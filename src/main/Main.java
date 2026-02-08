@@ -5,12 +5,14 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import java2rust.Java2Rust;
+import java2rust.rust.RustModule;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
@@ -20,8 +22,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
-public class java2rust implements Runnable {
+@CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
+public class Main implements Runnable {
 	@Option(names = { "-o", "--output" }, description = "the output file or directory")
 	private File output;
 
@@ -32,7 +34,7 @@ public class java2rust implements Runnable {
 	private ParserConfiguration.LanguageLevel languageLevel = ParserConfiguration.LanguageLevel.JAVA_25;
 
 	static void main(String[] args) {
-		int exitCode = new CommandLine(new java2rust()).execute(args);
+		int exitCode = new CommandLine(new Main()).execute(args);
 		System.exit(exitCode);
 	}
 
@@ -42,27 +44,42 @@ public class java2rust implements Runnable {
 		config.setLanguageLevel(languageLevel);
 		StaticJavaParser.setConfiguration(config);
 
+		RustModule lib = RustModule.lib(Java2Rust.toSnakeCase(FilenameUtils.removeExtension(output.getName())));
+		CombinedTypeSolver solver = new CombinedTypeSolver();
+		solver.add(new ReflectionTypeSolver());
+
 		for (File input : this.input) {
 			System.out.printf("==> %s\n", input.toString());
-			consider(input, input);
+			consider(input, input, lib);
 		}
+
+		System.out.println("\n[ Rust Modules ]\n");
+		print(lib);
 	}
 
-	void consider(@NonNull File input, @NonNull File root) {
+	void print(RustModule mod) {
+		System.out.printf("==> %s\n%s", mod.path, mod);
+		for (RustModule submodule : mod.submodules())
+			print(submodule);
+	}
+
+	void consider(@NonNull File input, @NonNull File root, RustModule mod) {
 		File[] children = input.listFiles();
 		if (children == null) {
 			if (input
 				.getPath()
-				.endsWith(".java"))
-				convert(input, root);
+				.endsWith(".java")) {
+				String name = Java2Rust.toSnakeCase(FilenameUtils.removeExtension(input.getName()));
+				convert(input, root, mod.submodule(name, true));
+			}
 			return;
 		}
 
 		for (File file : children)
-			consider(file, root);
+			consider(file, root, mod);
 	}
 
-	void convert(@NonNull File input, @NonNull File root) {
+	void convert(@NonNull File input, @NonNull File root, RustModule mod) {
 		String prefix = StringUtils.getCommonPrefix(input.getPath(), root.getPath());
 		String relativePath = input
 			.getPath()
@@ -77,6 +94,7 @@ public class java2rust implements Runnable {
 				.get(relativePath)
 				.getParent()
 				.toString(),
+			"src",
 			filename);
 		System.out.print('\t');
 		System.out.println(filename);
@@ -84,7 +102,7 @@ public class java2rust implements Runnable {
 		String code;
 		try {
 			CompilationUnit unit = StaticJavaParser.parse(input);
-			code = Java2Rust.convert(unit);
+			code = Java2Rust.convert(unit, mod);
 		} catch (ParseProblemException e) {
 			StringBuilder sb = new StringBuilder("/*\n");
 
@@ -99,7 +117,7 @@ public class java2rust implements Runnable {
 			sb.append("*/\n");
 			code = sb.toString();
 		} catch (Throwable e) {
-			code = "/*\nFIXME: %s\n".formatted(e.getLocalizedMessage());
+			code = "/*\nFIXME: %s\n*/\n".formatted(e.toString());
 			System.err.println(e.getMessage());
 		}
 		try {

@@ -9,11 +9,11 @@ import org.apache.commons.lang3.Strings;
 /**
  * Created by aschoerk on 30.04.16.
  */
-public class NameVisitor extends VoidVisitorAdapter<JavaConverterData> {
+public class NameVisitor extends VoidVisitorAdapter<JavaTranspiler> {
 
 
 	@Override
-	public void visit(DoubleLiteralExpr n, JavaConverterData arg) {
+	public void visit(DoubleLiteralExpr n, JavaTranspiler arg) {
 		boolean isFloat = Strings.CI.endsWith(n.getValue(), "f");
 		String value = removePlusAndSuffix(n.getValue(), "d", "D", "f", "F");
 		n.setValue(value);
@@ -21,14 +21,14 @@ public class NameVisitor extends VoidVisitorAdapter<JavaConverterData> {
 	}
 
 	@Override
-	public void visit(IntegerLiteralExpr n, JavaConverterData arg) {
+	public void visit(IntegerLiteralExpr n, JavaTranspiler arg) {
 		String value = removePlusAndSuffix(n.getValue());
 		n.setValue(value);
 		super.visit(n, arg);
 	}
 
 	@Override
-	public void visit(LongLiteralExpr n, JavaConverterData arg) {
+	public void visit(LongLiteralExpr n, JavaTranspiler arg) {
 		String value = removePlusAndSuffix(n.getValue(), "l", "L");
 		n.setValue(value);
 		super.visit(n, arg);

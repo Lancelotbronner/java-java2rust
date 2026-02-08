@@ -3,20 +3,22 @@ package java2rust;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import java2rust.rust.RustModule;
 import org.apache.commons.lang3.ArrayUtils;
 
 
 public class Java2Rust {
-	public static String convert(String javaString) {
+	public static String test(String javaString) {
 		try {
 			CompilationUnit compilationUnit = StaticJavaParser.parse(javaString);
-			return convert(compilationUnit);
+			return convert(compilationUnit, RustModule.lib("test"));
 		} catch (ParseProblemException e) {
 			return e.toString();
 		}
 	}
 
-	public static String convert(CompilationUnit unit) {
+	public static String convert(CompilationUnit unit, RustModule mod) {
+		new DeclVisitor(mod).visit(unit, null);
 		IdTrackerVisitor idTrackerVisitor = new IdTrackerVisitor();
 		IdTracker idTracker = new IdTracker();
 		idTrackerVisitor.visit(unit, idTracker);

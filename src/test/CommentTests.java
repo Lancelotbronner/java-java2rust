@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CommentTests {
 	@Test
 	public void noDuplicateJavadocComments() {
-		String res = Java2Rust.convert("""
+		String res = Java2Rust.test("""
 			/**
 			 * Interface comment
 			 */
@@ -49,7 +49,7 @@ public class CommentTests {
 
 	@Test
 	public void packageDeclarationJavadoc() {
-		String actual = Java2Rust.convert("""
+		String actual = Java2Rust.test("""
 			/**
 			 * Licence
 			 */

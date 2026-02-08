@@ -4,6 +4,7 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.*;
 import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -93,6 +94,22 @@ import static java.util.Collections.reverse;
 	//
 	//		printOrphanCommentsEnding(n);
 	//	}
+
+	@Override
+	public void visit(AnnotationDeclaration n, Object arg) {
+		printer.startComment();
+		printer.print("AnnotationDeclaration");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(AnnotationMemberDeclaration n, Object arg) {
+		printer.startComment();
+		printer.print("AnnotationMemberDeclaration");
+		printer.println(n.toString());
+		printer.endComment();
+	}
 
 	@Override
 	public void visit(final ArrayAccessExpr n, final Object arg) {
@@ -377,9 +394,8 @@ import static java.util.Collections.reverse;
 
 	@Override
 	public void visit(final BlockComment n, final Object arg) {
-		if (!this.printComments) {
+		if (!this.printComments)
 			return;
-		}
 		printer.comment(n.getContent());
 		printer.endComment();
 		printer.println();
@@ -1256,6 +1272,14 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
+	public void visit(TraditionalJavadocComment n, Object arg) {
+		printer.startComment();
+		printer.print("TraditionalJavadocComment");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
 	public void visit(final LabeledStmt n, final Object arg) {
 		printJavaComment(
 			n
@@ -1290,6 +1314,14 @@ import static java.util.Collections.reverse;
 				.getComment()
 				.orElse(null), arg);
 		printer.print(removePlusAndSuffix(n.getValue(), "l", "L"));
+	}
+
+	@Override
+	public void visit(MarkerAnnotationExpr n, Object arg) {
+		printer.startComment();
+		printer.print("MarkerAnnotationExpr");
+		printer.println(n.toString());
+		printer.endComment();
 	}
 
 	@Override
@@ -1487,6 +1519,14 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
+	public void visit(NormalAnnotationExpr n, Object arg) {
+		printer.startComment();
+		printer.print("NormalAnnotationExpr");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
 	public void visit(final NullLiteralExpr n, final Object arg) {
 		printJavaComment(
 			n
@@ -1671,6 +1711,11 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
+	public void visit(ArrayCreationLevel n, Object arg) {
+		super.visit(n, arg);
+	}
+
+	@Override
 	public void visit(final IntersectionType n, final Object arg) {
 		printJavaComment(
 			n
@@ -1727,6 +1772,14 @@ import static java.util.Collections.reverse;
 			}
 		}
 		printer.print(";");
+	}
+
+	@Override
+	public void visit(SingleMemberAnnotationExpr n, Object arg) {
+		printer.startComment();
+		printer.print("SingleMemberAnnotationExpr");
+		printer.println(n.toString());
+		printer.endComment();
 	}
 
 	@Override
@@ -1931,6 +1984,22 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
+	public void visit(LocalClassDeclarationStmt n, Object arg) {
+		printer.startComment();
+		printer.print("LocalClassDeclarationStmt");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(LocalRecordDeclarationStmt n, Object arg) {
+		printer.startComment();
+		printer.print("LocalRecordDeclarationStmt");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
 	public void visit(final TypeParameter n, final Object arg) {
 		printJavaComment(
 			n
@@ -1985,7 +2054,10 @@ import static java.util.Collections.reverse;
 
 	@Override
 	public void visit(final UnknownType n, final Object arg) {
-		// Nothing to dump
+		printer.startComment();
+		printer.print("UnknownType");
+		printer.println(n.toString());
+		printer.endComment();
 	}
 
 	@Override
@@ -2221,6 +2293,78 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
+	public void visit(ModuleDeclaration n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleDeclaration");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ModuleRequiresDirective n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleRequiresDirective");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ModuleExportsDirective n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleExportsDirective");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ModuleProvidesDirective n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleProvidesDirective");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ModuleUsesDirective n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleUsesDirective");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ModuleOpensDirective n, Object arg) {
+		printer.startComment();
+		printer.print("ModuleOpensDirective");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(UnparsableStmt n, Object arg) {
+		printer.startComment();
+		printer.print("UnparsableStmt");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(ReceiverParameter n, Object arg) {
+		printer.startComment();
+		printer.print("ReceiverParameter");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(VarType n, Object arg) {
+		printer.startComment();
+		printer.print("VarType");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
 	public void visit(Modifier n, Object arg) {
 		switch (n.getKeyword()) {
 		case DEFAULT:
@@ -2270,6 +2414,70 @@ import static java.util.Collections.reverse;
 			printer.comment("nonsealed ");
 			break;
 		}
+	}
+
+	@Override
+	public void visit(SwitchExpr n, Object arg) {
+		printer.startComment();
+		printer.print("SwitchExpr");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(TextBlockLiteralExpr n, Object arg) {
+		printer.startComment();
+		printer.print("TextBlockLiteralExpr");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(YieldStmt n, Object arg) {
+		printer.startComment();
+		printer.print("YieldStmt");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(TypePatternExpr n, Object arg) {
+		printer.startComment();
+		printer.print("TypePatternExpr");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(RecordDeclaration n, Object arg) {
+		printer.startComment();
+		printer.print("RecordDeclaration");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(CompactConstructorDeclaration n, Object arg) {
+		printer.startComment();
+		printer.print("CompactConstructorDeclaration");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(RecordPatternExpr n, Object arg) {
+		printer.startComment();
+		printer.print("RecordPatternExpr");
+		printer.println(n.toString());
+		printer.endComment();
+	}
+
+	@Override
+	public void visit(MatchAllPatternExpr n, Object arg) {
+		printer.startComment();
+		printer.print("MatchAllPatternExpr");
+		printer.println(n.toString());
+		printer.endComment();
 	}
 
 	@Override
