@@ -80,4 +80,9 @@ public class CommentTests {
 				""",
 			actual);
 	}
+
+	@Test
+	public void caseTest() {
+		assertEquals("glfw_error_capture", Java2Rust.toSnakeCase("GLFWErrorCapture"));
+	}
 }

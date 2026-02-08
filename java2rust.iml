@@ -45,5 +45,6 @@
     <orderEntry type="library" name="apache.commons.lang3" level="project" />
     <orderEntry type="library" name="commons.io" level="project" />
     <orderEntry type="library" name="github.javaparser.symbol.solver.core" level="project" />
+    <orderEntry type="library" name="info.picocli" level="project" />
   </component>
 </module>

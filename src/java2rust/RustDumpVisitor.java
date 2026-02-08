@@ -176,7 +176,7 @@ import static java.util.Collections.reverse;
 				val.accept(this, null);
 				printer.print(", ");
 			}
-			printer.printLn("]");
+			printer.println("]");
 
 		}
 	}
@@ -382,7 +382,7 @@ import static java.util.Collections.reverse;
 		}
 		printer.comment(n.getContent());
 		printer.endComment();
-		printer.printLn();
+		printer.println();
 	}
 
 	@Override
@@ -392,12 +392,12 @@ import static java.util.Collections.reverse;
 			n
 				.getComment()
 				.orElse(null), arg);
-		printer.printLn("{");
+		printer.println("{");
 		if (n.getStatements() != null) {
 			printer.indent();
 			for (final Statement s : n.getStatements()) {
 				s.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 			printer.unindent();
 		}
@@ -520,7 +520,7 @@ import static java.util.Collections.reverse;
 					printer.print(", ");
 				}
 			}
-			printer.printLn(")]");
+			printer.println(")]");
 		}
 
 		n
@@ -552,22 +552,22 @@ import static java.util.Collections.reverse;
 						printer.print(" + ");
 					i.accept(this, arg);
 				}
-				printer.printLn(" {");
+				printer.println(" {");
 				printer.indent();
 			} else {
-				printer.printLn(" {");
+				printer.println(" {");
 				printer.indent();
 				int count = n
 					.getExtendedTypes()
 					.size() > 1 ? 0 : -1;
 				for (final ClassOrInterfaceType c : n.getExtendedTypes()) {
-					printer.print("super" + (count >= 0 ? ++count + "" : "") + ": ");
+					printer.print("base" + (count >= 0 ? ++count + "" : "") + ": ");
 					c.accept(this, arg);
-					printer.printLn(";");
+					printer.println(",");
 				}
 			}
 		} else {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 		}
 
@@ -581,22 +581,22 @@ import static java.util.Collections.reverse;
 
 		if (!n.isInterface()) {
 			printer.unindent();
-			printer.printLn("}");
-			printer.printLn("");
+			printer.println("}");
+			printer.println("");
 
 			printer.print("impl ");
 			printer.print(n
 				.getName()
 				.asString());
 
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 		}
 		if (!isNullOrEmpty(n.getMembers())) {
 			printMembers(n.getMembers(), arg, mem -> !(mem instanceof FieldDeclaration));
 		}
 		printer.unindent();
-		printer.printLn("}");
+		printer.println("}");
 
 	}
 
@@ -699,8 +699,8 @@ import static java.util.Collections.reverse;
         */
 
 		if (idTracker.hasThrows()) {
-			printer.printLn("use std::rc::*;");
-			printer.printLn("use java::exc::*;");
+			printer.println("use std::rc::*;");
+			printer.println("use java::exc::*;");
 		}
 
 		if (!isNullOrEmpty(n.getTypes())) {
@@ -710,9 +710,9 @@ import static java.util.Collections.reverse;
 				i
 					.next()
 					.accept(this, arg);
-				printer.printLn();
+				printer.println();
 				if (i.hasNext()) {
-					printer.printLn();
+					printer.println();
 				}
 			}
 		}
@@ -800,7 +800,7 @@ import static java.util.Collections.reverse;
 		} finally {
 			idTracker.setInConstructor(false);
 		}
-		printer.printLn("\n");
+		printer.println("\n");
 	}
 
 	@Override
@@ -910,11 +910,11 @@ import static java.util.Collections.reverse;
 		if (!n
 			.getClassBody()
 			.isEmpty()) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			printMembers(n.getClassBody(), arg, null);
 			printer.unindent();
-			printer.printLn("}");
+			printer.println("}");
 		}
 	}
 
@@ -949,10 +949,10 @@ import static java.util.Collections.reverse;
 			}
 		}
 
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 		if (n.getEntries() != null) {
-			printer.printLn();
+			printer.println();
 			for (final Iterator<EnumConstantDeclaration> i = n
 				.getEntries()
 				.iterator(); i.hasNext(); ) {
@@ -966,13 +966,13 @@ import static java.util.Collections.reverse;
 		if (!n
 			.getMembers()
 			.isEmpty()) {
-			printer.printLn(";");
+			printer.println(";");
 			printMembers(n.getMembers(), arg, null);
 		} else {
 			if (!n
 				.getEntries()
 				.isEmpty()) {
-				printer.printLn();
+				printer.println();
 			}
 		}
 		printer.unindent();
@@ -1004,10 +1004,13 @@ import static java.util.Collections.reverse;
 					.accept(this, arg);
 				printer.print(".");
 			}
-			printTypeArgs(
-				n
-					.getTypeArguments()
-					.get(), arg);
+			if (n
+				.getTypeArguments()
+				.isPresent())
+				printTypeArgs(
+					n
+						.getTypeArguments()
+						.get(), arg);
 			printer.print("super");
 		}
 		printArguments(n.getArguments(), arg);
@@ -1079,7 +1082,7 @@ import static java.util.Collections.reverse;
 			}
 		}
 
-		printer.printLn(",");
+		printer.println(",");
 	}
 
 	@Override
@@ -1109,11 +1112,11 @@ import static java.util.Collections.reverse;
 		if (n.getInitialization() != null && !n
 			.getInitialization()
 			.isEmpty()) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			for (final Expression e : n.getInitialization()) {
 				e.accept(this, arg);
-				printer.printLn(";");
+				printer.println(";");
 			}
 		}
 		if (n
@@ -1130,27 +1133,27 @@ import static java.util.Collections.reverse;
 		if (n.getUpdate() != null && !n
 			.getUpdate()
 			.isEmpty()) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 		}
 
 		encapsulateIfNotBlock(n.getBody(), arg);
-		printer.printLn("");
+		printer.println("");
 		if (n.getUpdate() != null && !n
 			.getUpdate()
 			.isEmpty()) {
 			for (final Expression e : n.getUpdate()) {
 				e.accept(this, arg);
-				printer.printLn(";");
+				printer.println(";");
 			}
 			printer.unindent();
-			printer.printLn(" }");
+			printer.println(" }");
 		}
 		if (n.getInitialization() != null && !n
 			.getInitialization()
 			.isEmpty()) {
 			printer.unindent();
-			printer.printLn(" }");
+			printer.println(" }");
 		}
 	}
 
@@ -1168,7 +1171,7 @@ import static java.util.Collections.reverse;
 		if (thenBlock) // block statement should start on the same line
 			printer.print(" ");
 		else {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 		}
 		n
@@ -1176,8 +1179,8 @@ import static java.util.Collections.reverse;
 			.accept(this, arg);
 		if (!thenBlock) {
 			printer.unindent();
-			printer.printLn();
-			printer.printLn("}");
+			printer.println();
+			printer.println("}");
 		}
 		if (n
 			.getElseStmt()
@@ -1202,8 +1205,8 @@ import static java.util.Collections.reverse;
 				.accept(this, arg);
 			if (!(elseIf || elseBlock)) {
 				printer.unindent();
-				printer.printLn();
-				printer.printLn("}");
+				printer.println();
+				printer.println("}");
 			}
 		}
 	}
@@ -1253,13 +1256,6 @@ import static java.util.Collections.reverse;
 	}
 
 	@Override
-	public void visit(final MarkdownComment n, final Object arg) {
-		printer.print("/**");
-		printer.print(n.getContent());
-		printer.printLn("*/");
-	}
-
-	@Override
 	public void visit(final LabeledStmt n, final Object arg) {
 		printJavaComment(
 			n
@@ -1284,7 +1280,7 @@ import static java.util.Collections.reverse;
 		String tmp = n.getContent();
 		tmp = tmp.replace('\r', ' ');
 		tmp = tmp.replace('\n', ' ');
-		printer.printLn(tmp);
+		printer.println(tmp);
 	}
 
 	@Override
@@ -1384,7 +1380,7 @@ import static java.util.Collections.reverse;
 					.getName()
 					.getIdentifier()
 					.equals("Test")) {
-					printer.printLn("#[test]");
+					printer.println("#[test]");
 				}
 			}
 			n
@@ -1464,7 +1460,7 @@ import static java.util.Collections.reverse;
 		} finally {
 			idTracker.setCurrentMethod(null);
 		}
-		printer.printLn("\n");
+		printer.println("\n");
 	}
 
 	@Override
@@ -1540,7 +1536,7 @@ import static java.util.Collections.reverse;
 		if (n
 			.getAnonymousClassBody()
 			.isPresent()) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			printMembers(
 				n
@@ -1561,8 +1557,8 @@ import static java.util.Collections.reverse;
 		n
 			.getName()
 			.accept(this, arg);
-		printer.printLn(";");
-		printer.printLn();
+		printer.println(";");
+		printer.println();
 
 		printOrphanCommentsEnding(n);
 	}
@@ -1777,17 +1773,17 @@ import static java.util.Collections.reverse;
 		} else {
 			printer.print("_ => ");
 		}
-		printer.printLn();
+		printer.println();
 		printer.indent();
 		if (n.getStatements() != null) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			for (final Statement s : n.getStatements()) {
 				s.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 			printer.unindent();
-			printer.printLn("}");
+			printer.println("}");
 		}
 		printer.unindent();
 	}
@@ -1802,7 +1798,7 @@ import static java.util.Collections.reverse;
 		n
 			.getSelector()
 			.accept(this, arg);
-		printer.printLn(" {");
+		printer.println(" {");
 		if (n.getEntries() != null) {
 			printer.indent();
 			for (final SwitchEntry e : n.getEntries()) {
@@ -1873,8 +1869,8 @@ import static java.util.Collections.reverse;
 				n
 					.getComment()
 					.orElse(null), arg);
-			printer.printLn("let tryResult" + tryCount + " = 0;");
-			printer.printLn("'try" + tryCount + ": loop {");
+			printer.println("let tryResult" + tryCount + " = 0;");
+			printer.println("'try" + tryCount + ": loop {");
 			if (!n
 				.getResources()
 				.isEmpty()) {
@@ -1890,7 +1886,7 @@ import static java.util.Collections.reverse;
 							.asVariableDeclarationExpr(), arg);
 					if (resources.hasNext()) {
 						printer.print(";");
-						printer.printLn();
+						printer.println();
 						if (first) {
 							printer.indent();
 						}
@@ -1907,18 +1903,18 @@ import static java.util.Collections.reverse;
 			n
 				.getTryBlock()
 				.accept(this, arg);
-			printer.printLn();
-			printer.printLn("break 'try" + tryCount);
-			printer.printLn("}");
+			printer.println();
+			printer.println("break 'try" + tryCount);
+			printer.println("}");
 			if (n.getCatchClauses() != null) {
-				printer.printLn("match tryResult" + tryCount + " {");
+				printer.println("match tryResult" + tryCount + " {");
 				printer.indent();
 				for (final CatchClause c : n.getCatchClauses()) {
 					c.accept(this, arg);
 				}
-				printer.printLn("  0 => break");
+				printer.println("  0 => break");
 				printer.unindent();
-				printer.printLn("}");
+				printer.println("}");
 			}
 			if (n
 				.getFinallyBlock()
@@ -2009,9 +2005,8 @@ import static java.util.Collections.reverse;
 			.iterator(); i.hasNext(); ) {
 			final VariableDeclarator v = i.next();
 			v.accept(this, n.getCommonType());
-			if (i.hasNext()) {
-				printer.print(", ");
-			}
+			if (i.hasNext())
+				printer.print("; ");
 		}
 	}
 
@@ -2168,11 +2163,9 @@ import static java.util.Collections.reverse;
 		}
 
 		printer.print("::");
-		if (!n
-			.getTypeArguments()
-			.get()
+		if (n.getTypeArguments()
 			//			.getTypeArguments()
-			.isEmpty()) {
+			.isPresent()) {
 			printer.print("<");
 			for (Iterator<Type> i = n
 				.getTypeArguments()
@@ -2222,7 +2215,7 @@ import static java.util.Collections.reverse;
 		if (n.isAsterisk()) {
 			printer.print("::*");
 		}
-		printer.printLn(";");
+		printer.println(";");
 
 		printOrphanCommentsEnding(n);
 	}
@@ -2241,7 +2234,7 @@ import static java.util.Collections.reverse;
 			printer.comment("protected ");
 			break;
 		case PRIVATE:
-			printer.comment("private ");
+			// everything is private by default in Rust
 			break;
 		case ABSTRACT:
 			printer.comment("abstract ");
@@ -2277,6 +2270,13 @@ import static java.util.Collections.reverse;
 			printer.comment("nonsealed ");
 			break;
 		}
+	}
+
+	@Override
+	public void visit(final MarkdownComment n, final Object arg) {
+		printer.print("/**");
+		printer.print(n.getContent());
+		printer.println("*/");
 	}
 
 	boolean isEmbeddedInStmt(UnaryExpr n) {
@@ -2347,34 +2347,19 @@ import static java.util.Collections.reverse;
 	}
 
 	private String toSnakeIfNecessary(String n) {
-		if (namesMap.containsKey(n)) {
+		if (namesMap.containsKey(n))
 			n = namesMap.get(n);
-		}
-		String name = n;
-		if (Character.isLowerCase(name.charAt(0))) {
-			StringBuilder sb = new StringBuilder();
-			for (Character c : name.toCharArray()) {
-				if (Character.isUpperCase(c)) {
-					sb
-						.append("_")
-						.append(Character.toLowerCase(c));
-				} else {
-					sb.append(c);
-				}
-			}
-			return sb.toString();
-		}
-		return n;
+		return Java2Rust.identifier(n);
 	}
 
 	private void encapsulateIfNotBlock(Statement n, final Object arg) {
 		if (n instanceof BlockStmt) {
 			n.accept(this, arg);
 		} else {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			n.accept(this, arg);
-			printer.printLn("}");
+			printer.println("}");
 		}
 	}
 

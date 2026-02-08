@@ -24,9 +24,9 @@ public class RustPrinter {
 		level--;
 	}
 
-	public void printLn(final String arg) {
+	public void println(final String arg) {
 		print(arg);
-		printLn();
+		println();
 	}
 
 	public void print(final String arg) {
@@ -37,7 +37,7 @@ public class RustPrinter {
 		buf.append(arg);
 	}
 
-	public void printLn() {
+	public void println() {
 		buf.append(System.lineSeparator());
 		indented = false;
 	}
