@@ -14,7 +14,7 @@ public class DeclarationsTest {
 		assertEquals(
 			"""
 				struct A {
-				  i: i32,
+					i: i32,
 				}
 				""", Java2Rust.test("""
 				class A { int i; }
@@ -22,10 +22,25 @@ public class DeclarationsTest {
 		assertEquals(
 			"""
 				struct A {
-				  i: i32 = 1,
+					i: i32 = 1,
 				}
 				""", Java2Rust.test("""
 				class A { int i = 1; }
+				"""));
+	}
+
+	@Test
+	public void canConvertGenerics() {
+		assertEquals(
+			"""
+				struct D;
+				
+				struct A<B, C: crate::D, E> {
+					i: C,
+				}
+				""", Java2Rust.test("""
+				class D {}
+				class A<B, C extends D, E> { C i; }
 				"""));
 	}
 
@@ -40,6 +55,181 @@ public class DeclarationsTest {
 				}
 				""", Java2Rust.test("class A { void m(int i) { }; }"));
 	}
+
+	@Test
+	public void canConvertInheritance() {
+		assertEquals(
+			"""
+				struct A {
+					x: i32,
+				}
+				
+				impl A {
+					fn get_x(&self) -> i32 { self.x };
+					fn set_x(&mut self, x: i32) { self.x = x };
+				}
+				
+				struct B {
+					a: A,
+					y: i32,
+				}
+				
+				impl B {
+					fn get_x(&self) -> i32 { 0 };
+					fn set_x(&mut self, x: i32) { self.a.set_x(x) };
+					fn get_y(&self) -> i32 { self.y }
+					fn set_y(&mut self, y: i32) { self.y = y }
+				}
+				
+				struct C {
+					b: B,
+					z: i32,
+				}
+				
+				impl C {
+					fn get_x(&self) -> i32 { self.b.get_x() };
+					fn set_x(&mut self, x: i32) { self.b.set_x(x) };
+					fn get_y(&self) -> i32 { self.b.get_y() };
+					fn set_y(&mut self, y: i32) { self.b.set_y(x) };
+					fn get_z(&self) -> i32 { self.z }
+					fn set_z(&mut self, z: i32) { self.z = z }
+				}
+				""", Java2Rust.test("""
+				class A {
+					int x;
+					int getX() { return x; }
+					void setX(int x) { this.x = x; }
+				}
+				
+				class B extends A {
+					int y;
+					@Override
+					int getX() { return 0: }
+					int getY() { return y; }
+					void setY(int y) { this.y = y; }
+				}
+				
+				class C extends B {
+					int z;
+					int getZ() { return z; }
+					void setZ(int z) { this.z = z; }
+				}
+				"""));
+		assertEquals(
+			"""
+				struct A {
+					i: i32 = 1,
+				}
+				""", Java2Rust.test("""
+				class A { int i = 1; }
+				"""));
+	}
+
+	@Test
+	public void canConvertClassWithExtends() {
+		assertEquals(
+			"""
+				struct A {
+					b: i32,
+				}
+				
+				struct B {
+					base: A,
+					c: i32 = 5,
+				}
+				""", Java2Rust.test("""
+				class A { int b; }
+				class B extends A { int c = 5; }
+				"""));
+	}
+
+	@Test
+	public void canConvertInterfaceWithImplements() {
+		assertEquals(
+			"""
+				trait B {}
+				
+				struct A;
+				
+				impl B for A {}
+				""", Java2Rust.test("interface B {}; class A implements B { }"));
+	}
+
+	@Test
+	public void canConvertClassWithMultipleImplementations() {
+		assertEquals(
+			"""
+				struct A;
+				
+				impl B for A {}
+				
+				impl C for A {}
+				""", Java2Rust.test("interface B {}; interface C {}; class A implements B, C { }"));
+	}
+
+	@Test
+	public void canConvertClassWithConstructors() {
+		assertEquals(
+			"""
+				struct A {
+					x: i32 = 10,
+				}
+				
+				struct B extends A {
+					y: i32 = 20,
+				}
+				""", Java2Rust.test("""
+				class A { int x; }
+				class B extends A { int y; }
+				"""));
+	}
+
+	@Test
+	public void canConvertClassWithStaticMethods() {
+		assertEquals(
+			"""
+				struct A {
+					static fn m() {}
+				}
+				
+				struct B extends A {
+					static fn n() {}
+				}
+				""", Java2Rust.test("""
+				class A { void static m(); }
+				class B extends A { void static n(); }
+				"""));
+	}
+
+	@Test
+	public void canConvertClassWithFinalVariables() {
+		assertEquals(
+			"""
+				struct A {
+					final i32 a: i32 = 10,
+				}
+				""", Java2Rust.test("""
+				class A { final int a; }
+				"""));
+	}
+
+	@Test
+	public void canConvertClassWithDefaultMethods() {
+		assertEquals(
+			"""
+				struct A {
+					fn f() {}
+				}
+				
+				struct B extends A {
+					void g() {}
+				}
+				""", Java2Rust.test("""
+				class A { void f(); }
+				class B extends A { void g(); }
+				"""));
+	}
+}
 
 //	@Test
 //	public void canConvertVariableDeclaration() {
@@ -79,5 +269,3 @@ public class DeclarationsTest {
 //			call("class X {\n" + " enum A { AA; private final int id; }\n" + " enum B { BB; private final int id; }\n" + "}"),
 //			containsString("let id: i32"));
 //	}
-
-}

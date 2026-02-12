@@ -1,6 +1,6 @@
 package java2rust;
 
-import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import java2rust.rust.RustModule;
@@ -8,27 +8,33 @@ import org.apache.commons.lang3.ArrayUtils;
 
 
 public class Java2Rust {
-	public static String test(String javaString) {
-		try {
-			CompilationUnit compilationUnit = StaticJavaParser.parse(javaString);
-			return convert(compilationUnit, RustModule.lib("test"));
-		} catch (ParseProblemException e) {
-			return e.toString();
-		}
+	public static String test(String java) {
+		ParserConfiguration config = new ParserConfiguration();
+		config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
+		StaticJavaParser.setConfiguration(config);
+
+		JavaTranspiler transpiler = new JavaTranspiler("test");
+		config.setSymbolResolver(transpiler.solver);
+
+		transpiler.addCode("test.java", java);
+		transpiler.compile(_ -> {});
+		transpiler.analyze();
+		return transpiler.lib.toString();
 	}
 
+	/*
 	public static String convert(CompilationUnit unit, RustModule mod) {
-		new DeclVisitor(mod).visit(unit, null);
 		IdTrackerVisitor idTrackerVisitor = new IdTrackerVisitor();
 		IdTracker idTracker = new IdTracker();
 		idTrackerVisitor.visit(unit, idTracker);
 		TypeTrackerVisitor typeTrackerVisitor = new TypeTrackerVisitor(idTracker);
 		typeTrackerVisitor.visit(unit, null);
 
-		RustDumpVisitor dumper = new RustDumpVisitor(true, idTracker, typeTrackerVisitor);
+		RustVisitor dumper = new RustVisitor();
 		dumper.visit(unit, null);
 		return dumper.getSource();
 	}
+	 */
 
 	public static String identifier(String java) {
 		if (Character.isLowerCase(java.charAt(0))) {
@@ -47,13 +53,30 @@ public class Java2Rust {
 		return java;
 	}
 
-	public static String toSnakeCase(String java) {
+	public static String pascalCaseToSnakeCase(String java) {
 		StringBuilder sb = new StringBuilder();
 		Character[] chars = ArrayUtils.toObject(java.toCharArray());
 		int i = 0;
 		for (Character c : chars) {
 			if (Character.isUpperCase(c)) {
 				if (!sb.isEmpty() && !Character.isUpperCase(ArrayUtils.get(chars, i + 1, '\0')))
+					sb.append('_');
+				sb.append(Character.toLowerCase(c));
+			} else {
+				sb.append(c);
+			}
+			i++;
+		}
+		return sb.toString();
+	}
+
+	public static String camelCaseToSnakeCase(String java) {
+		StringBuilder sb = new StringBuilder();
+		Character[] chars = ArrayUtils.toObject(java.toCharArray());
+		int i = 0;
+		for (Character c : chars) {
+			if (Character.isUpperCase(c)) {
+				if (!sb.isEmpty() && !Character.isUpperCase(ArrayUtils.get(chars, i + 1, 'A')))
 					sb.append('_');
 				sb.append(Character.toLowerCase(c));
 			} else {

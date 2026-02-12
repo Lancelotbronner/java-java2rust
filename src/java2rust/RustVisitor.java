@@ -20,60 +20,21 @@ import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static com.github.javaparser.utils.Utils.isNullOrEmpty;
 import static java.util.Collections.reverse;
 
-/*
- * Copyright (C) 2007-2010 Júlio Vilmar Gesser. Copyright (C) 2011, 2013-2015 The JavaParser Team. This file is part of JavaParser. JavaParser can be
- * used either under the terms of a) the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version. b) the terms of the Apache License You should have received a copy of both licenses in LICENCE.LGPL
- * and LICENCE.APACHE. Please refer to those files for details. JavaParser is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
- * more details.
- */
-@SuppressWarnings("Duplicates")
+public final class RustVisitor extends VoidVisitorAdapter<Object> {
+	public final JavaTranspiler transpiler;
+	private final RustPrinter printer = new RustPrinter("\t");
 
-/*
- * Dumps the AST to formatted Java source code.
- *
- * @author Julio Vilmar Gesser
- */ public class RustDumpVisitor extends VoidVisitorAdapter<Object> {
-
-	static String[] mappedNames = { "NaN", "NAN", "NEGATIVE_INFINITY", "NEG_INFINITY", "POSITIVE_INFINITY", "INFINITY", "MIN_VALUE", "MIN", "MAX_VALUE", "MAX", };
-	static HashMap<String, String> namesMap = new HashMap<>();
-
-	static {
-		for (int i = 0; i < mappedNames.length; i += 2) {
-			namesMap.put(mappedNames[i], mappedNames[i + 1]);
-		}
-	}
-
-	protected final RustPrinter printer = createSourcePrinter();
-
-	private final IdTracker idTracker;
-	private final TypeTrackerVisitor typeTracker;
-	private final boolean printComments;
-
-	public RustDumpVisitor() {
-		this(true, null, null);
-	}
-
-	public RustDumpVisitor(
-		boolean printComments,
-		IdTracker idTracker,
-		TypeTrackerVisitor typeTrackerVisitor
+	public RustVisitor(
+		JavaTranspiler transpiler
 	) {
-		this.idTracker = idTracker;
-		this.typeTracker = typeTrackerVisitor;
-		this.printComments = printComments;
-	}
-
-	protected RustPrinter createSourcePrinter() {
-		return new RustPrinter("    ");
+		this.transpiler = transpiler;
 	}
 
 	public String getSource() {
 		return printer.getSource();
 	}
 
-	protected void printJavadoc(final JavadocComment javadoc, final Object arg) {
+	private void printJavadoc(final JavadocComment javadoc, final Object arg) {
 		if (javadoc != null) {
 			javadoc.accept(this, arg);
 		}
@@ -114,15 +75,12 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ArrayAccessExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getName()
+		n.getName()
 			.accept(this, arg);
 		printer.print("[");
-		n
-			.getIndex()
+		n.getIndex()
 			.accept(this, arg);
 		printer.print("]");
 	}
@@ -130,16 +88,14 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ArrayCreationExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		if (!isNullOrEmpty(n.getLevels())) {
 			String type = acceptAndCut(n.getElementType(), arg);
 			String typeOrDefaultValue = defaultValue(type);
 			if (typeOrDefaultValue.equals("None"))
 				type = "Option<" + type + ">";
-			List<String> dims = n
-				.getLevels()
+			List<String> dims = n.getLevels()
 				.stream()
 				.map(e -> acceptAndCut(e, arg))
 				.collect(Collectors.toList());
@@ -152,11 +108,9 @@ import static java.util.Collections.reverse;
 
 		} else {
 			printer.print(" ");
-			if (n
-				.getInitializer()
+			if (n.getInitializer()
 				.isPresent())
-				n
-					.getInitializer()
+				n.getInitializer()
 					.get()
 					.accept(this, n.getElementType());
 		}
@@ -166,8 +120,7 @@ import static java.util.Collections.reverse;
 	public void visit(final ArrayInitializerExpr n, final Object arg) {
 		Type t = arg instanceof Type ? (Type) arg : null;
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
 		if (!isNullOrEmpty(n.getValues())) {
@@ -178,8 +131,7 @@ import static java.util.Collections.reverse;
 				reverse(dims);
 				for (Integer i : dims) {
 					sb.insert(0, "vec![");
-					sb
-						.append("; ")
+					sb.append("; ")
 						.append(i)
 						.append("]");
 				}
@@ -200,30 +152,25 @@ import static java.util.Collections.reverse;
 
 	List<Integer> getDimensions(ArrayInitializerExpr n, Type t) {
 		List<Integer> dimensions = new ArrayList<>();
-		Integer actsize = n
-			.getValues()
+		Integer actsize = n.getValues()
 			.size();
 		while (n != null) {
 			dimensions.add(actsize);
 			actsize = null;
-			Expression firstValue = n
-				.getValues()
+			Expression firstValue = n.getValues()
 				.get(0);
 			if (firstValue instanceof ArrayInitializerExpr) {
 				Integer size = null;
 				for (Expression e : n.getValues()) {
 					ArrayInitializerExpr ai = (ArrayInitializerExpr) e;
 					if (size == null) {
-						size = ai
-							.getValues()
+						size = ai.getValues()
 							.size();
 						n = ai;
 					} else {
-						if (size < ai
-							.getValues()
+						if (size < ai.getValues()
 							.size()) {
-							size = ai
-								.getValues()
+							size = ai.getValues()
 								.size();
 							n = ai;
 						}
@@ -240,19 +187,15 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final AssertStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("assert!( ");
-		n
-			.getCheck()
+		n.getCheck()
 			.accept(this, arg);
-		if (n
-			.getMessage()
+		if (n.getMessage()
 			.isPresent()) {
 			printer.print(" : ");
-			n
-				.getMessage()
+			n.getMessage()
 				.get()
 				.accept(this, arg);
 		}
@@ -262,11 +205,9 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final AssignExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getTarget()
+		n.getTarget()
 			.accept(this, arg);
 		printer.print(" ");
 		switch (n.getOperator()) {
@@ -308,23 +249,16 @@ import static java.util.Collections.reverse;
 			break;
 		}
 		printer.print(" ");
-		n
-			.getValue()
+		n.getValue()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final BinaryExpr n, final Object arg) {
-		if (String.class.equals(idTracker.getType(n))) {
-			printStringExpression(n, arg);
-			return;
-		}
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getLeft()
+		n.getLeft()
 			.accept(this, arg);
 		printer.print(" ");
 		switch (n.getOperator()) {
@@ -387,15 +321,12 @@ import static java.util.Collections.reverse;
 			break;
 		}
 		printer.print(" ");
-		n
-			.getRight()
+		n.getRight()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final BlockComment n, final Object arg) {
-		if (!this.printComments)
-			return;
 		printer.comment(n.getContent());
 		printer.endComment();
 		printer.println();
@@ -405,8 +336,7 @@ import static java.util.Collections.reverse;
 	public void visit(final BlockStmt n, final Object arg) {
 		printOrphanCommentsBeforeThisChildNode(n);
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.println("{");
 		if (n.getStatements() != null) {
@@ -419,14 +349,12 @@ import static java.util.Collections.reverse;
 		}
 		printOrphanCommentsEnding(n);
 		printer.print("}");
-
 	}
 
 	@Override
 	public void visit(final BooleanLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(String.valueOf(n.getValue()));
 	}
@@ -434,16 +362,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final BreakStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("break");
-		if (n
-			.getLabel()
+		if (n.getLabel()
 			.isPresent()) {
 			printer.print(" '");
-			printer.print(n
-				.getLabel()
+			printer.print(n.getLabel()
 				.get()
 				.asString());
 		}
@@ -453,31 +378,25 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final CastExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 		printer.print(" as ");
-		n
-			.getType()
+		n.getType()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final CatchClause n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(" catch (");
-		n
-			.getParameter()
+		n.getParameter()
 			.accept(this, arg);
 		printer.print(") ");
-		n
-			.getBody()
+		n.getBody()
 			.accept(this, arg);
 
 	}
@@ -485,8 +404,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final CharLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("'");
 		printer.print(n.getValue());
@@ -496,11 +414,9 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ClassExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getType()
+		n.getType()
 			.accept(this, arg);
 		printer.print(".class");
 	}
@@ -508,8 +424,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ClassOrInterfaceDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
 		final boolean[] staticSearched = { true };
@@ -527,8 +442,7 @@ import static java.util.Collections.reverse;
 
 		if (!isNullOrEmpty(n.getImplementedTypes())) {
 			printer.print("#[derive(");
-			for (final Iterator<ClassOrInterfaceType> i = n
-				.getImplementedTypes()
+			for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -539,8 +453,7 @@ import static java.util.Collections.reverse;
 			printer.println(")]");
 		}
 
-		n
-			.getModifiers()
+		n.getModifiers()
 			.accept(this, arg);
 		printer.endComment();
 
@@ -550,8 +463,7 @@ import static java.util.Collections.reverse;
 			printer.print("struct ");
 		}
 
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 
 		printTypeParameters(n.getTypeParameters(), arg);
@@ -573,8 +485,7 @@ import static java.util.Collections.reverse;
 			} else {
 				printer.println(" {");
 				printer.indent();
-				int count = n
-					.getExtendedTypes()
+				int count = n.getExtendedTypes()
 					.size() > 1 ? 0 : -1;
 				for (final ClassOrInterfaceType c : n.getExtendedTypes()) {
 					printer.print("base" + (count >= 0 ? ++count + "" : "") + ": ");
@@ -601,8 +512,7 @@ import static java.util.Collections.reverse;
 			printer.println("");
 
 			printer.print("impl ");
-			printer.print(n
-				.getName()
+			printer.print(n.getName()
 				.asString());
 
 			printer.println(" {");
@@ -616,7 +526,7 @@ import static java.util.Collections.reverse;
 
 	}
 
-	protected void printMembers(
+	private void printMembers(
 		final List<BodyDeclaration<?>> members,
 		final Object arg,
 		Function<BodyDeclaration<?>, Boolean> filter
@@ -628,7 +538,7 @@ import static java.util.Collections.reverse;
 		}
 	}
 
-	protected void printTypeParameters(final List<TypeParameter> args, final Object arg) {
+	private void printTypeParameters(final List<TypeParameter> args, final Object arg) {
 		if (!isNullOrEmpty(args)) {
 			printer.print("<");
 			for (final Iterator<TypeParameter> i = args.iterator(); i.hasNext(); ) {
@@ -645,37 +555,31 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ClassOrInterfaceType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
-		if (n
-			.getScope()
+		if (n.getScope()
 			.isPresent()) {
-			n
-				.getScope()
+			n.getScope()
 				.get()
 				.accept(this, arg);
 			printer.print(".");
 		}
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 
 		if (n.isUsingDiamondOperator()) {
 			printer.print("<>");
 		} else {
-			if (n
-				.getTypeArguments()
+			if (n.getTypeArguments()
 				.isPresent())
 				printTypeArgs(
-					n
-						.getTypeArguments()
+					n.getTypeArguments()
 						.get(), arg);
 		}
 	}
 
-	protected void printTypeArgs(final List<Type> args, final Object arg) {
+	private void printTypeArgs(final List<Type> args, final Object arg) {
 		if (!isNullOrEmpty(args)) {
 			printer.print("<");
 			for (final Iterator<Type> i = args.iterator(); i.hasNext(); ) {
@@ -692,15 +596,12 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final CompilationUnit n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
-		if (n
-			.getPackageDeclaration()
+		if (n.getPackageDeclaration()
 			.isPresent()) {
-			n
-				.getPackageDeclaration()
+			n.getPackageDeclaration()
 				.get()
 				.accept(this, arg);
 		}
@@ -714,17 +615,10 @@ import static java.util.Collections.reverse;
         }
         */
 
-		if (idTracker.hasThrows()) {
-			printer.println("use std::rc::*;");
-			printer.println("use java::exc::*;");
-		}
-
 		if (!isNullOrEmpty(n.getTypes())) {
-			for (final Iterator<TypeDeclaration<?>> i = n
-				.getTypes()
+			for (final Iterator<TypeDeclaration<?>> i = n.getTypes()
 				.iterator(); i.hasNext(); ) {
-				i
-					.next()
+				i.next()
 					.accept(this, arg);
 				printer.println();
 				if (i.hasNext()) {
@@ -739,99 +633,79 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ConditionalExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(" if ");
-		n
-			.getCondition()
+		n.getCondition()
 			.accept(this, arg);
 		printer.print(" { ");
-		n
-			.getThenExpr()
+		n.getThenExpr()
 			.accept(this, arg);
 		printer.print(" } else { ");
-		n
-			.getElseExpr()
+		n.getElseExpr()
 			.accept(this, arg);
 		printer.print(" }");
 	}
 
 	@Override
 	public void visit(final ConstructorDeclaration n, final Object arg) {
-		idTracker.setInConstructor(true);
-		try {
-			printJavaComment(
-				n
-					.getComment()
-					.orElse(null), arg);
-			n
-				.getModifiers()
-				.accept(this, arg);
-			printer.endComment();
+		printJavaComment(
+			n.getComment()
+				.orElse(null), arg);
+		n.getModifiers()
+			.accept(this, arg);
+		printer.endComment();
 
-			printTypeParameters(n.getTypeParameters(), arg);
-			if (!n
-				.getTypeParameters()
-				.isEmpty()) {
-				printer.print(" ");
-			}
-			printer.print("fn new");
-
-			printer.print("(");
-			if (!n
-				.getParameters()
-				.isEmpty()) {
-				for (final Iterator<Parameter> i = n
-					.getParameters()
-					.iterator(); i.hasNext(); ) {
-					final Parameter p = i.next();
-					p.accept(this, arg);
-					if (i.hasNext()) {
-						printer.print(", ");
-					}
-				}
-			}
-			printer.print(") -> ");
-			printer.print(n
-				.getName()
-				.asString());
-
-			if (!isNullOrEmpty(n.getThrownExceptions())) {
-				printer.print(" throws ");
-				for (final Iterator<ReferenceType> i = n
-					.getThrownExceptions()
-					.iterator(); i.hasNext(); ) {
-					final ReferenceType referenceType = i.next();
-					referenceType.accept(this, arg);
-					if (i.hasNext()) {
-						printer.print(", ");
-					}
-				}
-			}
+		printTypeParameters(n.getTypeParameters(), arg);
+		if (!n.getTypeParameters()
+			.isEmpty()) {
 			printer.print(" ");
-			n
-				.getBody()
-				.accept(this, arg);
-		} finally {
-			idTracker.setInConstructor(false);
 		}
+		printer.print("fn new");
+
+		printer.print("(");
+		if (!n.getParameters()
+			.isEmpty()) {
+			for (final Iterator<Parameter> i = n.getParameters()
+				.iterator(); i.hasNext(); ) {
+				final Parameter p = i.next();
+				p.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		printer.print(") -> ");
+		printer.print(n.getName()
+			.asString());
+
+		if (!isNullOrEmpty(n.getThrownExceptions())) {
+			printer.print(" throws ");
+			for (final Iterator<ReferenceType> i = n.getThrownExceptions()
+				.iterator(); i.hasNext(); ) {
+				final ReferenceType referenceType = i.next();
+				referenceType.accept(this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
+		printer.print(" ");
+		n.getBody()
+			.accept(this, arg);
 		printer.println("\n");
 	}
 
 	@Override
 	public void visit(final ContinueStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("continue");
-		if (n
-			.getLabel()
+		if (n.getLabel()
 			.isPresent()) {
 			printer.print(" '");
-			printer.print(n
-				.getLabel()
+			printer.print(n.getLabel()
 				.get()
 				.asString());
 		}
@@ -841,16 +715,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final DoStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("loop { ");
-		n
-			.getBody()
+		n.getBody()
 			.accept(this, arg);
 		printer.print("if !(");
-		n
-			.getCondition()
+		n.getCondition()
 			.accept(this, arg);
 		printer.print(") break;");
 		printer.print("}");
@@ -859,8 +730,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final DoubleLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		String value = n.getValue();
 		if (!StringUtils.containsAny(value, '.', 'e', 'E', 'x', 'X'))
@@ -888,8 +758,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final EmptyStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(";");
 	}
@@ -897,13 +766,11 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final EnclosedExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("(");
 		if (n.getInner() != null) {
-			n
-				.getInner()
+			n.getInner()
 				.accept(this, arg);
 		}
 		printer.print(")");
@@ -912,19 +779,16 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final EnumConstantDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 
 		if (n.getArguments() != null) {
 			printArguments(n.getArguments(), arg);
 		}
 
-		if (!n
-			.getClassBody()
+		if (!n.getClassBody()
 			.isEmpty()) {
 			printer.println(" {");
 			printer.indent();
@@ -937,25 +801,20 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final EnumDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getModifiers()
+		n.getModifiers()
 			.accept(this, arg);
 		printer.endComment();
 
 		printer.print("enum ");
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 
-		if (!n
-			.getImplementedTypes()
+		if (!n.getImplementedTypes()
 			.isEmpty()) {
 			printer.print(" implements ");
-			for (final Iterator<ClassOrInterfaceType> i = n
-				.getImplementedTypes()
+			for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -969,8 +828,7 @@ import static java.util.Collections.reverse;
 		printer.indent();
 		if (n.getEntries() != null) {
 			printer.println();
-			for (final Iterator<EnumConstantDeclaration> i = n
-				.getEntries()
+			for (final Iterator<EnumConstantDeclaration> i = n.getEntries()
 				.iterator(); i.hasNext(); ) {
 				final EnumConstantDeclaration e = i.next();
 				e.accept(this, arg);
@@ -979,14 +837,12 @@ import static java.util.Collections.reverse;
 				}
 			}
 		}
-		if (!n
-			.getMembers()
+		if (!n.getMembers()
 			.isEmpty()) {
 			printer.println(";");
 			printMembers(n.getMembers(), arg, null);
 		} else {
-			if (!n
-				.getEntries()
+			if (!n.getEntries()
 				.isEmpty()) {
 				printer.println();
 			}
@@ -998,34 +854,27 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ExplicitConstructorInvocationStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		if (n.isThis()) {
-			if (n
-				.getTypeArguments()
+			if (n.getTypeArguments()
 				.isPresent())
 				printTypeArgs(
-					n
-						.getTypeArguments()
+					n.getTypeArguments()
 						.get(), arg);
 			printer.print("this");
 		} else {
-			if (n
-				.getExpression()
+			if (n.getExpression()
 				.isPresent()) {
-				n
-					.getExpression()
+				n.getExpression()
 					.get()
 					.accept(this, arg);
 				printer.print(".");
 			}
-			if (n
-				.getTypeArguments()
+			if (n.getTypeArguments()
 				.isPresent())
 				printTypeArgs(
-					n
-						.getTypeArguments()
+					n.getTypeArguments()
 						.get(), arg);
 			printer.print("super");
 		}
@@ -1037,11 +886,9 @@ import static java.util.Collections.reverse;
 	public void visit(final ExpressionStmt n, final Object arg) {
 		printOrphanCommentsBeforeThisChildNode(n);
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 		printer.print(";");
 	}
@@ -1049,12 +896,10 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final FieldAccessExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		int mark = printer.push();
-		n
-			.getScope()
+		n.getScope()
 			.accept(this, arg);
 		String scope = printer.getMark(mark);
 		printer.drop();
@@ -1066,8 +911,7 @@ import static java.util.Collections.reverse;
 		} else {
 			printer.print(".");
 		}
-		printer.print(replaceLengthAtEnd(n
-			.getName()
+		printer.print(replaceLengthAtEnd(n.getName()
 			.asString()));
 	}
 
@@ -1076,19 +920,16 @@ import static java.util.Collections.reverse;
 		printOrphanCommentsBeforeThisChildNode(n);
 
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getModifiers()
+		n.getModifiers()
 			.accept(this, arg);
 		printer.endComment();
 
 		// indent if necessary
 		printer.print("");
 
-		for (final Iterator<VariableDeclarator> i = n
-			.getVariables()
+		for (final Iterator<VariableDeclarator> i = n.getVariables()
 			.iterator(); i.hasNext(); ) {
 			final VariableDeclarator var = i.next();
 
@@ -1104,16 +945,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ForEachStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("for ");
-		n
-			.getVariable()
+		n.getVariable()
 			.accept(this, arg);
 		printer.print(" in ");
-		n
-			.getIterable()
+		n.getIterable()
 			.accept(this, arg);
 		printer.print(" ");
 		encapsulateIfNotBlock(n.getBody(), arg);
@@ -1122,11 +960,9 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ForStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n.getInitialization() != null && !n
-			.getInitialization()
+		if (n.getInitialization() != null && !n.getInitialization()
 			.isEmpty()) {
 			printer.println(" {");
 			printer.indent();
@@ -1135,19 +971,16 @@ import static java.util.Collections.reverse;
 				printer.println(";");
 			}
 		}
-		if (n
-			.getCompare()
+		if (n.getCompare()
 			.isPresent()) {
 			printer.print("while ");
-			n
-				.getCompare()
+			n.getCompare()
 				.get()
 				.accept(this, arg);
 		} else {
 			printer.print("loop ");
 		}
-		if (n.getUpdate() != null && !n
-			.getUpdate()
+		if (n.getUpdate() != null && !n.getUpdate()
 			.isEmpty()) {
 			printer.println(" {");
 			printer.indent();
@@ -1155,8 +988,7 @@ import static java.util.Collections.reverse;
 
 		encapsulateIfNotBlock(n.getBody(), arg);
 		printer.println("");
-		if (n.getUpdate() != null && !n
-			.getUpdate()
+		if (n.getUpdate() != null && !n.getUpdate()
 			.isEmpty()) {
 			for (final Expression e : n.getUpdate()) {
 				e.accept(this, arg);
@@ -1165,8 +997,7 @@ import static java.util.Collections.reverse;
 			printer.unindent();
 			printer.println(" }");
 		}
-		if (n.getInitialization() != null && !n
-			.getInitialization()
+		if (n.getInitialization() != null && !n.getInitialization()
 			.isEmpty()) {
 			printer.unindent();
 			printer.println(" }");
@@ -1176,12 +1007,10 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final IfStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("if ");
-		n
-			.getCondition()
+		n.getCondition()
 			.accept(this, arg);
 		final boolean thenBlock = n.getThenStmt() instanceof BlockStmt;
 		if (thenBlock) // block statement should start on the same line
@@ -1190,24 +1019,20 @@ import static java.util.Collections.reverse;
 			printer.println(" {");
 			printer.indent();
 		}
-		n
-			.getThenStmt()
+		n.getThenStmt()
 			.accept(this, arg);
 		if (!thenBlock) {
 			printer.unindent();
 			printer.println();
 			printer.println("}");
 		}
-		if (n
-			.getElseStmt()
+		if (n.getElseStmt()
 			.isPresent()) {
 			if (thenBlock)
 				printer.print(" ");
-			final boolean elseIf = n
-				.getElseStmt()
+			final boolean elseIf = n.getElseStmt()
 				.get() instanceof IfStmt;
-			final boolean elseBlock = n
-				.getElseStmt()
+			final boolean elseBlock = n.getElseStmt()
 				.get() instanceof BlockStmt;
 			if (elseIf || elseBlock) // put chained if and start of block statement on a same level
 				printer.print("else ");
@@ -1215,8 +1040,7 @@ import static java.util.Collections.reverse;
 				printer.print("else {");
 				printer.indent();
 			}
-			n
-				.getElseStmt()
+			n.getElseStmt()
 				.get()
 				.accept(this, arg);
 			if (!(elseIf || elseBlock)) {
@@ -1230,37 +1054,31 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final InitializerDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		if (n.isStatic()) {
 			printer.print("static ");
 		}
-		n
-			.getBody()
+		n.getBody()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final InstanceOfExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 		printer.print(" instanceof ");
-		n
-			.getType()
+		n.getType()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final IntegerLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		String output = removePlusAndSuffix(n.getValue());
 		if (isFloatInHistory(n)) {
@@ -1282,24 +1100,18 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final LabeledStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("'");
-		printer.print(n
-			.getLabel()
+		printer.print(n.getLabel()
 			.asString());
 		printer.print(": ");
-		n
-			.getStatement()
+		n.getStatement()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final LineComment n, final Object arg) {
-		if (!this.printComments) {
-			return;
-		}
 		printer.print("//");
 		String tmp = n.getContent();
 		tmp = tmp.replace('\r', ' ');
@@ -1310,8 +1122,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final LongLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(removePlusAndSuffix(n.getValue(), "l", "L"));
 	}
@@ -1327,52 +1138,42 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final MemberValuePair n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 		printer.print(" = ");
-		n
-			.getValue()
+		n.getValue()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final MethodCallExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n
-			.getScope()
+		if (n.getScope()
 			.isPresent()) {
-			n
-				.getScope()
+			n.getScope()
 				.get()
 				.accept(this, arg);
-			if (Character.isUpperCase(n
-				.getScope()
+			if (Character.isUpperCase(n.getScope()
 				.toString()
 				.charAt(0)))
 				printer.print("::");
 			else
 				printer.print(".");
 		}
-		if (n
-			.getTypeArguments()
+		if (n.getTypeArguments()
 			.isPresent())
 			printTypeArgs(
-				n
-					.getTypeArguments()
+				n.getTypeArguments()
 					.get(), arg);
-		if (n
-			.getScope()
+		if (n.getScope()
 			.isEmpty()) {
+			/*
 			Optional<Pair<TypeDescription, Node>> decl = idTracker.findDeclarationNodeFor(
-				n
-					.getName()
+				n.getName()
 					.asString(), n);
 			if (decl.isPresent()) {
 				Node declNode = decl.get().b;
@@ -1387,36 +1188,30 @@ import static java.util.Collections.reverse;
 					}
 				}
 			}
+			 */
 		}
-		printer.print(toSnakeIfNecessary(n
-			.getName()
+		printer.print(toSnakeIfNecessary(n.getName()
 			.asString()));
 		printArguments(n.getArguments(), arg);
 	}
 
 	@Override
 	public void visit(final MethodDeclaration n, final Object arg) {
-		idTracker.setCurrentMethod(n
-			.getName()
-			.asString());
 		try {
 			printOrphanCommentsBeforeThisChildNode(n);
 
 			printJavaComment(
-				n
-					.getComment()
+				n.getComment()
 					.orElse(null), arg);
 
 			for (AnnotationExpr a : n.getAnnotations()) {
-				if (a
-					.getName()
+				if (a.getName()
 					.getIdentifier()
 					.equals("Test")) {
 					printer.println("#[test]");
 				}
 			}
-			n
-				.getModifiers()
+			n.getModifiers()
 				.accept(this, arg);
 			printer.endComment();
 			printer.print("fn ");
@@ -1429,13 +1224,11 @@ import static java.util.Collections.reverse;
 			}
 
 			int mark = printer.push();
-			n
-				.getType()
+			n.getType()
 				.accept(this, arg);
 			String typeString = printer.getMark(mark);
 			printer.pop();
-			printer.print(toSnakeIfNecessary(n
-				.getName()
+			printer.print(toSnakeIfNecessary(n.getName()
 				.asString()));
 
 			printer.print("(");
@@ -1445,8 +1238,7 @@ import static java.util.Collections.reverse;
 					printer.print(", ");
 			}
 			if (!isNullOrEmpty(n.getParameters())) {
-				for (final Iterator<Parameter> i = n
-					.getParameters()
+				for (final Iterator<Parameter> i = n.getParameters()
 					.iterator(); i.hasNext(); ) {
 					final Parameter p = i.next();
 					p.accept(this, arg);
@@ -1479,18 +1271,15 @@ import static java.util.Collections.reverse;
 					replaceThrows(n, arg, "Void");
 				}
 			}
-			if (n
-				.getBody()
+			if (n.getBody()
 				.isEmpty()) {
 				printer.print(";");
 			} else {
-				n
-					.getBody()
+				n.getBody()
 					.get()
 					.accept(this, arg);
 			}
 		} finally {
-			idTracker.setCurrentMethod(null);
 		}
 		printer.println("\n");
 	}
@@ -1498,21 +1287,20 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final NameExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
+		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
-			n
-				.getName()
+			n.getName()
 				.asString(), n);
 
 		if (b.isPresent() && (NodeEvaluator.isNonStaticFieldDeclaration(b.get().b) && idTracker.isOutsideConstructor() || NodeEvaluator.isNonStaticMethodDeclaration(
 			b.get().b))) {
 			printer.print("self.");
 		}
-		printer.print(toSnakeIfNecessary(n
-			.getName()
+		*/
+		printer.print(toSnakeIfNecessary(n.getName()
 			.asString()));
 
 		printOrphanCommentsEnding(n);
@@ -1529,8 +1317,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final NullLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("null");
 	}
@@ -1538,49 +1325,40 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ObjectCreationExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n
-			.getScope()
+		if (n.getScope()
 			.isPresent()) {
-			n
-				.getScope()
+			n.getScope()
 				.get()
 				.accept(this, arg);
 			printer.print(".");
 		}
 
 
-		if (n
-			.getTypeArguments()
+		if (n.getTypeArguments()
 			.isPresent()) {
 			printTypeArgs(
-				n
-					.getTypeArguments()
+				n.getTypeArguments()
 					.get(), arg);
-			if (!isNullOrEmpty(n
-				.getTypeArguments()
+			if (!isNullOrEmpty(n.getTypeArguments()
 				.get())) {
 				printer.print(" ");
 			}
 		}
 
-		n
-			.getType()
+		n.getType()
 			.accept(this, arg);
 		printer.print("::new");
 
 		printArguments(n.getArguments(), arg);
 
-		if (n
-			.getAnonymousClassBody()
+		if (n.getAnonymousClassBody()
 			.isPresent()) {
 			printer.println(" {");
 			printer.indent();
 			printMembers(
-				n
-					.getAnonymousClassBody()
+				n.getAnonymousClassBody()
 					.get(), arg, null);
 			printer.unindent();
 			printer.print("}");
@@ -1590,12 +1368,10 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final PackageDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("// package ");
-		n
-			.getName()
+		n.getName()
 			.accept(this, arg);
 		printer.println(";");
 		printer.println();
@@ -1606,25 +1382,21 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final Parameter n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getModifiers()
+		n.getModifiers()
 			.accept(this, arg);
 		if (n.isVarArgs())
 			printer.comment("... ");
 		printer.endComment();
 
-		n
-			.getName()
+		n.getName()
 			.accept(this, arg);
 		printer.print(": ");
 		if (!(n.getType() instanceof PrimitiveType))
 			printer.print("&");
 		if (n.getType() != null) {
-			n
-				.getType()
+			n.getType()
 				.accept(this, arg);
 		}
 	}
@@ -1632,8 +1404,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final PrimitiveType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
 		switch (n.getType()) {
@@ -1667,14 +1438,11 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(Name n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n
-			.getQualifier()
+		if (n.getQualifier()
 			.isPresent()) {
-			n
-				.getQualifier()
+			n.getQualifier()
 				.get()
 				.accept(this, arg);
 			printer.print("::");
@@ -1686,8 +1454,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(SimpleName n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print(toSnakeIfNecessary(n.getIdentifier()));
 	}
@@ -1695,15 +1462,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(ArrayType n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
 		for (int i = 0; i < n.getArrayLevel(); i++) {
 			printer.print("Vec<");
 		}
-		n
-			.getElementType()
+		n.getElementType()
 			.accept(this, arg);
 		for (int i = 0; i < n.getArrayLevel(); i++) {
 			printer.print(">");
@@ -1718,8 +1483,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final IntersectionType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		boolean isFirst = true;
 		for (ReferenceType element : n.getElements()) {
@@ -1735,8 +1499,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final UnionType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		boolean isFirst = true;
 		for (ReferenceType element : n.getElements()) {
@@ -1752,24 +1515,21 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ReturnStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("return");
-		if (n
-			.getExpression()
+		if (n.getExpression()
 			.isPresent()) {
 			printer.print(" ");
-			if (idTracker.hasThrows()) {
-				printer.print("Ok(");
-			}
-			n
-				.getExpression()
+//			if (idTracker.hasThrows()) {
+//				printer.print("Ok(");
+//			}
+			n.getExpression()
 				.get()
 				.accept(this, arg);
-			if (idTracker.hasThrows()) {
-				printer.print(")");
-			}
+//			if (idTracker.hasThrows()) {
+//				printer.print(")");
+//			}
 		}
 		printer.print(";");
 	}
@@ -1785,8 +1545,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final StringLiteralExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("\"");
 		printer.print(n.getValue());
@@ -1796,14 +1555,11 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final SuperExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n
-			.getTypeName()
+		if (n.getTypeName()
 			.isPresent()) {
-			n
-				.getTypeName()
+			n.getTypeName()
 				.get()
 				.accept(this, arg);
 			printer.print(".");
@@ -1814,13 +1570,11 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final SwitchEntry n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		if (n.getLabels() != null) {
 			printer.print("  ");
-			n
-				.getLabels()
+			n.getLabels()
 				.accept(this, arg);
 			printer.print(" => ");
 		} else {
@@ -1844,12 +1598,10 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final SwitchStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("match ");
-		n
-			.getSelector()
+		n.getSelector()
 			.accept(this, arg);
 		printer.println(" {");
 		if (n.getEntries() != null) {
@@ -1866,76 +1618,64 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final SynchronizedStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("synchronized (");
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 		printer.print(") ");
-		n
-			.getBody()
+		n.getBody()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final ThisExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		if (n
-			.getTypeName()
+		if (n.getTypeName()
 			.isPresent()) {
-			n
-				.getTypeName()
+			n.getTypeName()
 				.get()
 				.accept(this, arg);
 		} else {
-			if (idTracker.isOutsideConstructor())
-				printer.print("self");
-			else {
-				printer.print("let ");
-			}
+//			if (idTracker.isOutsideConstructor())
+//				printer.print("self");
+//			else {
+//				printer.print("let ");
+//			}
 		}
 	}
 
 	@Override
 	public void visit(final ThrowStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("throw ");
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final TryStmt n, final Object arg) {
-		int tryCount = ++idTracker.tryCount;
+//		int tryCount = ++idTracker.tryCount;
 		try {
 			printJavaComment(
-				n
-					.getComment()
+				n.getComment()
 					.orElse(null), arg);
-			printer.println("let tryResult" + tryCount + " = 0;");
-			printer.println("'try" + tryCount + ": loop {");
-			if (!n
-				.getResources()
+//			printer.println("let tryResult" + tryCount + " = 0;");
+//			printer.println("'try" + tryCount + ": loop {");
+			if (!n.getResources()
 				.isEmpty()) {
 				printer.print("(");
-				Iterator<Expression> resources = n
-					.getResources()
+				Iterator<Expression> resources = n.getResources()
 					.iterator();
 				boolean first = true;
 				while (resources.hasNext()) {
 					visit(
-						resources
-							.next()
+						resources.next()
 							.asVariableDeclarationExpr(), arg);
 					if (resources.hasNext()) {
 						printer.print(";");
@@ -1946,21 +1686,19 @@ import static java.util.Collections.reverse;
 					}
 					first = false;
 				}
-				if (n
-					.getResources()
+				if (n.getResources()
 					.size() > 1) {
 					printer.unindent();
 				}
 				printer.print(") ");
 			}
-			n
-				.getTryBlock()
+			n.getTryBlock()
 				.accept(this, arg);
 			printer.println();
-			printer.println("break 'try" + tryCount);
+//			printer.println("break 'try" + tryCount);
 			printer.println("}");
 			if (n.getCatchClauses() != null) {
-				printer.println("match tryResult" + tryCount + " {");
+//				printer.println("match tryResult" + tryCount + " {");
 				printer.indent();
 				for (final CatchClause c : n.getCatchClauses()) {
 					c.accept(this, arg);
@@ -1969,17 +1707,15 @@ import static java.util.Collections.reverse;
 				printer.unindent();
 				printer.println("}");
 			}
-			if (n
-				.getFinallyBlock()
+			if (n.getFinallyBlock()
 				.isPresent()) {
 				printer.print(" finally ");
-				n
-					.getFinallyBlock()
+				n.getFinallyBlock()
 					.get()
 					.accept(this, arg);
 			}
 		} finally {
-			idTracker.tryCount--;
+//			idTracker.tryCount--;
 		}
 	}
 
@@ -2002,16 +1738,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final TypeParameter n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		printer.print(n
-			.getName()
+		printer.print(n.getName()
 			.asString());
 		if (!isNullOrEmpty(n.getTypeBound())) {
 			printer.print(" extends ");
-			for (final Iterator<ClassOrInterfaceType> i = n
-				.getTypeBound()
+			for (final Iterator<ClassOrInterfaceType> i = n.getTypeBound()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -2025,8 +1758,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(UnaryExpr n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		String unarySuffix = "";
 		switch (n.getOperator()) {
@@ -2042,8 +1774,7 @@ import static java.util.Collections.reverse;
 			if (unarySuffix.isEmpty())
 				unarySuffix = " -= 1" + (isEmbeddedInStmt(n) ? " !!!check!!! post decrement" : "");
 		case PLUS:
-			n
-				.getExpression()
+			n.getExpression()
 				.accept(this, arg);
 			printer.print(unarySuffix);
 			break;
@@ -2063,17 +1794,14 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final VariableDeclarationExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
-		n
-			.getModifiers()
+		n.getModifiers()
 			.accept(this, arg);
 		printer.endComment();
 		printer.print("");
 
-		for (final Iterator<VariableDeclarator> i = n
-			.getVariables()
+		for (final Iterator<VariableDeclarator> i = n.getVariables()
 			.iterator(); i.hasNext(); ) {
 			final VariableDeclarator v = i.next();
 			v.accept(this, n.getCommonType());
@@ -2085,8 +1813,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final VariableDeclarator n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		String name = acceptAndCut(n.getName(), arg);
 		boolean isConstant = false;
@@ -2095,17 +1822,14 @@ import static java.util.Collections.reverse;
 			isConstant = true;
 		} else {
 			printer.print("let ");
-			if (idTracker.isChanged(name, n)) {
-				printer.print("mut ");
-			}
+//			if (idTracker.isChanged(name, n)) {
+//				printer.print("mut ");
+//			}
 		}
 		printer.print(name);
-		boolean isInitializedArray = n
-			.getInitializer()
-			.isPresent() && (n
-			.getInitializer()
-			.get() instanceof ArrayInitializerExpr || n
-			.getInitializer()
+		boolean isInitializedArray = n.getInitializer()
+			.isPresent() && (n.getInitializer()
+			.get() instanceof ArrayInitializerExpr || n.getInitializer()
 			.get() instanceof ArrayCreationExpr);
 		if (arg instanceof Type t && !isInitializedArray) {
 			printer.print(": ");
@@ -2117,13 +1841,11 @@ import static java.util.Collections.reverse;
 				printer.print(tmp);
 			}
 		}
-		if (n
-			.getInitializer()
+		if (n.getInitializer()
 			.isPresent()) {
 			if (!isInitializedArray)
 				printer.print(" = ");
-			n
-				.getInitializer()
+			n.getInitializer()
 				.get()
 				.accept(this, arg);
 		}
@@ -2132,8 +1854,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final VoidType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("void");
 	}
@@ -2141,41 +1862,33 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final WhileStmt n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("while ");
-		n
-			.getCondition()
+		n.getCondition()
 			.accept(this, arg);
 		printer.print(" ");
-		n
-			.getBody()
+		n.getBody()
 			.accept(this, arg);
 	}
 
 	@Override
 	public void visit(final WildcardType n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("?");
-		if (n
-			.getExtendedType()
+		if (n.getExtendedType()
 			.isPresent()) {
 			printer.print(" extends ");
-			n
-				.getExtendedType()
+			n.getExtendedType()
 				.get()
 				.accept(this, arg);
 		}
-		if (n
-			.getSuperType()
+		if (n.getSuperType()
 			.isPresent()) {
 			printer.print(" super ");
-			n
-				.getSuperType()
+			n.getSuperType()
 				.get()
 				.accept(this, arg);
 		}
@@ -2184,8 +1897,7 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(LambdaExpr n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 
 		List<Parameter> parameters = n.getParameters();
@@ -2212,8 +1924,7 @@ import static java.util.Collections.reverse;
 		Statement body = n.getBody();
 		if (body instanceof ExpressionStmt) {
 			// Print the expression directly
-			((ExpressionStmt) body)
-				.getExpression()
+			((ExpressionStmt) body).getExpression()
 				.accept(this, arg);
 		} else {
 			body.accept(this, arg);
@@ -2223,14 +1934,12 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(MethodReferenceExpr n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		Expression scope = n.getScope();
 		String identifier = n.getIdentifier();
 		if (scope != null) {
-			n
-				.getScope()
+			n.getScope()
 				.accept(this, arg);
 		}
 
@@ -2239,8 +1948,7 @@ import static java.util.Collections.reverse;
 			//			.getTypeArguments()
 			.isPresent()) {
 			printer.print("<");
-			for (Iterator<Type> i = n
-				.getTypeArguments()
+			for (Iterator<Type> i = n.getTypeArguments()
 				.get()
 				//				.getTypeArguments()
 				.iterator(); i.hasNext(); ) {
@@ -2261,12 +1969,10 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(TypeExpr n, Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		if (n.getType() != null) {
-			n
-				.getType()
+			n.getType()
 				.accept(this, arg);
 		}
 	}
@@ -2274,15 +1980,13 @@ import static java.util.Collections.reverse;
 	@Override
 	public void visit(final ImportDeclaration n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		printer.print("use ");
 		if (n.isStatic()) {
 			printer.comment("static");
 		}
-		n
-			.getName()
+		n.getName()
 			.accept(this, arg);
 		if (n.isAsterisk()) {
 			printer.print("::*");
@@ -2488,16 +2192,14 @@ import static java.util.Collections.reverse;
 	}
 
 	boolean isEmbeddedInStmt(UnaryExpr n) {
-		Node parent = n
-			.getParentNode()
+		Node parent = n.getParentNode()
 			.get();
 		return !(parent instanceof ExpressionStmt) && !(parent instanceof ForStmt);
 	}
 
 	private void orgVisit(final UnaryExpr n, final Object arg) {
 		printJavaComment(
-			n
-				.getComment()
+			n.getComment()
 				.orElse(null), arg);
 		switch (n.getOperator()) {
 		case PLUS:
@@ -2521,8 +2223,7 @@ import static java.util.Collections.reverse;
 		default:
 		}
 
-		n
-			.getExpression()
+		n.getExpression()
 			.accept(this, arg);
 
 		switch (n.getOperator()) {
@@ -2539,8 +2240,7 @@ import static java.util.Collections.reverse;
 	private void replaceThrows(MethodDeclaration n, Object arg, String typeString) {
 		printer.startComment();
 		printer.comment("throws ");
-		for (final Iterator<ReferenceType> i = n
-			.getThrownExceptions()
+		for (final Iterator<ReferenceType> i = n.getThrownExceptions()
 			.iterator(); i.hasNext(); ) {
 			final ReferenceType name = i.next();
 			name.accept(this, arg);
@@ -2555,8 +2255,9 @@ import static java.util.Collections.reverse;
 	}
 
 	private String toSnakeIfNecessary(String n) {
-		if (namesMap.containsKey(n))
-			n = namesMap.get(n);
+		String name = transpiler.nameOf(n);
+		if (name != null)
+			return name;
 		return Java2Rust.identifier(n);
 	}
 
@@ -2578,15 +2279,15 @@ import static java.util.Collections.reverse;
 			return fieldAccess;
 	}
 
-	protected void printArguments(final List<Expression> args, final Object arg) {
+	private void printArguments(final List<Expression> args, final Object arg) {
 		printer.print("(");
 		if (!isNullOrEmpty(args)) {
 			for (final Iterator<Expression> i = args.iterator(); i.hasNext(); ) {
 				final Expression e = i.next();
 				if (e instanceof NameExpr ne) {
+					/*
 					Optional<Pair<TypeDescription, Node>> decl = idTracker.findDeclarationNodeFor(
-						ne
-							.getName()
+						ne.getName()
 							.asString(), ne);
 					if (decl.isPresent() && decl.get().b != null) {
 						final TypeDescription left = decl.get().a;
@@ -2594,6 +2295,7 @@ import static java.util.Collections.reverse;
 							printer.print("&");
 						}
 					}
+					 */
 				} else if (e instanceof MethodCallExpr) {
 					printer.print("&");
 				}
@@ -2606,16 +2308,14 @@ import static java.util.Collections.reverse;
 		printer.print(")");
 	}
 
-	protected void printOrphanCommentsBeforeThisChildNode(final Node node) {
+	private void printOrphanCommentsBeforeThisChildNode(final Node node) {
 		if (node instanceof Comment)
 			return;
 
-		if (node
-			.getParentNode()
+		if (node.getParentNode()
 			.isEmpty())
 			return;
-		Node parent = node
-			.getParentNode()
+		Node parent = node.getParentNode()
 			.get();
 		List<Node> everything = new LinkedList<Node>();
 		everything.addAll(parent.getChildNodes());
@@ -2661,8 +2361,7 @@ import static java.util.Collections.reverse;
 			}
 		}
 		for (int i = 0; i < commentsAtEnd; i++) {
-			everything
-				.get(everything.size() - commentsAtEnd + i)
+			everything.get(everything.size() - commentsAtEnd + i)
 				.accept(this, null);
 		}
 	}
@@ -2690,8 +2389,7 @@ import static java.util.Collections.reverse;
 		reverse(dims);
 		for (String s : dims) {
 			sb.insert(0, "[");
-			sb
-				.append("; ")
+			sb.append("; ")
 				.append(s)
 				.append("]");
 		}
@@ -2699,7 +2397,7 @@ import static java.util.Collections.reverse;
 		return sb.toString();
 	}
 
-	protected void printJavaComment(final Comment javacomment, final Object arg) {
+	private void printJavaComment(final Comment javacomment, final Object arg) {
 		if (javacomment != null) {
 			javacomment.accept(this, arg);
 		}
@@ -2751,22 +2449,19 @@ import static java.util.Collections.reverse;
 	}
 
 	boolean isFloatInSiblings(Node n) {
-		if (n == null || n
-			.getParentNode()
+		if (n == null || n.getParentNode()
 			.isEmpty())
 			return false;
-		if (stopHistorySearch(n
-			.getParentNode()
+		if (stopHistorySearch(n.getParentNode()
 			.get()))
 			return false;
-		List<Node> siblings = n
-			.getParentNode()
+		List<Node> siblings = n.getParentNode()
 			.get()
 			.getChildNodes();
 		for (Node sibling : siblings) {
-			if (idTracker.isFloat(sibling)) {
-				return true;
-			}
+//			if (idTracker.isFloat(sibling)) {
+//				return true;
+//			}
 		}
 		return false;
 	}
@@ -2815,15 +2510,13 @@ import static java.util.Collections.reverse;
 			return false;
 		if (isFloatInSiblings(n))
 			return true;
-		Class clazz = idTracker.getType(n);
-		if (idTracker.isFloat(clazz)) {
-			return true;
-		} else {
-			return isFloatInHistory(n
-				.getParentNode()
+//		Class clazz = idTracker.getType(n);
+//		if (idTracker.isFloat(clazz)) {
+//			return true;
+//		} else {
+			return isFloatInHistory(n.getParentNode()
 				.get());
-		}
-
+//		}
 	}
 
 	/*
