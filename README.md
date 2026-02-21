@@ -1,10 +1,27 @@
 # Java to Rust
 
-This project is a quick fork of something I found online.
-Its license is in the source code.
+This fork was rewritten from scratch.
+The forked code serves only as a reminder for features to implement, it isn't called anywhere.
 
-You can invoke it with the input files/dirs and an output directory.
+## Features
 
-The output seems to be for an ancient Rust version, I'll work on making it up-to-date.
+- Converts Java names to Rust
+- Converts classes, records and their local variants to structs
+  - Parameters either take a primitive by value or a Java class by reference
+  - Promotes to `const` when possible
+  - *currently methods are missing their `self` parameter*
+  - *currently no analysis for thrown exceptions to `Result`*
+  - *currently no analysis for `mut` parameters*
+  - *currently no analysis for `&mut` parameter types*
+- Converts statements and expressions to Rust
+  - *currently no support for `try-catch`*
+  - *currently no analysis for `mut` locals*
+- Support for specifying maven dependencies in order to improve analysis
 
-Feel free to fork or open a PR!
+## Usage
+
+There's a CLI tool available with embedded help.
+
+## Contributing
+
+Feel free to fork and open a PR!
