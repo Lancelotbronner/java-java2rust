@@ -16,9 +16,11 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import java2rust.rust.RustItem;
+import java2rust.rust.RustMethod;
 import java2rust.rust.RustModule;
 import java2rust.rust.RustVisibility;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -44,6 +47,7 @@ public final class JavaTranspiler {
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
 	private final Set<String> unknownNames = new HashSet<>();
+	private final Map<String, RustMethod> methods = new HashMap<>();
 
 	public JavaTranspiler(File crate) {
 		this.output = new File(crate, "src");
@@ -87,6 +91,14 @@ public final class JavaTranspiler {
 		tasks.put(filename, new Task(filename, java, lib));
 	}
 
+	public void register(RustMethod method) {
+		methods.put(method.resolved.getQualifiedSignature(), method);
+	}
+
+	public @Nullable RustMethod method(@NotNull String qualifiedSignature) {
+		return methods.get(qualifiedSignature);
+	}
+
 	public void compile(Consumer<Task> onCompile) {
 		for (Task task : tasks.values()) {
 			onCompile.accept(task);
@@ -117,6 +129,8 @@ public final class JavaTranspiler {
 	}
 
 	public String describe(Type type) {
+		if (type.isVoidType())
+			return "()";
 		try {
 			ResolvedType ty = type.resolve();
 			if (ty != null)

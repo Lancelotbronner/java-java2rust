@@ -73,7 +73,10 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	public void visit(MethodDeclaration n, Object arg) {
 		try {
 			RustMethod method = items.peek().method(n);
+			transpiler.register(method);
 			transpiler.registerName(method.id, method.name);
+			if (n.getBody().isPresent())
+				n.getBody().get().accept(new AnalyzerVisitor(transpiler, method), null);
 		} catch (Throwable e) {
 			System.err.println(e);
 			//TODO: push error method.

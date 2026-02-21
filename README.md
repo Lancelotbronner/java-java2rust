@@ -10,7 +10,7 @@ The forked code serves only as a reminder for features to implement, it isn't ca
   - Parameters either take a primitive by value or a Java class by reference
   - Promotes to `const` when possible
   - *currently methods are missing their `self` parameter*
-  - *currently no analysis for thrown exceptions to `Result`*
+  - *some analysis for propagating thrown exception via `Result`, currently no generated code*
   - *currently no analysis for `mut` parameters*
   - *currently no analysis for `&mut` parameter types*
 - Converts statements and expressions to Rust
