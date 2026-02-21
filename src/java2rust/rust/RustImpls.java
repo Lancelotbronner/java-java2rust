@@ -1,13 +1,14 @@
 package java2rust.rust;
 
+import com.github.javaparser.quality.NotNull;
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedRecordDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import java2rust.JavaTranspiler;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class RustImpls {
@@ -26,32 +27,28 @@ public class RustImpls {
 	}
 
 	public void analyze(ResolvedClassDeclaration decl, JavaTranspiler transpiler) {
-		try {
-			analyze(decl.getAllInterfaces(), transpiler);
-		} catch (Throwable e) {
-			problems.add("%s".formatted(e.getMessage()));
-		}
+		analyze(decl.getAllInterfaces(), transpiler);
 	}
 
 	private void analyze(
-		@NonNull List<ResolvedReferenceType> implemented,
+		@NotNull List<ResolvedReferenceType> implemented,
 		JavaTranspiler transpiler
 	) {
+		Objects.requireNonNull(implemented);
 		for (ResolvedReferenceType i : implemented) {
 			try {
 				traits.add(transpiler.describe(i));
 			} catch (Throwable e) {
+				System.err.println(e);
 				problems.add("%s".formatted(e.getMessage()));
 			}
 		}
 	}
 
 	public void analyze(ResolvedRecordDeclaration decl, JavaTranspiler transpiler) {
-		try {
+		// Note: As records cannot implement interfaces this is expected to always be null
+		if (decl.getAllInterfaces() != null)
 			analyze(decl.getAllInterfaces(), transpiler);
-		} catch (Throwable e) {
-			problems.add("%s".formatted(e.getMessage()));
-		}
 	}
 
 	@Override

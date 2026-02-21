@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class RustTrait extends RustItem {
+public class RustInterface extends RustItem {
 	public final ResolvedInterfaceDeclaration decl;
 	public final List<RustField> fields = new ArrayList<>();
 	public final List<String> params = new ArrayList<>();
 
-	RustTrait(
+	RustInterface(
 		String name,
 		RustModule module,
 		ResolvedInterfaceDeclaration decl,
@@ -51,6 +51,7 @@ public class RustTrait extends RustItem {
 				sb.append(bounds);
 				params.add(sb.toString());
 			} catch (Throwable e) {
+				System.err.println(e);
 				params.add("/* %s */ %s".formatted(e.getMessage(), param.getName()));
 			}
 		}

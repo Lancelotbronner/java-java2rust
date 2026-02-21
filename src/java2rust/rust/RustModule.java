@@ -96,13 +96,13 @@ public final class RustModule extends RustItem {
 	}
 
 	/// Declares and returns a new trait.
-	public RustTrait trait(
+	public RustInterface trait(
 		String name,
 		ResolvedInterfaceDeclaration decl,
 		RustVisibility visibility
 	) {
 		//TODO: Ensure trait name is PascalCase
-		RustTrait item = new RustTrait(name, this, decl, visibility);
+		RustInterface item = new RustInterface(name, this, decl, visibility);
 		items.add(item);
 		return item;
 	}

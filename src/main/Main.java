@@ -18,6 +18,9 @@ public class Main implements Runnable {
 	@Parameters(paramLabel = "<java>", description = "Java files or directories to convert to Rust.", index = "1..")
 	private File[] input;
 
+	@Option(names = "--maven")
+	private String[] maven;
+
 	@Option(names = "--language")
 	private ParserConfiguration.LanguageLevel languageLevel = ParserConfiguration.LanguageLevel.JAVA_25;
 
@@ -34,6 +37,19 @@ public class Main implements Runnable {
 
 		JavaTranspiler transpiler = new JavaTranspiler(crate);
 		config.setSymbolResolver(transpiler.solver);
+
+		boolean hasError = false;
+		for (String dep : maven) {
+			try {
+				transpiler.addMavenDependency(dep);
+				System.out.println("=> " + dep);
+			} catch (Exception e) {
+				System.err.println(e);
+				hasError = true;
+			}
+		}
+		if (hasError)
+			return;
 
 		int files = 0;
 		for (File input : this.input) {

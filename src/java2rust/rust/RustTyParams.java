@@ -31,6 +31,7 @@ public class RustTyParams {
 					bounds.add(transpiler.describe(bound.getType()));
 				params.add(new Pair<>(param.getName(), bounds.toString()));
 			} catch (Throwable e) {
+				System.err.println(e);
 				params.add(new Pair<>(param.getName(), "/* %s */".formatted(e.getMessage())));
 			}
 		}

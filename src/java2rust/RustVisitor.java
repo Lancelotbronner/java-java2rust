@@ -9,8 +9,8 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
-import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -786,15 +786,37 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		String access = ".";
 		String name = n.getNameAsString();
 		try {
-			ResolvedFieldDeclaration field = n.resolve().asField();
-			access = field.isStatic() ? "::" : ".";
+			ResolvedValueDeclaration value = n.resolve();
+			boolean isStatic;
+			if (value.isField())
+				isStatic = value.asField().isStatic();
+			else if (value.isEnumConstant())
+				isStatic = true;
+			else
+				throw new UnsupportedOperationException(
+					"Unsupported FieldAccessExpr: Unknown value '%s' (%s)".formatted(
+						value.getName(),
+						value));
 
-			ResolvedType ty = field.getType();
+			access = isStatic ? "::" : ".";
+
+			ResolvedType ty = value.getType();
 			if (ty.isReferenceType()) {
 				String id = "%s.%s".formatted(ty.asReferenceType().getId(), n.getNameAsString());
 				name = transpiler.nameOf(id, name);
 			}
-		} catch (UnsolvedSymbolException | UnsupportedOperationException _) {}
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		} catch (UnsolvedSymbolException _) {
+			// Assume it's a local type instead
+			try {
+				ResolvedType scope = n.getScope().calculateResolvedType();
+				access = "::";
+				name = transpiler.nameOf(scope.describe() + "." + name, name);
+			} catch (Throwable e) {
+				System.err.println(e);
+			}
+		}
 
 		printer.print(access + name);
 	}
@@ -1006,8 +1028,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 			if (n.getScope().isEmpty())
 				printer.print(resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self");
-		} catch (UnsolvedSymbolException _) {
-
+		} catch (UnsolvedSymbolException e) {
+			System.err.println(e.getMessage());
 		}
 
 		printer.print(access + name);

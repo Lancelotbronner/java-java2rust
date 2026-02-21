@@ -12,6 +12,7 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import java2rust.rust.RustItem;
@@ -23,10 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Created by aschoerk on 30.04.16.
@@ -39,13 +43,14 @@ public final class JavaTranspiler {
 	private final CombinedTypeSolver solvers = new CombinedTypeSolver();
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
+	private final Set<String> unknownNames = new HashSet<>();
 
 	public JavaTranspiler(File crate) {
 		this.output = new File(crate, "src");
 		this.lib = RustModule.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(crate.getName())));
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.setExceptionHandler(CombinedTypeSolver.ExceptionHandlers.IGNORE_ALL);
-		solvers.add(new ReflectionTypeSolver());
+		solvers.add(new ReflectionTypeSolver(false));
 	}
 
 	public JavaTranspiler(String lib) {
@@ -53,6 +58,20 @@ public final class JavaTranspiler {
 		this.lib = RustModule.lib(lib);
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.add(new ReflectionTypeSolver());
+	}
+
+	public void addMavenDependency(String maven) throws Exception {
+		String[] components = maven.split(":", 4);
+		if (components.length == 4)
+			throw new Exception("Invalid maven dependency string '" + maven + "'");
+		String[] path = components[0].split("\\.");
+		Path jar =  Paths.get(System.getProperty("user.home"), ".m2")
+			.resolve("repository", path)
+			.resolve(components[1], components[2], components[1] + "-" + components[2] + ".jar")
+			.toRealPath();
+		if (!Files.exists(jar))
+			throw new Exception("Could not locate '%s' at '%s'".formatted(maven, jar));
+		solvers.add(new JarTypeSolver(jar));
 	}
 
 	public void addPackage(File input) {
@@ -102,6 +121,7 @@ public final class JavaTranspiler {
 			if (ty != null)
 				return describe(ty);
 		} catch (Throwable e) {
+			System.err.println(e);
 			return "/* %s */ %s".formatted(e.getMessage(), type);
 		}
 		return "/* Java */ %s".formatted(type);
@@ -120,18 +140,32 @@ public final class JavaTranspiler {
 				case DOUBLE -> "f64";
 			};
 		if (ty.isReferenceType())
-			return this.describeViaId(ty.asReferenceType().getId());
+			return this.describeViaId(ty.asReferenceType().getId(), ty.asReferenceType().describe());
 		if (ty.isTypeVariable())
 			return ty.asTypeVariable().describe();
-		return "/* Java */ %s".formatted(ty.describe());
+		throw new UnsupportedOperationException("Unknown ResolvedType " + ty);
 	}
 
 	public String describe(@NotNull ResolvedReferenceTypeDeclaration ty) {
-		return describeViaId(ty.getId());
+		return describeViaId(ty.getId(), ty.getName());
 	}
 
-	private String describeViaId(@NotNull String id) {
-		return this.nameOf(id, "/* Java */ " + id + " /**/");
+	private String describeViaId(@NotNull String id, Supplier<String> insert) {
+		if (names.get(id) instanceof String name)
+			return name;
+//		String name = insert.get().replace(".", "::");
+//		return names.put(id, name);
+		if (unknownNames.add(id))
+			System.err.printf("Unknown identifier '%s'%n", id);
+		return "/* Java */ %s /**/".formatted(id);
+	}
+
+	private String describeViaId(@NotNull String id, String insert, UnaryOperator<String> convert) {
+		return describeViaId(id, () -> convert.apply(insert));
+	}
+
+	private String describeViaId(@NotNull String id, String insert) {
+		return describeViaId(id, () -> insert);
 	}
 
 	public String nameOf(String id, String defaultValue) {

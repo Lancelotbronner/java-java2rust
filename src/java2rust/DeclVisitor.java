@@ -75,6 +75,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			RustMethod method = items.peek().method(n);
 			transpiler.registerName(method.id, method.name);
 		} catch (Throwable e) {
+			System.err.println(e);
 			//TODO: push error method.
 		}
 
