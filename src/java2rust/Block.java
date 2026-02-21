@@ -25,15 +25,6 @@ public class Block {
 	HashMap<String, List<Node>> usages = new HashMap<>();
 
 
-	public Block(IdTracker idTracker, Node n) {
-		if (!idTracker.currentBlocks.empty()) {
-			this.parentBlock = idTracker.currentBlocks.peek();
-			this.parentBlock.children.add(this);
-		}
-		this.n = n;
-		this.id = blockCount.incrementAndGet();
-	}
-
 	public Block(Block parent, Node n) {
 		this(n);
 		this.parentBlock = parent;

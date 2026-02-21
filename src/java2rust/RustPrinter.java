@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RustPrinter {
-
 	private final String indentation;
 	private final StringBuilder buf = new StringBuilder();
 	private final List<Integer> marks = new ArrayList<>();
@@ -42,8 +41,13 @@ public class RustPrinter {
 		indented = false;
 	}
 
+	private void makeIndent() {
+		buf.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+	}
+
 	public void startComment() {
-		if (isWithinComment) return;
+		if (isWithinComment)
+			return;
 		isWithinComment = true;
 		print("/* ");
 	}
@@ -54,15 +58,10 @@ public class RustPrinter {
 	}
 
 	public void endComment() {
-		if (!isWithinComment) return;
+		if (!isWithinComment)
+			return;
 		isWithinComment = false;
 		print("*/ ");
-	}
-
-	private void makeIndent() {
-		buf.append(String
-			.valueOf(indentation)
-			.repeat(Math.max(0, level)));
 	}
 
 	public int push() {

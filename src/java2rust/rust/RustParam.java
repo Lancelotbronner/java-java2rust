@@ -7,6 +7,7 @@ import java2rust.JavaTranspiler;
 public class RustParam {
 	public final RustMethod method;
 	public final Parameter java;
+	public boolean isMutable;
 	private String name;
 	private String type;
 	private String cache;
@@ -24,6 +25,8 @@ public class RustParam {
 
 	private String toRust() {
 		StringBuilder sb = new StringBuilder();
+		if (isMutable)
+			sb.append("mut ");
 		sb.append(name);
 		sb.append(": ");
 		if (java.getType().isReferenceType())

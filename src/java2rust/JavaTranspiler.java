@@ -65,7 +65,8 @@ public final class JavaTranspiler {
 		if (components.length == 4)
 			throw new Exception("Invalid maven dependency string '" + maven + "'");
 		String[] path = components[0].split("\\.");
-		Path jar =  Paths.get(System.getProperty("user.home"), ".m2")
+		Path jar = Paths
+			.get(System.getProperty("user.home"), ".m2")
 			.resolve("repository", path)
 			.resolve(components[1], components[2], components[1] + "-" + components[2] + ".jar")
 			.toRealPath();
@@ -140,32 +141,34 @@ public final class JavaTranspiler {
 				case DOUBLE -> "f64";
 			};
 		if (ty.isReferenceType())
-			return this.describeViaId(ty.asReferenceType().getId(), ty.asReferenceType().describe());
+			return this.describeViaId(
+				ty.asReferenceType().getId(),
+				ty.asReferenceType().describe());
 		if (ty.isTypeVariable())
 			return ty.asTypeVariable().describe();
 		throw new UnsupportedOperationException("Unknown ResolvedType " + ty);
+	}
+
+	private String describeViaId(@NotNull String id, String insert) {
+		return describeViaId(id, () -> insert);
+	}
+
+	private String describeViaId(@NotNull String id, Supplier<String> insert) {
+		if (names.get(id) instanceof String name)
+			return name;
+		//		String name = insert.get().replace(".", "::");
+		//		return names.put(id, name);
+		if (unknownNames.add(id))
+			System.err.printf("Unknown identifier '%s'%n", id);
+		return "/* Java */ %s /**/".formatted(id);
 	}
 
 	public String describe(@NotNull ResolvedReferenceTypeDeclaration ty) {
 		return describeViaId(ty.getId(), ty.getName());
 	}
 
-	private String describeViaId(@NotNull String id, Supplier<String> insert) {
-		if (names.get(id) instanceof String name)
-			return name;
-//		String name = insert.get().replace(".", "::");
-//		return names.put(id, name);
-		if (unknownNames.add(id))
-			System.err.printf("Unknown identifier '%s'%n", id);
-		return "/* Java */ %s /**/".formatted(id);
-	}
-
 	private String describeViaId(@NotNull String id, String insert, UnaryOperator<String> convert) {
 		return describeViaId(id, () -> convert.apply(insert));
-	}
-
-	private String describeViaId(@NotNull String id, String insert) {
-		return describeViaId(id, () -> insert);
 	}
 
 	public String nameOf(String id, String defaultValue) {

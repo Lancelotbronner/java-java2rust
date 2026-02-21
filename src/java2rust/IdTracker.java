@@ -60,23 +60,17 @@ public class IdTracker {
 
 	void addChange(String name, Node n) {
 		if (!currentBlocks.empty())
-			currentBlocks
-				.peek()
-				.addChange(name, n);
+			currentBlocks.peek().addChange(name, n);
 	}
 
 	void addDeclaration(String name, Pair<TypeDescription, Node> description) {
 		if (!currentBlocks.empty())
-			currentBlocks
-				.peek()
-				.addDeclaration(name, description);
+			currentBlocks.peek().addDeclaration(name, description);
 	}
 
 	void addUsage(String name, Node n) {
 		if (!currentBlocks.empty())
-			currentBlocks
-				.peek()
-				.addUsage(name, n);
+			currentBlocks.peek().addUsage(name, n);
 	}
 
 	void pushBlock(Node n) {
@@ -109,24 +103,18 @@ public class IdTracker {
 		if (root.isEmpty()) {
 			sb.append("No Blockroot descernable\n");
 		} else {
-			if (root
-				.get()
-				.getId() != 1) {
+			if (root.get().getId() != 1) {
 				sb.append("Expected Blockroot to have Id 1\n");
 			}
 		}
-		if (blocks
-			.stream()
-			.anyMatch(b -> !b.disjunctChildren())) {
+		if (blocks.stream().anyMatch(b -> !b.disjunctChildren())) {
 			sb.append("Found children which are not disjunct\n");
 		}
 		return sb.toString();
 	}
 
 	Optional<Block> findRoot() {
-		return blocks
-			.stream()
-			.min((block1, block2) -> Long.compare(block2.size(), block1.size()));
+		return blocks.stream().min((block1, block2) -> Long.compare(block2.size(), block1.size()));
 	}
 
 	boolean willBeChanged(String name, Node n) {
@@ -171,20 +159,13 @@ public class IdTracker {
 
 	private HashMap<String, List<Node>> getAll(Function<Block, HashMap<String, List<Node>>> f) {
 		final HashMap<String, List<Node>> res = new HashMap<>();
-		blocks
-			.stream()
-			.map(f)
-			.forEach(u -> u
-				.keySet()
-				.forEach(k -> {
-					if (res.containsKey(k)) {
-						res
-							.get(k)
-							.addAll(u.get(k));
-					} else {
-						res.put(k, u.get(k));
-					}
-				}));
+		blocks.stream().map(f).forEach(u -> u.keySet().forEach(k -> {
+			if (res.containsKey(k)) {
+				res.get(k).addAll(u.get(k));
+			} else {
+				res.put(k, u.get(k));
+			}
+		}));
 		return res;
 	}
 
@@ -221,21 +202,13 @@ public class IdTracker {
 
 	public Map<String, List<Node>> getDeclarations() {
 		final HashMap<String, List<Node>> res = new HashMap<>();
-		blocks
-			.stream()
-			.map(b -> b.declarations)
-			.forEach(u -> u
-				.keySet()
-				.stream()
-				.forEach(k -> {
-					if (res.containsKey(k)) {
-						res
-							.get(k)
-							.add(u.get(k).b);
-					} else {
-						res.put(k, new ArrayList<>(Collections.singletonList(u.get(k).b)));
-					}
-				}));
+		blocks.stream().map(b -> b.declarations).forEach(u -> u.keySet().stream().forEach(k -> {
+			if (res.containsKey(k)) {
+				res.get(k).add(u.get(k).b);
+			} else {
+				res.put(k, new ArrayList<>(Collections.singletonList(u.get(k).b)));
+			}
+		}));
 		return res;
 	}
 
@@ -272,9 +245,7 @@ public class IdTracker {
 		if (clazz == null)
 			return false;
 		return clazz.equals(Float.TYPE) || clazz.equals(Double.TYPE) || clazz.equals(Float.class) || clazz.equals(
-			Double.class) || clazz
-			.getTypeName()
-			.equals("float") || clazz
+			Double.class) || clazz.getTypeName().equals("float") || clazz
 			.getTypeName()
 			.equals("double");
 	}

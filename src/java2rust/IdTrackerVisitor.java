@@ -29,21 +29,14 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 	@Override
 	public void visit(AssignExpr n, IdTracker arg) {
 
-		visitComment(
-			n
-				.getComment()
-				.orElse(null), arg);
+		visitComment(n.getComment().orElse(null), arg);
 		inAssignTarget = true;
 		try {
-			n
-				.getTarget()
-				.accept(this, arg);
+			n.getTarget().accept(this, arg);
 		} finally {
 			inAssignTarget = false;
 		}
-		n
-			.getValue()
-			.accept(this, arg);
+		n.getValue().accept(this, arg);
 
 	}
 
@@ -67,10 +60,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 	@Override
 	public void visit(ClassOrInterfaceDeclaration n, IdTracker arg) {
 		arg.pushBlock(n);
-		arg.addDeclaration(
-			n
-				.getName()
-				.asString(), new Pair<>(null, n));
+		arg.addDeclaration(n.getName().asString(), new Pair<>(null, n));
 		super.visit(n, arg);
 		arg.popBlock();
 	}
@@ -82,29 +72,14 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 
 	@Override
 	public void visit(final CompilationUnit n, final IdTracker arg) {
-		visitComment(
-			n
-				.getComment()
-				.orElse(null), arg);
-		if (n
-			.getPackageDeclaration()
-			.isPresent()) {
-			arg.setPackageName(n
-				.getPackageDeclaration()
-				.get()
-				.getName()
-				.asString());
-			n
-				.getPackageDeclaration()
-				.get()
-				.accept(this, arg);
+		visitComment(n.getComment().orElse(null), arg);
+		if (n.getPackageDeclaration().isPresent()) {
+			arg.setPackageName(n.getPackageDeclaration().get().getName().asString());
+			n.getPackageDeclaration().get().accept(this, arg);
 		}
 		if (n.getImports() != null) {
 			for (final ImportDeclaration i : n.getImports()) {
-				arg.addImport(new Import(
-					i
-						.getName()
-						.toString(), i.isStatic(), i.isAsterisk()));
+				arg.addImport(new Import(i.getName().toString(), i.isStatic(), i.isAsterisk()));
 				i.accept(this, arg);
 			}
 		}
@@ -125,10 +100,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 	@Override
 	public void visit(EnumDeclaration n, IdTracker arg) {
 		arg.pushBlock(n);
-		arg.addDeclaration(
-			n
-				.getName()
-				.asString(), new Pair<>(null, n));
+		arg.addDeclaration(n.getName().asString(), new Pair<>(null, n));
 		super.visit(n, arg);
 		arg.popBlock();
 	}
@@ -157,32 +129,20 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 
 	@Override
 	public void visit(MethodCallExpr n, IdTracker arg) {
-		if (n.getScope().isPresent() && n
-			.getScope()
-			.get() instanceof NameExpr ne) {
-			Class clazz = identifyaClass(
-				arg,
-				ne
-					.getName()
-					.asString());
+		if (n.getScope().isPresent() && n.getScope().get() instanceof NameExpr ne) {
+			Class clazz = identifyaClass(arg, ne.getName().asString());
 			if (clazz != null) {
-				String methodName = n
-					.getName()
-					.asString();
+				String methodName = n.getName().asString();
 				Method[] ms = clazz.getMethods();
 				Set<Method> candidates = new HashSet<>();
 				for (Method m : ms) {
-					if (m
-						.getName()
-						.equals(methodName)) {
+					if (m.getName().equals(methodName)) {
 						candidates.add(m);
 					}
 				}
 				Method resulting = null;
 				if (candidates.size() == 1) {
-					resulting = candidates
-						.iterator()
-						.next();
+					resulting = candidates.iterator().next();
 				} else {
 					List<Method> matching = candidates
 						.stream()
@@ -200,42 +160,27 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 					for (int i = 0; i < resulting.getParameterCount(); i++) {
 
 						java.lang.reflect.Parameter p = resulting.getParameters()[i];
-						if (n
-							.getArguments()
-							.size() > i) {
-							arg.putType(
-								n
-									.getArguments()
-									.get(i), p.getType());
+						if (n.getArguments().size() > i) {
+							arg.putType(n.getArguments().get(i), p.getType());
 						}
 					}
 				}
 			}
 
 		}
-		arg.addUsage(
-			n
-				.getName()
-				.asString(), n);
+		arg.addUsage(n.getName().asString(), n);
 		super.visit(n, arg);
 	}
 
 	@Override
 	public void visit(MethodDeclaration n, IdTracker arg) {
 		try {
-			arg.addDeclaration(
-				n
-					.getName()
-					.asString(), new Pair<>(null, n));
+			arg.addDeclaration(n.getName().asString(), new Pair<>(null, n));
 		} catch (RuntimeException ex) {
 			// ignore duplicate Methods with the same name. Let it be declared just once, so that self can be constructed.
 		}
-		if (n.getThrownExceptions() != null && !n
-			.getThrownExceptions()
-			.isEmpty()) {
-			arg.setHasThrows(n
-				.getName()
-				.asString());
+		if (n.getThrownExceptions() != null && !n.getThrownExceptions().isEmpty()) {
+			arg.setHasThrows(n.getName().asString());
 		}
 		arg.pushBlock(n);
 		super.visit(n, arg);
@@ -245,15 +190,9 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 	@Override
 	public void visit(NameExpr n, IdTracker arg) {
 		if (inAssignTarget) {
-			arg.addChange(
-				n
-					.getName()
-					.asString(), n);
+			arg.addChange(n.getName().asString(), n);
 		} else {
-			arg.addUsage(
-				n
-					.getName()
-					.asString(), n);
+			arg.addUsage(n.getName().asString(), n);
 		}
 		super.visit(n, arg);
 	}
@@ -261,10 +200,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 	@Override
 	public void visit(Name n, IdTracker arg) {
 		if (inAssignTarget) {
-			arg.addChange(
-				n
-					.getQualifier()
-					.toString(), n);
+			arg.addChange(n.getQualifier().toString(), n);
 		}
 		super.visit(n, arg);
 	}
@@ -282,9 +218,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 			default:
 				inAssignTarget = false;
 			}
-			n
-				.getExpression()
-				.accept(this, arg);
+			n.getExpression().accept(this, arg);
 		} finally {
 			inAssignTarget = false;
 		}
@@ -299,11 +233,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 			arg.putType(n, typeDescr.getClazz());
 			if (typeDescr.getArrayCount() > 0) {
 				try {
-					Node initializer = n
-						.getChildNodes()
-						.get(1)
-						.getChildNodes()
-						.get(1);
+					Node initializer = n.getChildNodes().get(1).getChildNodes().get(1);
 					if (!(initializer instanceof MethodCallExpr)) {
 						List<Node> nodes = initializer.getChildNodes();
 						for (Node child : nodes) {
@@ -320,16 +250,9 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 
 	@Override
 	public void visit(VariableDeclarator n, IdTracker arg) {
-		boolean isField = n
-			.getParentNode()
-			.get()
-			.getParentNode()
-			.get() instanceof FieldDeclaration;
+		boolean isField = n.getParentNode().get().getParentNode().get() instanceof FieldDeclaration;
 		TypeDescription clazz = typeOf(n, arg);
-		arg.addDeclaration(
-			n
-				.getName()
-				.asString(), new Pair<>(clazz, n));
+		arg.addDeclaration(n.getName().asString(), new Pair<>(clazz, n));
 		super.visit(n, arg);
 	}
 
@@ -341,9 +264,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 					if (i.isWildcardImport()) {
 						clazz = forName(i.getImportString() + "." + name);
 					} else {
-						if (i
-							.getImportString()
-							.endsWith("." + name)) {
+						if (i.getImportString().endsWith("." + name)) {
 							final String importString = i.getImportString();
 							clazz = forName(importString);
 						}
@@ -378,9 +299,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 
 	String getNameOfType(Type t) {
 		if (t instanceof ClassOrInterfaceType) {
-			return ((ClassOrInterfaceType) t)
-				.getName()
-				.asString();
+			return ((ClassOrInterfaceType) t).getName().asString();
 		} else if (t instanceof ReferenceType rtype) {
 			return getNameOfType(rtype.getElementType());
 		}
@@ -395,9 +314,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 			.getParentNode()
 			.get() instanceof FieldDeclaration fieldDeclaration) {
 			t = fieldDeclaration.getCommonType();
-		} else if (n
-			.getParentNode()
-			.get() instanceof Parameter p) {
+		} else if (n.getParentNode().get() instanceof Parameter p) {
 			t = p.getType();
 		} else if (n
 			.getParentNode()
@@ -434,9 +351,7 @@ public class IdTrackerVisitor extends VoidVisitorAdapter<IdTracker> {
 
 	private Class getPotentialPrimitiveType(final Type t) {
 		if (t instanceof PrimitiveType pt) {
-			switch (pt
-				.getType()
-				.name()) {
+			switch (pt.getType().name()) {
 			case "Byte":
 				return Byte.TYPE;
 			case "Short":

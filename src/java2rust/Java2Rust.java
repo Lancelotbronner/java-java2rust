@@ -2,8 +2,6 @@ package java2rust;
 
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import java2rust.rust.RustModule;
 import org.apache.commons.lang3.ArrayUtils;
 
 
@@ -41,9 +39,7 @@ public class Java2Rust {
 			StringBuilder sb = new StringBuilder();
 			for (Character c : java.toCharArray()) {
 				if (Character.isUpperCase(c)) {
-					sb
-						.append("_")
-						.append(Character.toLowerCase(c));
+					sb.append("_").append(Character.toLowerCase(c));
 				} else {
 					sb.append(c);
 				}
