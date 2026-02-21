@@ -11,9 +11,7 @@ public class RustParams {
 	private String cache;
 
 	public RustParams(RustMethod method, List<Parameter> java) {
-		params = java.stream()
-			.map(p -> new RustParam(method, p))
-			.toList();
+		params = java.stream().map(p -> new RustParam(method, p)).toList();
 	}
 
 	public void analyze(JavaTranspiler transpiler) {

@@ -23,7 +23,13 @@ public class RustParam {
 	}
 
 	private String toRust() {
-		return "%s: %s".formatted(name, type);
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		sb.append(": ");
+		if (java.getType().isReferenceType())
+			sb.append("&");
+		sb.append(type);
+		return sb.toString();
 	}
 
 	@Override

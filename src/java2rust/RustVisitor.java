@@ -8,11 +8,17 @@ import com.github.javaparser.ast.modules.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.utils.Pair;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,11 +29,17 @@ import static java.util.Collections.reverse;
 public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public final JavaTranspiler transpiler;
 	private final RustPrinter printer = new RustPrinter("\t");
+	private boolean isVarDeclStmt = true;
 
 	public RustVisitor(
 		JavaTranspiler transpiler
 	) {
 		this.transpiler = transpiler;
+	}
+
+	@Override
+	public String toString() {
+		return printer.toString();
 	}
 
 	public String getSource() {
@@ -74,28 +86,23 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ArrayAccessExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getName()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getName().accept(this, arg);
 		printer.print("[");
-		n.getIndex()
-			.accept(this, arg);
+		n.getIndex().accept(this, arg);
 		printer.print("]");
 	}
 
 	@Override
 	public void visit(final ArrayCreationExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		if (!isNullOrEmpty(n.getLevels())) {
 			String type = acceptAndCut(n.getElementType(), arg);
 			String typeOrDefaultValue = defaultValue(type);
 			if (typeOrDefaultValue.equals("None"))
 				type = "Option<" + type + ">";
-			List<String> dims = n.getLevels()
+			List<String> dims = n
+				.getLevels()
 				.stream()
 				.map(e -> acceptAndCut(e, arg))
 				.collect(Collectors.toList());
@@ -108,20 +115,15 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 		} else {
 			printer.print(" ");
-			if (n.getInitializer()
-				.isPresent())
-				n.getInitializer()
-					.get()
-					.accept(this, n.getElementType());
+			if (n.getInitializer().isPresent())
+				n.getInitializer().get().accept(this, n.getElementType());
 		}
 	}
 
 	@Override
 	public void visit(final ArrayInitializerExpr n, final Object arg) {
 		Type t = arg instanceof Type ? (Type) arg : null;
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		if (!isNullOrEmpty(n.getValues())) {
 			if (t != null) {
@@ -131,9 +133,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				reverse(dims);
 				for (Integer i : dims) {
 					sb.insert(0, "vec![");
-					sb.append("; ")
-						.append(i)
-						.append("]");
+					sb.append("; ").append(i).append("]");
 				}
 				printer.print(": ");
 				printer.print(sb.toString());
@@ -152,26 +152,21 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	List<Integer> getDimensions(ArrayInitializerExpr n, Type t) {
 		List<Integer> dimensions = new ArrayList<>();
-		Integer actsize = n.getValues()
-			.size();
+		Integer actsize = n.getValues().size();
 		while (n != null) {
 			dimensions.add(actsize);
 			actsize = null;
-			Expression firstValue = n.getValues()
-				.get(0);
+			Expression firstValue = n.getValues().get(0);
 			if (firstValue instanceof ArrayInitializerExpr) {
 				Integer size = null;
 				for (Expression e : n.getValues()) {
 					ArrayInitializerExpr ai = (ArrayInitializerExpr) e;
 					if (size == null) {
-						size = ai.getValues()
-							.size();
+						size = ai.getValues().size();
 						n = ai;
 					} else {
-						if (size < ai.getValues()
-							.size()) {
-							size = ai.getValues()
-								.size();
+						if (size < ai.getValues().size()) {
+							size = ai.getValues().size();
 							n = ai;
 						}
 					}
@@ -186,29 +181,20 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final AssertStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("assert!( ");
-		n.getCheck()
-			.accept(this, arg);
-		if (n.getMessage()
-			.isPresent()) {
+		n.getCheck().accept(this, arg);
+		if (n.getMessage().isPresent()) {
 			printer.print(" : ");
-			n.getMessage()
-				.get()
-				.accept(this, arg);
+			n.getMessage().get().accept(this, arg);
 		}
 		printer.print(");");
 	}
 
 	@Override
 	public void visit(final AssignExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getTarget()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getTarget().accept(this, arg);
 		printer.print(" ");
 		switch (n.getOperator()) {
 		case ASSIGN:
@@ -249,17 +235,13 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			break;
 		}
 		printer.print(" ");
-		n.getValue()
-			.accept(this, arg);
+		n.getValue().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final BinaryExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getLeft()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getLeft().accept(this, arg);
 		printer.print(" ");
 		switch (n.getOperator()) {
 		case OR:
@@ -321,8 +303,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			break;
 		}
 		printer.print(" ");
-		n.getRight()
-			.accept(this, arg);
+		n.getRight().accept(this, arg);
 	}
 
 	@Override
@@ -335,9 +316,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final BlockStmt n, final Object arg) {
 		printOrphanCommentsBeforeThisChildNode(n);
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.println("{");
 		if (n.getStatements() != null) {
 			printer.indent();
@@ -353,59 +332,42 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final BooleanLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(String.valueOf(n.getValue()));
 	}
 
 	@Override
 	public void visit(final BreakStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("break");
-		if (n.getLabel()
-			.isPresent()) {
+		if (n.getLabel().isPresent()) {
 			printer.print(" '");
-			printer.print(n.getLabel()
-				.get()
-				.asString());
+			printer.print(n.getLabel().get().asString());
 		}
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final CastExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getExpression()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getExpression().accept(this, arg);
 		printer.print(" as ");
-		n.getType()
-			.accept(this, arg);
+		n.getType().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final CatchClause n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(" catch (");
-		n.getParameter()
-			.accept(this, arg);
+		n.getParameter().accept(this, arg);
 		printer.print(") ");
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 
 	}
 
 	@Override
 	public void visit(final CharLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("'");
 		printer.print(n.getValue());
 		printer.print("'");
@@ -413,19 +375,14 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ClassExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getType()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getType().accept(this, arg);
 		printer.print(".class");
 	}
 
 	@Override
 	public void visit(final ClassOrInterfaceDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		final boolean[] staticSearched = { true };
 		Function<BodyDeclaration<?>, Boolean> selectFieldDeclarationBooleanFunction = mem -> {
@@ -435,14 +392,13 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				return false;
 			}
 		};
-		if (!isNullOrEmpty(n.getMembers())) {
+		if (!isNullOrEmpty(n.getMembers()))
 			printMembers(n.getMembers(), arg, selectFieldDeclarationBooleanFunction);
-		}
-
 
 		if (!isNullOrEmpty(n.getImplementedTypes())) {
 			printer.print("#[derive(");
-			for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes()
+			for (final Iterator<ClassOrInterfaceType> i = n
+				.getImplementedTypes()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -453,8 +409,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.println(")]");
 		}
 
-		n.getModifiers()
-			.accept(this, arg);
+		n.getModifiers().accept(this, arg);
 		printer.endComment();
 
 		if (n.isInterface()) {
@@ -463,8 +418,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.print("struct ");
 		}
 
-		printer.print(n.getName()
-			.asString());
+		printer.print(n.getName().asString());
 
 		printTypeParameters(n.getTypeParameters(), arg);
 
@@ -485,8 +439,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			} else {
 				printer.println(" {");
 				printer.indent();
-				int count = n.getExtendedTypes()
-					.size() > 1 ? 0 : -1;
+				int count = n.getExtendedTypes().size() > 1 ? 0 : -1;
 				for (final ClassOrInterfaceType c : n.getExtendedTypes()) {
 					printer.print("base" + (count >= 0 ? ++count + "" : "") + ": ");
 					c.accept(this, arg);
@@ -512,8 +465,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.println("");
 
 			printer.print("impl ");
-			printer.print(n.getName()
-				.asString());
+			printer.print(n.getName().asString());
 
 			printer.println(" {");
 			printer.indent();
@@ -554,28 +506,19 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ClassOrInterfaceType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
-		if (n.getScope()
-			.isPresent()) {
-			n.getScope()
-				.get()
-				.accept(this, arg);
+		if (n.getScope().isPresent()) {
+			n.getScope().get().accept(this, arg);
 			printer.print(".");
 		}
-		printer.print(n.getName()
-			.asString());
+		printer.print(n.getName().asString());
 
 		if (n.isUsingDiamondOperator()) {
 			printer.print("<>");
 		} else {
-			if (n.getTypeArguments()
-				.isPresent())
-				printTypeArgs(
-					n.getTypeArguments()
-						.get(), arg);
+			if (n.getTypeArguments().isPresent())
+				printTypeArgs(n.getTypeArguments().get(), arg);
 		}
 	}
 
@@ -595,15 +538,10 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final CompilationUnit n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
-		if (n.getPackageDeclaration()
-			.isPresent()) {
-			n.getPackageDeclaration()
-				.get()
-				.accept(this, arg);
+		if (n.getPackageDeclaration().isPresent()) {
+			n.getPackageDeclaration().get().accept(this, arg);
 		}
 
         /*
@@ -616,10 +554,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
         */
 
 		if (!isNullOrEmpty(n.getTypes())) {
-			for (final Iterator<TypeDeclaration<?>> i = n.getTypes()
-				.iterator(); i.hasNext(); ) {
-				i.next()
-					.accept(this, arg);
+			for (final Iterator<TypeDeclaration<?>> i = n.getTypes().iterator(); i.hasNext(); ) {
+				i.next().accept(this, arg);
 				printer.println();
 				if (i.hasNext()) {
 					printer.println();
@@ -632,42 +568,31 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ConditionalExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(" if ");
-		n.getCondition()
-			.accept(this, arg);
+		n.getCondition().accept(this, arg);
 		printer.print(" { ");
-		n.getThenExpr()
-			.accept(this, arg);
+		n.getThenExpr().accept(this, arg);
 		printer.print(" } else { ");
-		n.getElseExpr()
-			.accept(this, arg);
+		n.getElseExpr().accept(this, arg);
 		printer.print(" }");
 	}
 
 	@Override
 	public void visit(final ConstructorDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getModifiers()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getModifiers().accept(this, arg);
 		printer.endComment();
 
 		printTypeParameters(n.getTypeParameters(), arg);
-		if (!n.getTypeParameters()
-			.isEmpty()) {
+		if (!n.getTypeParameters().isEmpty()) {
 			printer.print(" ");
 		}
 		printer.print("fn new");
 
 		printer.print("(");
-		if (!n.getParameters()
-			.isEmpty()) {
-			for (final Iterator<Parameter> i = n.getParameters()
-				.iterator(); i.hasNext(); ) {
+		if (!n.getParameters().isEmpty()) {
+			for (final Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext(); ) {
 				final Parameter p = i.next();
 				p.accept(this, arg);
 				if (i.hasNext()) {
@@ -676,12 +601,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			}
 		}
 		printer.print(") -> ");
-		printer.print(n.getName()
-			.asString());
+		printer.print(n.getName().asString());
 
 		if (!isNullOrEmpty(n.getThrownExceptions())) {
 			printer.print(" throws ");
-			for (final Iterator<ReferenceType> i = n.getThrownExceptions()
+			for (final Iterator<ReferenceType> i = n
+				.getThrownExceptions()
 				.iterator(); i.hasNext(); ) {
 				final ReferenceType referenceType = i.next();
 				referenceType.accept(this, arg);
@@ -691,47 +616,35 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			}
 		}
 		printer.print(" ");
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 		printer.println("\n");
 	}
 
 	@Override
 	public void visit(final ContinueStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("continue");
-		if (n.getLabel()
-			.isPresent()) {
+		if (n.getLabel().isPresent()) {
 			printer.print(" '");
-			printer.print(n.getLabel()
-				.get()
-				.asString());
+			printer.print(n.getLabel().get().asString());
 		}
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final DoStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("loop { ");
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 		printer.print("if !(");
-		n.getCondition()
-			.accept(this, arg);
+		n.getCondition().accept(this, arg);
 		printer.print(") break;");
 		printer.print("}");
 	}
 
 	@Override
 	public void visit(final DoubleLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		String value = n.getValue();
 		if (!StringUtils.containsAny(value, '.', 'e', 'E', 'x', 'X'))
 			value = value + ".0";
@@ -757,39 +670,30 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final EmptyStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final EnclosedExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("(");
 		if (n.getInner() != null) {
-			n.getInner()
-				.accept(this, arg);
+			n.getInner().accept(this, arg);
 		}
 		printer.print(")");
 	}
 
 	@Override
 	public void visit(final EnumConstantDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		printer.print(n.getName()
-			.asString());
+		printJavaComment(n.getComment().orElse(null), arg);
+		printer.print(n.getName().asString());
 
 		if (n.getArguments() != null) {
 			printArguments(n.getArguments(), arg);
 		}
 
-		if (!n.getClassBody()
-			.isEmpty()) {
+		if (!n.getClassBody().isEmpty()) {
 			printer.println(" {");
 			printer.indent();
 			printMembers(n.getClassBody(), arg, null);
@@ -800,21 +704,17 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final EnumDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getModifiers()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getModifiers().accept(this, arg);
 		printer.endComment();
 
 		printer.print("enum ");
-		printer.print(n.getName()
-			.asString());
+		printer.print(n.getName().asString());
 
-		if (!n.getImplementedTypes()
-			.isEmpty()) {
+		if (!n.getImplementedTypes().isEmpty()) {
 			printer.print(" implements ");
-			for (final Iterator<ClassOrInterfaceType> i = n.getImplementedTypes()
+			for (final Iterator<ClassOrInterfaceType> i = n
+				.getImplementedTypes()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -828,7 +728,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		printer.indent();
 		if (n.getEntries() != null) {
 			printer.println();
-			for (final Iterator<EnumConstantDeclaration> i = n.getEntries()
+			for (final Iterator<EnumConstantDeclaration> i = n
+				.getEntries()
 				.iterator(); i.hasNext(); ) {
 				final EnumConstantDeclaration e = i.next();
 				e.accept(this, arg);
@@ -837,13 +738,11 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				}
 			}
 		}
-		if (!n.getMembers()
-			.isEmpty()) {
+		if (!n.getMembers().isEmpty()) {
 			printer.println(";");
 			printMembers(n.getMembers(), arg, null);
 		} else {
-			if (!n.getEntries()
-				.isEmpty()) {
+			if (!n.getEntries().isEmpty()) {
 				printer.println();
 			}
 		}
@@ -853,29 +752,18 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ExplicitConstructorInvocationStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		if (n.isThis()) {
-			if (n.getTypeArguments()
-				.isPresent())
-				printTypeArgs(
-					n.getTypeArguments()
-						.get(), arg);
+			if (n.getTypeArguments().isPresent())
+				printTypeArgs(n.getTypeArguments().get(), arg);
 			printer.print("this");
 		} else {
-			if (n.getExpression()
-				.isPresent()) {
-				n.getExpression()
-					.get()
-					.accept(this, arg);
+			if (n.getExpression().isPresent()) {
+				n.getExpression().get().accept(this, arg);
 				printer.print(".");
 			}
-			if (n.getTypeArguments()
-				.isPresent())
-				printTypeArgs(
-					n.getTypeArguments()
-						.get(), arg);
+			if (n.getTypeArguments().isPresent())
+				printTypeArgs(n.getTypeArguments().get(), arg);
 			printer.print("super");
 		}
 		printArguments(n.getArguments(), arg);
@@ -885,52 +773,44 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final ExpressionStmt n, final Object arg) {
 		printOrphanCommentsBeforeThisChildNode(n);
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getExpression()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getExpression().accept(this, arg);
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final FieldAccessExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		int mark = printer.push();
-		n.getScope()
-			.accept(this, arg);
-		String scope = printer.getMark(mark);
-		printer.drop();
-		int i = StringUtils.lastIndexOfAny(StringUtils.stripEnd(scope, " "), "\n", "\t", " ", ".");
-		String accessed = i <= 0 ? scope : scope.substring(i + 1);
-		if (Character.isUpperCase(accessed.charAt(0)) && accessed.length() > 1 && Character.isLowerCase(
-			accessed.charAt(1))) {
-			printer.print("::");
-		} else {
-			printer.print(".");
-		}
-		printer.print(replaceLengthAtEnd(n.getName()
-			.asString()));
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getScope().accept(this, arg);
+
+		String access = ".";
+		String name = n.getNameAsString();
+		try {
+			ResolvedFieldDeclaration field = n.resolve().asField();
+			access = field.isStatic() ? "::" : ".";
+
+			ResolvedType ty = field.getType();
+			if (ty.isReferenceType()) {
+				String id = "%s.%s".formatted(ty.asReferenceType().getId(), n.getNameAsString());
+				name = transpiler.nameOf(id, name);
+			}
+		} catch (UnsolvedSymbolException | UnsupportedOperationException _) {}
+
+		printer.print(access + name);
 	}
 
 	@Override
 	public void visit(final FieldDeclaration n, final Object arg) {
 		printOrphanCommentsBeforeThisChildNode(n);
 
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getModifiers()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getModifiers().accept(this, arg);
 		printer.endComment();
 
 		// indent if necessary
 		printer.print("");
 
-		for (final Iterator<VariableDeclarator> i = n.getVariables()
-			.iterator(); i.hasNext(); ) {
+		for (final Iterator<VariableDeclarator> i = n.getVariables().iterator(); i.hasNext(); ) {
 			final VariableDeclarator var = i.next();
 
 			var.accept(this, n.getCommonType());
@@ -944,26 +824,21 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ForEachStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("for ");
-		n.getVariable()
-			.accept(this, arg);
+		this.isVarDeclStmt = false;
+		n.getVariable().accept(this, arg);
+		this.isVarDeclStmt = true;
 		printer.print(" in ");
-		n.getIterable()
-			.accept(this, arg);
+		n.getIterable().accept(this, arg);
 		printer.print(" ");
 		encapsulateIfNotBlock(n.getBody(), arg);
 	}
 
 	@Override
 	public void visit(final ForStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getInitialization() != null && !n.getInitialization()
-			.isEmpty()) {
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getInitialization() != null && !n.getInitialization().isEmpty()) {
 			printer.println(" {");
 			printer.indent();
 			for (final Expression e : n.getInitialization()) {
@@ -971,25 +846,20 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				printer.println(";");
 			}
 		}
-		if (n.getCompare()
-			.isPresent()) {
+		if (n.getCompare().isPresent()) {
 			printer.print("while ");
-			n.getCompare()
-				.get()
-				.accept(this, arg);
+			n.getCompare().get().accept(this, arg);
 		} else {
 			printer.print("loop ");
 		}
-		if (n.getUpdate() != null && !n.getUpdate()
-			.isEmpty()) {
+		if (n.getUpdate() != null && !n.getUpdate().isEmpty()) {
 			printer.println(" {");
 			printer.indent();
 		}
 
 		encapsulateIfNotBlock(n.getBody(), arg);
 		printer.println("");
-		if (n.getUpdate() != null && !n.getUpdate()
-			.isEmpty()) {
+		if (n.getUpdate() != null && !n.getUpdate().isEmpty()) {
 			for (final Expression e : n.getUpdate()) {
 				e.accept(this, arg);
 				printer.println(";");
@@ -997,8 +867,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.unindent();
 			printer.println(" }");
 		}
-		if (n.getInitialization() != null && !n.getInitialization()
-			.isEmpty()) {
+		if (n.getInitialization() != null && !n.getInitialization().isEmpty()) {
 			printer.unindent();
 			printer.println(" }");
 		}
@@ -1006,12 +875,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final IfStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("if ");
-		n.getCondition()
-			.accept(this, arg);
+		n.getCondition().accept(this, arg);
 		final boolean thenBlock = n.getThenStmt() instanceof BlockStmt;
 		if (thenBlock) // block statement should start on the same line
 			printer.print(" ");
@@ -1019,30 +885,24 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.println(" {");
 			printer.indent();
 		}
-		n.getThenStmt()
-			.accept(this, arg);
+		n.getThenStmt().accept(this, arg);
 		if (!thenBlock) {
 			printer.unindent();
 			printer.println();
 			printer.println("}");
 		}
-		if (n.getElseStmt()
-			.isPresent()) {
+		if (n.getElseStmt().isPresent()) {
 			if (thenBlock)
 				printer.print(" ");
-			final boolean elseIf = n.getElseStmt()
-				.get() instanceof IfStmt;
-			final boolean elseBlock = n.getElseStmt()
-				.get() instanceof BlockStmt;
+			final boolean elseIf = n.getElseStmt().get() instanceof IfStmt;
+			final boolean elseBlock = n.getElseStmt().get() instanceof BlockStmt;
 			if (elseIf || elseBlock) // put chained if and start of block statement on a same level
 				printer.print("else ");
 			else {
 				printer.print("else {");
 				printer.indent();
 			}
-			n.getElseStmt()
-				.get()
-				.accept(this, arg);
+			n.getElseStmt().get().accept(this, arg);
 			if (!(elseIf || elseBlock)) {
 				printer.unindent();
 				printer.println();
@@ -1053,33 +913,24 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final InitializerDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		if (n.isStatic()) {
 			printer.print("static ");
 		}
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final InstanceOfExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getExpression()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getExpression().accept(this, arg);
 		printer.print(" instanceof ");
-		n.getType()
-			.accept(this, arg);
+		n.getType().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final IntegerLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		String output = removePlusAndSuffix(n.getValue());
 		if (isFloatInHistory(n)) {
 			printer.print(output + ".0");
@@ -1099,15 +950,11 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final LabeledStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("'");
-		printer.print(n.getLabel()
-			.asString());
+		printer.print(n.getLabel().asString());
 		printer.print(": ");
-		n.getStatement()
-			.accept(this, arg);
+		n.getStatement().accept(this, arg);
 	}
 
 	@Override
@@ -1121,9 +968,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final LongLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(removePlusAndSuffix(n.getValue(), "l", "L"));
 	}
 
@@ -1137,158 +982,116 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final MemberValuePair n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		printer.print(n.getName()
-			.asString());
+		printJavaComment(n.getComment().orElse(null), arg);
+		printer.print(n.getName().asString());
 		printer.print(" = ");
-		n.getValue()
-			.accept(this, arg);
+		n.getValue().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final MethodCallExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getScope()
-			.isPresent()) {
-			n.getScope()
-				.get()
-				.accept(this, arg);
-			if (Character.isUpperCase(n.getScope()
-				.toString()
-				.charAt(0)))
-				printer.print("::");
-			else
-				printer.print(".");
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getScope().isPresent())
+			n.getScope().get().accept(this, arg);
+
+		if (n.getTypeArguments().isPresent())
+			printTypeArgs(n.getTypeArguments().get(), arg);
+
+		String access = ".";
+		String name = n.getNameAsString();
+		try {
+			ResolvedMethodDeclaration resolved = n.resolve();
+			access = resolved.isStatic() ? "::" : ".";
+			name = this.transpiler.nameOf(resolved.getQualifiedSignature(), name);
+
+			if (n.getScope().isEmpty())
+				printer.print(resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self");
+		} catch (UnsolvedSymbolException _) {
+
 		}
-		if (n.getTypeArguments()
-			.isPresent())
-			printTypeArgs(
-				n.getTypeArguments()
-					.get(), arg);
-		if (n.getScope()
-			.isEmpty()) {
-			/*
-			Optional<Pair<TypeDescription, Node>> decl = idTracker.findDeclarationNodeFor(
-				n.getName()
-					.asString(), n);
-			if (decl.isPresent()) {
-				Node declNode = decl.get().b;
-				if (declNode != null) {
-					if (declNode instanceof MethodDeclaration methodDeclaration) {
-						if (!methodDeclaration.isStatic())
-							printer.print("self.");
-						else
-							printer.print("::");
-					} else {
-						printer.print("self.");
-					}
-				}
-			}
-			 */
-		}
-		printer.print(toSnakeIfNecessary(n.getName()
-			.asString()));
+
+		printer.print(access + name);
 		printArguments(n.getArguments(), arg);
 	}
 
 	@Override
 	public void visit(final MethodDeclaration n, final Object arg) {
-		try {
-			printOrphanCommentsBeforeThisChildNode(n);
+		printOrphanCommentsBeforeThisChildNode(n);
 
-			printJavaComment(
-				n.getComment()
-					.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
-			for (AnnotationExpr a : n.getAnnotations()) {
-				if (a.getName()
-					.getIdentifier()
-					.equals("Test")) {
-					printer.println("#[test]");
-				}
+		for (AnnotationExpr a : n.getAnnotations()) {
+			if (a.getName().getIdentifier().equals("Test")) {
+				printer.println("#[test]");
 			}
-			n.getModifiers()
-				.accept(this, arg);
-			printer.endComment();
-			printer.print("fn ");
-			if (n.isDefault()) {
-				printer.print("default ");
-			}
-			printTypeParameters(n.getTypeParameters(), arg);
-			if (!isNullOrEmpty(n.getTypeParameters())) {
-				printer.print(" ");
-			}
+		}
+		n.getModifiers().accept(this, arg);
+		printer.endComment();
+		printer.print("fn ");
+		if (n.isDefault()) {
+			printer.print("default ");
+		}
+		printTypeParameters(n.getTypeParameters(), arg);
+		if (!isNullOrEmpty(n.getTypeParameters())) {
+			printer.print(" ");
+		}
 
-			int mark = printer.push();
-			n.getType()
-				.accept(this, arg);
-			String typeString = printer.getMark(mark);
-			printer.pop();
-			printer.print(toSnakeIfNecessary(n.getName()
-				.asString()));
+		int mark = printer.push();
+		n.getType().accept(this, arg);
+		String typeString = printer.getMark(mark);
+		printer.pop();
+		printer.print(toSnakeIfNecessary(n.getName().asString()));
 
-			printer.print("(");
-			if (!n.isStatic()) {
-				printer.print("&self");
-				if (!isNullOrEmpty(n.getParameters()))
+		printer.print("(");
+		if (!n.isStatic()) {
+			printer.print("&self");
+			if (!isNullOrEmpty(n.getParameters()))
+				printer.print(", ");
+		}
+		if (!isNullOrEmpty(n.getParameters())) {
+			for (final Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext(); ) {
+				final Parameter p = i.next();
+				p.accept(this, arg);
+				if (i.hasNext()) {
 					printer.print(", ");
-			}
-			if (!isNullOrEmpty(n.getParameters())) {
-				for (final Iterator<Parameter> i = n.getParameters()
-					.iterator(); i.hasNext(); ) {
-					final Parameter p = i.next();
-					p.accept(this, arg);
-					if (i.hasNext()) {
-						printer.print(", ");
-					}
 				}
 			}
-			printer.print(") ");
-			if (!typeString.equals("void")) {
-				printer.print("-> ");
+		}
+		printer.print(") ");
+		if (!typeString.equals("void")) {
+			printer.print("-> ");
 
-				//				if (n.getArrayCount() > 0) {
-				//					printer.print("/* ");
-				//					for (int i = 0; i < n.getArrayCount(); i++) {
-				//						printer.print("[]");
-				//					}
-				//					printer.print(" */");
-				//				}
+			//				if (n.getArrayCount() > 0) {
+			//					printer.print("/* ");
+			//					for (int i = 0; i < n.getArrayCount(); i++) {
+			//						printer.print("[]");
+			//					}
+			//					printer.print(" */");
+			//				}
 
-				if (!isNullOrEmpty(n.getThrownExceptions())) {
-					replaceThrows(n, arg, typeString);
-				} else {
-					printer.print(typeString);
-				}
-				printer.print(" ");
+			if (!isNullOrEmpty(n.getThrownExceptions())) {
+				replaceThrows(n, arg, typeString);
 			} else {
-				if (!isNullOrEmpty(n.getThrownExceptions())) {
-					printer.print(" -> ");
-					replaceThrows(n, arg, "Void");
-				}
+				printer.print(typeString);
 			}
-			if (n.getBody()
-				.isEmpty()) {
-				printer.print(";");
-			} else {
-				n.getBody()
-					.get()
-					.accept(this, arg);
+			printer.print(" ");
+		} else {
+			if (!isNullOrEmpty(n.getThrownExceptions())) {
+				printer.print(" -> ");
+				replaceThrows(n, arg, "Void");
 			}
-		} finally {
+		}
+		if (n.getBody().isEmpty()) {
+			printer.print(";");
+		} else {
+			n.getBody().get().accept(this, arg);
 		}
 		printer.println("\n");
 	}
 
 	@Override
 	public void visit(final NameExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
@@ -1300,8 +1103,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.print("self.");
 		}
 		*/
-		printer.print(toSnakeIfNecessary(n.getName()
-			.asString()));
+		printer.print(toSnakeIfNecessary(n.getName().asString()));
 
 		printOrphanCommentsEnding(n);
 	}
@@ -1316,50 +1118,35 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final NullLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("null");
 	}
 
 	@Override
 	public void visit(final ObjectCreationExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getScope()
-			.isPresent()) {
-			n.getScope()
-				.get()
-				.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getScope().isPresent()) {
+			n.getScope().get().accept(this, arg);
 			printer.print(".");
 		}
 
 
-		if (n.getTypeArguments()
-			.isPresent()) {
-			printTypeArgs(
-				n.getTypeArguments()
-					.get(), arg);
-			if (!isNullOrEmpty(n.getTypeArguments()
-				.get())) {
+		if (n.getTypeArguments().isPresent()) {
+			printTypeArgs(n.getTypeArguments().get(), arg);
+			if (!isNullOrEmpty(n.getTypeArguments().get())) {
 				printer.print(" ");
 			}
 		}
 
-		n.getType()
-			.accept(this, arg);
+		n.getType().accept(this, arg);
 		printer.print("::new");
 
 		printArguments(n.getArguments(), arg);
 
-		if (n.getAnonymousClassBody()
-			.isPresent()) {
+		if (n.getAnonymousClassBody().isPresent()) {
 			printer.println(" {");
 			printer.indent();
-			printMembers(
-				n.getAnonymousClassBody()
-					.get(), arg, null);
+			printMembers(n.getAnonymousClassBody().get(), arg, null);
 			printer.unindent();
 			printer.print("}");
 		}
@@ -1367,12 +1154,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final PackageDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("// package ");
-		n.getName()
-			.accept(this, arg);
+		n.getName().accept(this, arg);
 		printer.println(";");
 		printer.println();
 
@@ -1381,31 +1165,26 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final Parameter n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getModifiers()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getModifiers().accept(this, arg);
 		if (n.isVarArgs())
 			printer.comment("... ");
 		printer.endComment();
 
-		n.getName()
-			.accept(this, arg);
+		n.getName().accept(this, arg);
+
+		if (n.getType().isUnknownType())
+			return;
+
 		printer.print(": ");
-		if (!(n.getType() instanceof PrimitiveType))
+		if (n.getType().isReferenceType())
 			printer.print("&");
-		if (n.getType() != null) {
-			n.getType()
-				.accept(this, arg);
-		}
+		n.getType().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final PrimitiveType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		switch (n.getType()) {
 		case BOOLEAN:
@@ -1437,14 +1216,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(Name n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getQualifier()
-			.isPresent()) {
-			n.getQualifier()
-				.get()
-				.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getQualifier().isPresent()) {
+			n.getQualifier().get().accept(this, arg);
 			printer.print("::");
 		}
 		printer.print(n.getIdentifier());
@@ -1453,23 +1227,18 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(SimpleName n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print(toSnakeIfNecessary(n.getIdentifier()));
 	}
 
 	@Override
 	public void visit(ArrayType n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		for (int i = 0; i < n.getArrayLevel(); i++) {
 			printer.print("Vec<");
 		}
-		n.getElementType()
-			.accept(this, arg);
+		n.getElementType().accept(this, arg);
 		for (int i = 0; i < n.getArrayLevel(); i++) {
 			printer.print(">");
 		}
@@ -1482,9 +1251,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final IntersectionType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		boolean isFirst = true;
 		for (ReferenceType element : n.getElements()) {
 			element.accept(this, arg);
@@ -1498,9 +1265,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final UnionType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		boolean isFirst = true;
 		for (ReferenceType element : n.getElements()) {
 			element.accept(this, arg);
@@ -1514,22 +1279,17 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ReturnStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("return");
-		if (n.getExpression()
-			.isPresent()) {
+		if (n.getExpression().isPresent()) {
 			printer.print(" ");
-//			if (idTracker.hasThrows()) {
-//				printer.print("Ok(");
-//			}
-			n.getExpression()
-				.get()
-				.accept(this, arg);
-//			if (idTracker.hasThrows()) {
-//				printer.print(")");
-//			}
+			//			if (idTracker.hasThrows()) {
+			//				printer.print("Ok(");
+			//			}
+			n.getExpression().get().accept(this, arg);
+			//			if (idTracker.hasThrows()) {
+			//				printer.print(")");
+			//			}
 		}
 		printer.print(";");
 	}
@@ -1544,9 +1304,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final StringLiteralExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("\"");
 		printer.print(n.getValue());
 		printer.print("\"");
@@ -1554,14 +1312,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final SuperExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getTypeName()
-			.isPresent()) {
-			n.getTypeName()
-				.get()
-				.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getTypeName().isPresent()) {
+			n.getTypeName().get().accept(this, arg);
 			printer.print(".");
 		}
 		printer.print("super");
@@ -1569,20 +1322,30 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final SwitchEntry n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getLabels() != null) {
-			printer.print("  ");
-			n.getLabels()
-				.accept(this, arg);
-			printer.print(" => ");
-		} else {
-			printer.print("_ => ");
+		printJavaComment(n.getComment().orElse(null), arg);
+
+		if (n.getLabels().isNonEmpty()) {
+			n.getLabels().getFirst().orElseThrow().accept(this, arg);
+			n.getLabels().stream().skip(1).forEach(label -> {
+				printer.print(" | ");
+				label.accept(this, arg);
+			});
 		}
-		printer.println();
-		printer.indent();
-		if (n.getStatements() != null) {
+
+		if (n.isDefault())
+			printer.print("_");
+
+		if (n.getGuard().isPresent()) {
+			printer.print(" if ");
+			n.getGuard().get().accept(this, arg);
+		}
+
+		printer.print(" => ");
+		Statement first = n.getStatements().getFirst().orElse(null);
+		if (n.getStatements().size() == 1 && first != null && first.isExpressionStmt()) {
+			first.asExpressionStmt().getExpression().accept(this, arg);
+			printer.println(",");
+		} else {
 			printer.println(" {");
 			printer.indent();
 			for (final Statement s : n.getStatements()) {
@@ -1592,17 +1355,13 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.unindent();
 			printer.println("}");
 		}
-		printer.unindent();
 	}
 
 	@Override
 	public void visit(final SwitchStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("match ");
-		n.getSelector()
-			.accept(this, arg);
+		n.getSelector().accept(this, arg);
 		printer.println(" {");
 		if (n.getEntries() != null) {
 			printer.indent();
@@ -1617,105 +1376,79 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final SynchronizedStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("synchronized (");
-		n.getExpression()
-			.accept(this, arg);
+		n.getExpression().accept(this, arg);
 		printer.print(") ");
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final ThisExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		if (n.getTypeName()
-			.isPresent()) {
-			n.getTypeName()
-				.get()
-				.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		if (n.getTypeName().isPresent()) {
+			n.getTypeName().get().accept(this, arg);
 		} else {
-//			if (idTracker.isOutsideConstructor())
-//				printer.print("self");
-//			else {
-//				printer.print("let ");
-//			}
+			printer.print("self");
+			//			if (idTracker.isOutsideConstructor())
+			//				printer.print("self");
+			//			else {
+			//				printer.print("let ");
+			//			}
 		}
 	}
 
 	@Override
 	public void visit(final ThrowStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("throw ");
-		n.getExpression()
-			.accept(this, arg);
+		n.getExpression().accept(this, arg);
 		printer.print(";");
 	}
 
 	@Override
 	public void visit(final TryStmt n, final Object arg) {
-//		int tryCount = ++idTracker.tryCount;
-		try {
-			printJavaComment(
-				n.getComment()
-					.orElse(null), arg);
-//			printer.println("let tryResult" + tryCount + " = 0;");
-//			printer.println("'try" + tryCount + ": loop {");
-			if (!n.getResources()
-				.isEmpty()) {
-				printer.print("(");
-				Iterator<Expression> resources = n.getResources()
-					.iterator();
-				boolean first = true;
-				while (resources.hasNext()) {
-					visit(
-						resources.next()
-							.asVariableDeclarationExpr(), arg);
-					if (resources.hasNext()) {
-						printer.print(";");
-						printer.println();
-						if (first) {
-							printer.indent();
-						}
+		//		int tryCount = ++idTracker.tryCount;
+		printJavaComment(n.getComment().orElse(null), arg);
+		//			printer.println("let tryResult" + tryCount + " = 0;");
+		//			printer.println("'try" + tryCount + ": loop {");
+		if (!n.getResources().isEmpty()) {
+			printer.print("(");
+			Iterator<Expression> resources = n.getResources().iterator();
+			boolean first = true;
+			while (resources.hasNext()) {
+				visit(resources.next().asVariableDeclarationExpr(), arg);
+				if (resources.hasNext()) {
+					printer.print(";");
+					printer.println();
+					if (first) {
+						printer.indent();
 					}
-					first = false;
 				}
-				if (n.getResources()
-					.size() > 1) {
-					printer.unindent();
-				}
-				printer.print(") ");
+				first = false;
 			}
-			n.getTryBlock()
-				.accept(this, arg);
-			printer.println();
-//			printer.println("break 'try" + tryCount);
-			printer.println("}");
-			if (n.getCatchClauses() != null) {
-//				printer.println("match tryResult" + tryCount + " {");
-				printer.indent();
-				for (final CatchClause c : n.getCatchClauses()) {
-					c.accept(this, arg);
-				}
-				printer.println("  0 => break");
+			if (n.getResources().size() > 1) {
 				printer.unindent();
-				printer.println("}");
 			}
-			if (n.getFinallyBlock()
-				.isPresent()) {
-				printer.print(" finally ");
-				n.getFinallyBlock()
-					.get()
-					.accept(this, arg);
+			printer.print(") ");
+		}
+		n.getTryBlock().accept(this, arg);
+		printer.println();
+		//			printer.println("break 'try" + tryCount);
+		printer.println("}");
+		if (n.getCatchClauses() != null) {
+			//				printer.println("match tryResult" + tryCount + " {");
+			printer.indent();
+			for (final CatchClause c : n.getCatchClauses()) {
+				c.accept(this, arg);
 			}
-		} finally {
-//			idTracker.tryCount--;
+			printer.println("  0 => break");
+			printer.unindent();
+			printer.println("}");
+		}
+		if (n.getFinallyBlock().isPresent()) {
+			printer.print(" finally ");
+			n.getFinallyBlock().get().accept(this, arg);
 		}
 	}
 
@@ -1737,14 +1470,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final TypeParameter n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		printer.print(n.getName()
-			.asString());
+		printJavaComment(n.getComment().orElse(null), arg);
+		printer.print(n.getName().asString());
 		if (!isNullOrEmpty(n.getTypeBound())) {
 			printer.print(" extends ");
-			for (final Iterator<ClassOrInterfaceType> i = n.getTypeBound()
+			for (final Iterator<ClassOrInterfaceType> i = n
+				.getTypeBound()
 				.iterator(); i.hasNext(); ) {
 				final ClassOrInterfaceType c = i.next();
 				c.accept(this, arg);
@@ -1757,9 +1488,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(UnaryExpr n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		String unarySuffix = "";
 		switch (n.getOperator()) {
 		case PREFIX_INCREMENT:
@@ -1774,8 +1503,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			if (unarySuffix.isEmpty())
 				unarySuffix = " -= 1" + (isEmbeddedInStmt(n) ? " !!!check!!! post decrement" : "");
 		case PLUS:
-			n.getExpression()
-				.accept(this, arg);
+			n.getExpression().accept(this, arg);
 			printer.print(unarySuffix);
 			break;
 		default:
@@ -1793,16 +1521,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final VariableDeclarationExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
-		n.getModifiers()
-			.accept(this, arg);
+		printJavaComment(n.getComment().orElse(null), arg);
+		n.getModifiers().accept(this, arg);
 		printer.endComment();
 		printer.print("");
 
-		for (final Iterator<VariableDeclarator> i = n.getVariables()
-			.iterator(); i.hasNext(); ) {
+		for (final Iterator<VariableDeclarator> i = n.getVariables().iterator(); i.hasNext(); ) {
 			final VariableDeclarator v = i.next();
 			v.accept(this, n.getCommonType());
 			if (i.hasNext())
@@ -1812,24 +1536,29 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final VariableDeclarator n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		String name = acceptAndCut(n.getName(), arg);
+
+		if (!this.isVarDeclStmt) {
+			printer.print(name);
+			return;
+		}
+
 		boolean isConstant = false;
 		if (Character.isUpperCase(name.charAt(0))) {
 			printer.print("const ");
 			isConstant = true;
 		} else {
 			printer.print("let ");
-//			if (idTracker.isChanged(name, n)) {
-//				printer.print("mut ");
-//			}
+			//			if (idTracker.isChanged(name, n)) {
+			//				printer.print("mut ");
+			//			}
 		}
 		printer.print(name);
-		boolean isInitializedArray = n.getInitializer()
-			.isPresent() && (n.getInitializer()
-			.get() instanceof ArrayInitializerExpr || n.getInitializer()
+		boolean isInitializedArray = n.getInitializer().isPresent() && (n
+			.getInitializer()
+			.get() instanceof ArrayInitializerExpr || n
+			.getInitializer()
 			.get() instanceof ArrayCreationExpr);
 		if (arg instanceof Type t && !isInitializedArray) {
 			printer.print(": ");
@@ -1841,64 +1570,45 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				printer.print(tmp);
 			}
 		}
-		if (n.getInitializer()
-			.isPresent()) {
+		if (n.getInitializer().isPresent()) {
 			if (!isInitializedArray)
 				printer.print(" = ");
-			n.getInitializer()
-				.get()
-				.accept(this, arg);
+			n.getInitializer().get().accept(this, arg);
 		}
 	}
 
 	@Override
 	public void visit(final VoidType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("void");
 	}
 
 	@Override
 	public void visit(final WhileStmt n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("while ");
-		n.getCondition()
-			.accept(this, arg);
+		n.getCondition().accept(this, arg);
 		printer.print(" ");
-		n.getBody()
-			.accept(this, arg);
+		n.getBody().accept(this, arg);
 	}
 
 	@Override
 	public void visit(final WildcardType n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("?");
-		if (n.getExtendedType()
-			.isPresent()) {
+		if (n.getExtendedType().isPresent()) {
 			printer.print(" extends ");
-			n.getExtendedType()
-				.get()
-				.accept(this, arg);
+			n.getExtendedType().get().accept(this, arg);
 		}
-		if (n.getSuperType()
-			.isPresent()) {
+		if (n.getSuperType().isPresent()) {
 			printer.print(" super ");
-			n.getSuperType()
-				.get()
-				.accept(this, arg);
+			n.getSuperType().get().accept(this, arg);
 		}
 	}
 
 	@Override
 	public void visit(LambdaExpr n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 
 		List<Parameter> parameters = n.getParameters();
 		boolean printPar = false;
@@ -1924,8 +1634,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		Statement body = n.getBody();
 		if (body instanceof ExpressionStmt) {
 			// Print the expression directly
-			((ExpressionStmt) body).getExpression()
-				.accept(this, arg);
+			((ExpressionStmt) body).getExpression().accept(this, arg);
 		} else {
 			body.accept(this, arg);
 		}
@@ -1933,14 +1642,11 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(MethodReferenceExpr n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		Expression scope = n.getScope();
 		String identifier = n.getIdentifier();
 		if (scope != null) {
-			n.getScope()
-				.accept(this, arg);
+			n.getScope().accept(this, arg);
 		}
 
 		printer.print("::");
@@ -1948,8 +1654,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			//			.getTypeArguments()
 			.isPresent()) {
 			printer.print("<");
-			for (Iterator<Type> i = n.getTypeArguments()
-				.get()
+			for (Iterator<Type> i = n.getTypeArguments().get()
 				//				.getTypeArguments()
 				.iterator(); i.hasNext(); ) {
 				Type p = i.next();
@@ -1968,26 +1673,20 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(TypeExpr n, Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		if (n.getType() != null) {
-			n.getType()
-				.accept(this, arg);
+			n.getType().accept(this, arg);
 		}
 	}
 
 	@Override
 	public void visit(final ImportDeclaration n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("use ");
 		if (n.isStatic()) {
 			printer.comment("static");
 		}
-		n.getName()
-			.accept(this, arg);
+		n.getName().accept(this, arg);
 		if (n.isAsterisk()) {
 			printer.print("::*");
 		}
@@ -2122,10 +1821,11 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(SwitchExpr n, Object arg) {
-		printer.startComment();
-		printer.print("SwitchExpr");
-		printer.println(n.toString());
-		printer.endComment();
+		printer.print("match ");
+		n.getSelector().accept(this, arg);
+		printer.println(" {");
+		n.getEntries().forEach(p -> p.accept(this, arg));
+		printer.print("}");
 	}
 
 	@Override
@@ -2192,15 +1892,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	boolean isEmbeddedInStmt(UnaryExpr n) {
-		Node parent = n.getParentNode()
-			.get();
+		Node parent = n.getParentNode().get();
 		return !(parent instanceof ExpressionStmt) && !(parent instanceof ForStmt);
 	}
 
 	private void orgVisit(final UnaryExpr n, final Object arg) {
-		printJavaComment(
-			n.getComment()
-				.orElse(null), arg);
+		printJavaComment(n.getComment().orElse(null), arg);
 		switch (n.getOperator()) {
 		case PLUS:
 			printer.print("+");
@@ -2223,8 +1920,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		default:
 		}
 
-		n.getExpression()
-			.accept(this, arg);
+		n.getExpression().accept(this, arg);
 
 		switch (n.getOperator()) {
 		case POSTFIX_INCREMENT:
@@ -2237,11 +1933,17 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		}
 	}
 
+	private String toSnakeIfNecessary(String n) {
+		String name = transpiler.nameOf(n);
+		if (name != null)
+			return name;
+		return Java2Rust.identifier(n);
+	}
+
 	private void replaceThrows(MethodDeclaration n, Object arg, String typeString) {
 		printer.startComment();
 		printer.comment("throws ");
-		for (final Iterator<ReferenceType> i = n.getThrownExceptions()
-			.iterator(); i.hasNext(); ) {
+		for (final Iterator<ReferenceType> i = n.getThrownExceptions().iterator(); i.hasNext(); ) {
 			final ReferenceType name = i.next();
 			name.accept(this, arg);
 			if (i.hasNext()) {
@@ -2254,29 +1956,17 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		printer.print(", Rc<Exception>>");
 	}
 
-	private String toSnakeIfNecessary(String n) {
-		String name = transpiler.nameOf(n);
-		if (name != null)
-			return name;
-		return Java2Rust.identifier(n);
-	}
-
 	private void encapsulateIfNotBlock(Statement n, final Object arg) {
 		if (n instanceof BlockStmt) {
 			n.accept(this, arg);
 		} else {
-			printer.println(" {");
+			printer.println("{");
 			printer.indent();
 			n.accept(this, arg);
-			printer.println("}");
+			printer.unindent();
+			printer.println();
+			printer.print("}");
 		}
-	}
-
-	String replaceLengthAtEnd(String fieldAccess) {
-		if (fieldAccess.equals("length"))
-			return "len()";
-		else
-			return fieldAccess;
 	}
 
 	private void printArguments(final List<Expression> args, final Object arg) {
@@ -2312,11 +2002,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		if (node instanceof Comment)
 			return;
 
-		if (node.getParentNode()
-			.isEmpty())
+		if (node.getParentNode().isEmpty())
 			return;
-		Node parent = node.getParentNode()
-			.get();
+		Node parent = node.getParentNode().get();
 		List<Node> everything = new LinkedList<Node>();
 		everything.addAll(parent.getChildNodes());
 		sortByBeginPosition(everything);
@@ -2361,8 +2049,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			}
 		}
 		for (int i = 0; i < commentsAtEnd; i++) {
-			everything.get(everything.size() - commentsAtEnd + i)
-				.accept(this, null);
+			everything.get(everything.size() - commentsAtEnd + i).accept(this, null);
 		}
 	}
 
@@ -2389,9 +2076,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		reverse(dims);
 		for (String s : dims) {
 			sb.insert(0, "[");
-			sb.append("; ")
-				.append(s)
-				.append("]");
+			sb.append("; ").append(s).append("]");
 		}
 		reverse(dims);
 		return sb.toString();
@@ -2401,6 +2086,13 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		if (javacomment != null) {
 			javacomment.accept(this, arg);
 		}
+	}
+
+	String replaceLengthAtEnd(String fieldAccess) {
+		if (fieldAccess.equals("length"))
+			return "len()";
+		else
+			return fieldAccess;
 	}
 
 	List<Node> genStringExprSequence(BinaryExpr n) {
@@ -2449,19 +2141,15 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	boolean isFloatInSiblings(Node n) {
-		if (n == null || n.getParentNode()
-			.isEmpty())
+		if (n == null || n.getParentNode().isEmpty())
 			return false;
-		if (stopHistorySearch(n.getParentNode()
-			.get()))
+		if (stopHistorySearch(n.getParentNode().get()))
 			return false;
-		List<Node> siblings = n.getParentNode()
-			.get()
-			.getChildNodes();
+		List<Node> siblings = n.getParentNode().get().getChildNodes();
 		for (Node sibling : siblings) {
-//			if (idTracker.isFloat(sibling)) {
-//				return true;
-//			}
+			//			if (idTracker.isFloat(sibling)) {
+			//				return true;
+			//			}
 		}
 		return false;
 	}
@@ -2510,13 +2198,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			return false;
 		if (isFloatInSiblings(n))
 			return true;
-//		Class clazz = idTracker.getType(n);
-//		if (idTracker.isFloat(clazz)) {
-//			return true;
-//		} else {
-			return isFloatInHistory(n.getParentNode()
-				.get());
-//		}
+		//		Class clazz = idTracker.getType(n);
+		//		if (idTracker.isFloat(clazz)) {
+		//			return true;
+		//		} else {
+		return isFloatInHistory(n.getParentNode().get());
+		//		}
 	}
 
 	/*

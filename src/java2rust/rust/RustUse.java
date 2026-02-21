@@ -1,7 +1,6 @@
 package java2rust.rust;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.expr.Name;
 import java2rust.JavaTranspiler;
 
 public final class RustUse {

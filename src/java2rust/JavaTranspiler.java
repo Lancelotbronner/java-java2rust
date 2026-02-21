@@ -5,11 +5,10 @@ import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.Name;
-import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.quality.NotNull;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -78,11 +77,7 @@ public final class JavaTranspiler {
 	}
 
 	public long numberOfTasksToAnalyze() {
-		return tasks
-			.values()
-			.stream()
-			.filter(t -> t.unit != null)
-			.count();
+		return tasks.values().stream().filter(t -> t.unit != null).count();
 	}
 
 	public void analyze() {
@@ -125,15 +120,23 @@ public final class JavaTranspiler {
 				case DOUBLE -> "f64";
 			};
 		if (ty.isReferenceType())
-			if (names.get(ty
-				.asReferenceType()
-				.getId()) instanceof String ty2)
-				return ty2;
+			return this.describeViaId(ty.asReferenceType().getId());
 		if (ty.isTypeVariable())
-			return ty
-				.asTypeVariable()
-				.describe();
+			return ty.asTypeVariable().describe();
 		return "/* Java */ %s".formatted(ty.describe());
+	}
+
+	public String describe(@NotNull ResolvedReferenceTypeDeclaration ty) {
+		return describeViaId(ty.getId());
+	}
+
+	private String describeViaId(@NotNull String id) {
+		return this.nameOf(id, "/* Java */ " + id + " /**/");
+	}
+
+	public String nameOf(String id, String defaultValue) {
+		String name = names.get(id);
+		return name == null ? defaultValue : name;
 	}
 
 	public String describe(Expression expr) {
@@ -162,9 +165,7 @@ public final class JavaTranspiler {
 			String code = generate(task, onProblem, onError);
 
 			try {
-				Files.createDirectories(task.output
-					.getParentFile()
-					.toPath());
+				Files.createDirectories(task.output.getParentFile().toPath());
 				Files.writeString(task.output.toPath(), code);
 			} catch (IOException e) {
 				onError.accept(e);
@@ -191,7 +192,7 @@ public final class JavaTranspiler {
 			try {
 				if (task.exception != null)
 					throw task.exception;
-//				code = Java2Rust.convert(task.unit, task.module);
+				//				code = Java2Rust.convert(task.unit, task.module);
 				code = "TODO";
 			} catch (Throwable e) {
 				code = "/*\nFIXME: %s\n*/\n".formatted(e.toString());
@@ -221,9 +222,7 @@ public final class JavaTranspiler {
 	private boolean addItem(File input, File root, RustModule module) {
 		File[] children = input.listFiles();
 		if (children == null) {
-			if (input
-				.getPath()
-				.endsWith(".java")) {
+			if (input.getPath().endsWith(".java")) {
 				tasks.put(input.getAbsolutePath(), new Task(input, root, output, module));
 				return true;
 			}
@@ -254,15 +253,11 @@ public final class JavaTranspiler {
 			this.code = null;
 
 			module = mod;
-			relativePath = root
-				.toPath()
-				.relativize(input.toPath());
+			relativePath = root.toPath().relativize(input.toPath());
 
 			Path outputPath = Path.of(
 				output.toString(),
-				relativePath
-					.getParent()
-					.toString(),
+				relativePath.getParent().toString(),
 				"src",
 				module.name + ".rs");
 			this.output = new File(outputPath.toString());

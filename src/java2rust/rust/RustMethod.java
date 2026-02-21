@@ -32,12 +32,10 @@ public class RustMethod {
 	public void analyze(JavaTranspiler transpiler) {
 		typarams.analyze(resolved, transpiler);
 		params.analyze(transpiler);
-		returnType = java.getType()
-			.isVoidType() ? "" : " -> %s ".formatted(transpiler.describe(java.getType()));
-		if (java.getBody()
-			.isPresent())
-			body = transpiler.describe(java.getBody()
-				.orElse(null));
+		returnType = java.getType().isVoidType() ? " " : " -> %s ".formatted(transpiler.describe(
+			java.getType()));
+		if (java.getBody().isPresent())
+			body = transpiler.describe(java.getBody().orElse(null));
 		else
 			body = ";";
 	}

@@ -1,7 +1,6 @@
 package java2rust.rust;
 
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedEnumDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedRecordDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import java2rust.JavaTranspiler;

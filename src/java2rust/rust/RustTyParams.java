@@ -20,7 +20,10 @@ public class RustTyParams {
 		analyze(decl.getTypeParameters(), transpiler);
 	}
 
-	private void analyze(List<ResolvedTypeParameterDeclaration> typarams, JavaTranspiler transpiler) {
+	private void analyze(
+		List<ResolvedTypeParameterDeclaration> typarams,
+		JavaTranspiler transpiler
+	) {
 		for (ResolvedTypeParameterDeclaration param : typarams) {
 			try {
 				StringJoiner bounds = new StringJoiner("+");
@@ -33,18 +36,6 @@ public class RustTyParams {
 		}
 		implCache = toRustImpl();
 		boundsCache = toRustBounds();
-	}
-
-	public String toImpl() {
-		if (implCache == null)
-			implCache = toRustImpl();
-		return implCache;
-	}
-
-	public String toBounds() {
-		if (boundsCache == null)
-			boundsCache = toRustBounds();
-		return boundsCache;
 	}
 
 	/// `struct A<B: C, D>` becomes `<B, D>`
@@ -64,7 +55,8 @@ public class RustTyParams {
 		for (Pair<String, String> param : this.params) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(param.a);
-			if (param.b.isEmpty()) continue;
+			if (param.b.isEmpty())
+				continue;
 			sb.append(": ");
 			sb.append(param.b);
 			params.add(sb);
@@ -72,8 +64,20 @@ public class RustTyParams {
 		return params.toString();
 	}
 
+	public String toImpl() {
+		if (implCache == null)
+			implCache = toRustImpl();
+		return implCache;
+	}
+
 	@Override
 	public String toString() {
 		return toBounds();
+	}
+
+	public String toBounds() {
+		if (boundsCache == null)
+			boundsCache = toRustBounds();
+		return boundsCache;
 	}
 }

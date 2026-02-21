@@ -4,13 +4,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
-import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
-import java2rust.rust.RustItem;
-import java2rust.rust.RustMethod;
-import java2rust.rust.RustModule;
-import java2rust.rust.RustVisibility;
+import java2rust.rust.*;
 
 import java.util.Stack;
 
@@ -34,27 +28,21 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	@Override
-	public void visit(ImportDeclaration n, Object arg) {
-		// We'll be using this for name resolution.
-		modules.peek().use(n);
-	}
-
-	@Override
 	public void visit(ClassOrInterfaceDeclaration n, Object arg) {
 		RustItem item;
 		if (n.isInterface()) {
-			item = modules.peek()
+			item = modules
+				.peek()
 				.trait(
 					n.getNameAsString(),
-					n.resolve()
-						.asInterface(),
+					n.resolve().asInterface(),
 					RustVisibility.pub(n.isPublic()));
 		} else {
-			item = modules.peek()
+			item = modules
+				.peek()
 				.clazz(
 					n.getNameAsString(),
-					n.resolve()
-						.asClass(),
+					n.resolve().asClass(),
 					RustVisibility.pub(n.isPublic()));
 		}
 		transpiler.register(item);
@@ -84,8 +72,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(MethodDeclaration n, Object arg) {
 		try {
-			RustMethod method = items.peek()
-				.method(n);
+			RustMethod method = items.peek().method(n);
 			transpiler.registerName(method.id, method.name);
 		} catch (Throwable e) {
 			//TODO: push error method.
@@ -106,27 +93,28 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			assert false;
 			return;
 		}
-		if (fields.peek()
-			.isStatic()) {
+		if (fields.peek().isStatic()) {
 			//TODO: add as member
 			return;
 		}
-		items.peek()
-			.field(
-				n.getNameAsString(),
-				n.getType(),
-				n.getInitializer()
-					.orElse(null));
+		RustField field = items
+			.peek()
+			.field(n.getNameAsString(), n.getType(), n.getInitializer().orElse(null));
+		String id = "%s.%s".formatted(items.peek().id(), n.getName());
+		transpiler.registerName(id, field.name);
+	}
+
+	@Override
+	public void visit(ImportDeclaration n, Object arg) {
+		// We'll be using this for name resolution.
+		modules.peek().use(n);
 	}
 
 	@Override
 	public void visit(RecordDeclaration n, Object arg) {
-		items.push(modules.peek()
-			.record(
-				n.getNameAsString(),
-				n.resolve()
-					.asRecord(),
-				RustVisibility.pub(n.isPublic())));
+		items.push(modules
+			.peek()
+			.record(n.getNameAsString(), n.resolve().asRecord(), RustVisibility.pub(n.isPublic())));
 		super.visit(n, arg);
 		items.pop();
 	}

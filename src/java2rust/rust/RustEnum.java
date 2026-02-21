@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class RustEnum extends RustItem {
 	public final EnumDeclaration java;

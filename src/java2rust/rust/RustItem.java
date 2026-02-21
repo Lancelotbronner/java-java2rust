@@ -4,7 +4,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
 import java2rust.JavaTranspiler;
-import javassist.compiler.ast.MethodDecl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public abstract class RustItem {
 	}
 
 	public abstract String id();
+
 	public abstract String path();
 
 	public String name() {

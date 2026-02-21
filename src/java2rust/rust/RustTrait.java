@@ -13,7 +13,12 @@ public class RustTrait extends RustItem {
 	public final List<RustField> fields = new ArrayList<>();
 	public final List<String> params = new ArrayList<>();
 
-	RustTrait(String name, RustModule module, ResolvedInterfaceDeclaration decl, RustVisibility visibility) {
+	RustTrait(
+		String name,
+		RustModule module,
+		ResolvedInterfaceDeclaration decl,
+		RustVisibility visibility
+	) {
 		super(name, module, visibility);
 		this.decl = decl;
 	}
@@ -24,10 +29,6 @@ public class RustTrait extends RustItem {
 	//		fields.add(field);
 	//		return field;
 	//	}
-
-	public String path() {
-		return "%s::%s".formatted(module.path, name);
-	}
 
 	@Override
 	public void analyze(JavaTranspiler transpiler) {
@@ -58,6 +59,10 @@ public class RustTrait extends RustItem {
 	@Override
 	public String id() {
 		return decl.getId();
+	}
+
+	public String path() {
+		return "%s::%s".formatted(module.path, name);
 	}
 
 	@Override

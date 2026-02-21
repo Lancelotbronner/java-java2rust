@@ -26,10 +26,7 @@ public final class RustModule extends RustItem {
 
 	RustModule(String name, RustModule module, RustVisibility visibility) {
 		super(name, module, visibility);
-		path = StringUtils.join(
-			ancestors().map(RustModule::use)
-				.toList()
-				.reversed(), "::");
+		path = StringUtils.join(ancestors().map(RustModule::use).toList().reversed(), "::");
 	}
 
 	/// Returns a stream that iterates through parent modules starting at the current module.

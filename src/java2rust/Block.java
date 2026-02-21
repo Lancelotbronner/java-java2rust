@@ -1,14 +1,14 @@
 package java2rust;
 
+import com.github.javaparser.Position;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.utils.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
-
-import com.github.javaparser.Position;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.utils.Pair;
 
 /**
  * Created by aschoerk on 16.05.16.
@@ -78,12 +78,8 @@ public class Block {
 	}
 
 	public long size() {
-		Position begin = n
-			.getBegin()
-			.orElse(Position.HOME);
-		Position end = n
-			.getEnd()
-			.orElse(Position.HOME);
+		Position begin = n.getBegin().orElse(Position.HOME);
+		Position end = n.getEnd().orElse(Position.HOME);
 		return (end.line - begin.line) * FICTIONAL_LINE_SIZE + (end.column + FICTIONAL_LINE_SIZE - begin.column);
 	}
 
@@ -94,13 +90,9 @@ public class Block {
 				// following children overlap with this one ??
 				IntStream
 					.range(i1 + 1, children.size())
-					.filter(i2 -> children
-						.get(i1)
-						.contains(children.get(i2)))
+					.filter(i2 -> children.get(i1).contains(children.get(i2)))
 					.findAny()
-					.isPresent())
-			.findAny()
-			.isEmpty();
+					.isPresent()).findAny().isEmpty();
 	}
 
 	boolean contains(Block b) {
@@ -108,18 +100,9 @@ public class Block {
 	}
 
 	boolean contains(Node nP) {
-		if (n
-			.getRange()
-			.isEmpty() || nP
-			.getRange()
-			.isEmpty())
+		if (n.getRange().isEmpty() || nP.getRange().isEmpty())
 			return false;
-		return n
-			.getRange()
-			.get()
-			.contains(nP
-				.getRange()
-				.get());
+		return n.getRange().get().contains(nP.getRange().get());
 	}
 
 	@Override
