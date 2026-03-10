@@ -56,6 +56,7 @@ public class RustRecord extends RustItem {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
+		sb.append("#[derive(Debug, Hash, Eq, PartialEq)]");
 		sb.append(visibility);
 		sb.append("struct ");
 		sb.append(name);

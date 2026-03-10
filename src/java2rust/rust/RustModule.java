@@ -11,6 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +45,7 @@ public final class RustModule extends RustItem {
 	}
 
 	public static RustModule lib(@NonNull String name) {
-		return new RustModule(Java2Rust.camelCaseToSnakeCase(name), null, RustVisibility.PRIVATE);
+		return new RustModule(Java2Rust.camelCaseToSnakeCase(name), null, RustVisibility.INFERRED);
 	}
 
 	public void delete() {
@@ -132,6 +135,33 @@ public final class RustModule extends RustItem {
 			item.analyze(transpiler);
 		for (RustModule mod : submodules)
 			mod.analyze(transpiler);
+	}
+
+	public void generate(Path parent) {
+		Path dir;
+		Path file;
+
+		if (module == null) {
+			dir = parent;
+			file = parent.resolve("lib.rs");
+		} else if (submodules.isEmpty()) {
+			dir = parent;
+			file = parent.resolve(name + ".rs");
+		} else {
+			dir = parent.resolve(name);
+			file = dir.resolve("mod.rs");
+		}
+
+		System.out.printf("\tWriting %s to %s%n", id(), file);
+		try {
+			Files.createDirectories(dir);
+			Files.writeString(file, toString());
+		} catch (IOException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
+
+		for (RustModule mod : submodules)
+			mod.generate(dir);
 	}
 
 	@Override

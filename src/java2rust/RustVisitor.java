@@ -12,13 +12,11 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import java2rust.rust.RustMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,7 @@ import static java.util.Collections.reverse;
 public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public final JavaTranspiler transpiler;
 	private final RustPrinter printer = new RustPrinter("\t");
+	private final Stack<String> tryBlock = new Stack<>();
 	private boolean isVarDeclStmt = true;
 
 	public RustVisitor(
@@ -790,13 +789,27 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			boolean isStatic;
 			if (value.isField())
 				isStatic = value.asField().isStatic();
+			else if (value.isVariable())
+				isStatic = false;
 			else if (value.isEnumConstant())
 				isStatic = true;
+			else if (value.isTypePattern())
+				isStatic = true;
+			else if (value.isParameter())
+				isStatic = false;
+			else if (value.isType())
+				isStatic = true;
+			else if (value.isMethod())
+				isStatic = false;
+				//TODO: when there's a way to detect array length, do that and throw an exception on else
 			else
-				throw new UnsupportedOperationException(
-					"Unsupported FieldAccessExpr: Unknown value '%s' (%s)".formatted(
-						value.getName(),
-						value));
+				// this is an array `.length` access
+				isStatic = false;
+			//			else
+			//				throw new UnsupportedOperationException(
+			//					"Unsupported FieldAccessExpr: Unknown value '%s' (%s)".formatted(
+			//						value.getName(),
+			//						value));
 
 			access = isStatic ? "::" : ".";
 
@@ -816,6 +829,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			} catch (Throwable e) {
 				System.err.println(e);
 			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		printer.print(access + name);
@@ -1013,27 +1028,62 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final MethodCallExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
+
+		String access = ".";
+		String name = n.getNameAsString();
+		String scope = null;
+		Set<ResolvedType> thrown = null;
+		boolean isVoid = false;
+		boolean isWithinTry = !tryBlock.isEmpty();
+		try {
+			ResolvedMethodDeclaration resolved = n.resolve();
+			access = resolved.isStatic() ? "::" : ".";
+			name = this.transpiler.nameOf(resolved.getQualifiedSignature(), name);
+			isVoid = resolved.getReturnType().isVoid();
+
+			RustMethod method = this.transpiler.method(resolved);
+			if (method != null && !method.thrown.isEmpty())
+				thrown = method.thrown;
+
+			if (n.getScope().isEmpty())
+				scope = resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self";
+		} catch (UnsolvedSymbolException e) {
+			System.err.println(e.getMessage());
+		}
+
+		if (isWithinTry && thrown != null)
+			printer.print(isVoid ? "if let Err(e) = " : "match ");
+
 		if (n.getScope().isPresent())
 			n.getScope().get().accept(this, arg);
 
 		if (n.getTypeArguments().isPresent())
 			printTypeArgs(n.getTypeArguments().get(), arg);
 
-		String access = ".";
-		String name = n.getNameAsString();
-		try {
-			ResolvedMethodDeclaration resolved = n.resolve();
-			access = resolved.isStatic() ? "::" : ".";
-			name = this.transpiler.nameOf(resolved.getQualifiedSignature(), name);
-
-			if (n.getScope().isEmpty())
-				printer.print(resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self");
-		} catch (UnsolvedSymbolException e) {
-			System.err.println(e.getMessage());
-		}
+		if (scope != null)
+			printer.print(scope);
 
 		printer.print(access + name);
 		printArguments(n.getArguments(), arg);
+
+		if (!isWithinTry && thrown != null)
+			printer.print("?");
+
+		if (!isWithinTry || thrown == null)
+			return;
+		printer.println(" {");
+		printer.indent();
+
+		if (isVoid) {
+			printer.println("return Err(e);");
+		} else {
+			String ret = tryBlock.isEmpty() ? "return" : "break %s".formatted(tryBlock.peek());
+			printer.println("Err(e) => %s Err(e),".formatted(ret));
+			printer.println("Ok(s) => s,");
+		}
+
+		printer.unindent();
+		printer.print("}");
 	}
 
 	@Override
@@ -1301,6 +1351,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(final ReturnStmt n, final Object arg) {
+		//TODO: get method associated to this return, ensure the return expression matches the return type
+		// The final expression is either `Ok(EXPR)`, `EXPR`, or `EXPR.into()`
 		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("return");
 		if (n.getExpression().isPresent()) {
@@ -1423,18 +1475,24 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final ThrowStmt n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
-		printer.print("throw ");
+		printer.print(tryBlock.isEmpty() ? "return " : "break %s ".formatted(tryBlock.pop()));
+		printer.print("Err(");
 		n.getExpression().accept(this, arg);
-		printer.print(";");
+		printer.print(");");
 	}
 
 	@Override
 	public void visit(final TryStmt n, final Object arg) {
-		//		int tryCount = ++idTracker.tryCount;
 		printJavaComment(n.getComment().orElse(null), arg);
-		//			printer.println("let tryResult" + tryCount + " = 0;");
-		//			printer.println("'try" + tryCount + ": loop {");
+
+		String label = "'try%s".formatted(tryBlock.size());
+		String result = "r%s".formatted(tryBlock.size());
+		tryBlock.push(label);
+		printer.println("let %s = %s: {".formatted(result, label));
+		printer.indent();
+
 		if (!n.getResources().isEmpty()) {
+			//TODO: review using resources and ensuring they're dropped at the end of this block?
 			printer.print("(");
 			Iterator<Expression> resources = n.getResources().iterator();
 			boolean first = true;
@@ -1454,23 +1512,37 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			}
 			printer.print(") ");
 		}
-		n.getTryBlock().accept(this, arg);
-		printer.println();
-		//			printer.println("break 'try" + tryCount);
+
+		for (Statement stmt : n.getTryBlock().getStatements()) {
+			stmt.accept(this, arg);
+			printer.println();
+		}
+		printer.println("break %s Ok(());".formatted(label));
+		printer.unindent();
 		printer.println("}");
+
 		if (n.getCatchClauses() != null) {
-			//				printer.println("match tryResult" + tryCount + " {");
+			printer.println("match %s {".formatted(result));
 			printer.indent();
 			for (final CatchClause c : n.getCatchClauses()) {
-				c.accept(this, arg);
+				printer.print("Err(");
+				c.getParameter().accept(this, arg);
+				printer.print(") => ");
+				c.getBody().accept(this, arg);
+				printer.println(",");
 			}
-			printer.println("  0 => break");
+			printer.println("Err(e) => Err(e)?,");
+			printer.println("Ok => (),");
 			printer.unindent();
-			printer.println("}");
+			printer.print("}");
 		}
+
 		if (n.getFinallyBlock().isPresent()) {
-			printer.print(" finally ");
-			n.getFinallyBlock().get().accept(this, arg);
+			printer.println();
+			for (Statement stmt : n.getFinallyBlock().get().getStatements()) {
+				stmt.accept(this, arg);
+				printer.println();
+			}
 		}
 	}
 

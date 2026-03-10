@@ -8,6 +8,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.quality.NotNull;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
@@ -35,9 +36,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-/**
- * Created by aschoerk on 30.04.16.
- */
 public final class JavaTranspiler {
 	public final RustModule lib;
 	public final File output;
@@ -69,10 +67,24 @@ public final class JavaTranspiler {
 		if (components.length == 4)
 			throw new Exception("Invalid maven dependency string '" + maven + "'");
 		String[] path = components[0].split("\\.");
-		Path jar = Paths
+		Path resolved = Paths
 			.get(System.getProperty("user.home"), ".m2")
 			.resolve("repository", path)
-			.resolve(components[1], components[2], components[1] + "-" + components[2] + ".jar")
+			.resolve(components[1], components[2]);
+		Path sources = resolved
+			.resolve(components[1] + "-" + components[2] + "-sources.jar")
+			.toRealPath();
+
+		if (Files.exists(sources)) {
+			//TODO: Add this source jar as a Task, this is waiting for the Crate/File/Mod split
+			// Java files/packages are Rust modules, Java jars are Crates.
+			// each dependency will generate its own crate, the generated result is a workspace.
+			// This source zip will be turned into a RustCrate and all compilation units into RustModule
+			System.out.println("\tfound sources, will generate as a Rust crate (TODO)");
+		}
+
+		Path jar = resolved
+			.resolve(components[1] + "-" + components[2] + ".jar")
 			.toRealPath();
 		if (!Files.exists(jar))
 			throw new Exception("Could not locate '%s' at '%s'".formatted(maven, jar));
@@ -97,6 +109,10 @@ public final class JavaTranspiler {
 
 	public @Nullable RustMethod method(@NotNull String qualifiedSignature) {
 		return methods.get(qualifiedSignature);
+	}
+
+	public @Nullable RustMethod method(@NotNull ResolvedMethodDeclaration decl) {
+		return methods.get(decl.getQualifiedSignature());
 	}
 
 	public void compile(Consumer<Task> onCompile) {

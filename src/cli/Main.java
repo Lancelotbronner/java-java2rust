@@ -1,4 +1,4 @@
-package main;
+package cli;
 
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
@@ -9,6 +9,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
+import java.nio.file.Path;
 
 @CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
@@ -41,8 +42,8 @@ public class Main implements Runnable {
 		boolean hasError = false;
 		for (String dep : maven) {
 			try {
-				transpiler.addMavenDependency(dep);
 				System.out.println("=> " + dep);
+				transpiler.addMavenDependency(dep);
 			} catch (Exception e) {
 				System.err.println(e);
 				hasError = true;
@@ -66,17 +67,13 @@ public class Main implements Runnable {
 		System.out.printf("=> Analyzing %s Java files...\n", total);
 		transpiler.analyze();
 
+		/*
 		System.out.print("=> Printing analysis results\n");
 		print(transpiler.lib);
-
-		/*
-		System.out.print("=> Generating Rust files...\n");
-		transpiler.generate(
-			task -> System.out.printf("==> %s\n", task.relativePath),
-			problem -> System.out.printf("\t%s\n", problem.getVerboseMessage()),
-			e -> System.err.println(e.toString()));
-
 		 */
+
+		System.out.printf("=> Writing Rust files to %s...\n", crate);
+		transpiler.lib.generate(crate.toPath().resolve("src"));
 	}
 
 	void print(RustModule mod) {
