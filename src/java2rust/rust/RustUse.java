@@ -6,10 +6,10 @@ import java2rust.JavaTranspiler;
 public final class RustUse {
 	public final ImportDeclaration java;
 
-	public final RustModule module;
+	public final RustPackage module;
 	private String path;
 
-	public RustUse(ImportDeclaration java, RustModule mod) {
+	public RustUse(ImportDeclaration java, RustPackage mod) {
 		this.java = java;
 		this.module = mod;
 	}

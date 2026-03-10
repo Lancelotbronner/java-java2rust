@@ -18,7 +18,7 @@ public class RustClass extends RustItem {
 
 	RustClass(
 		String name,
-		RustModule module,
+		RustPackage module,
 		ResolvedClassDeclaration decl,
 		RustVisibility visibility
 	) {

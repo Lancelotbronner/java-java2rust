@@ -16,10 +16,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import java2rust.rust.RustItem;
-import java2rust.rust.RustMethod;
-import java2rust.rust.RustModule;
-import java2rust.rust.RustVisibility;
+import java2rust.rust.*;
 import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -28,16 +25,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public final class JavaTranspiler {
-	public final RustModule lib;
+	public final List<RustJar> crates = new ArrayList<>();
+	public final RustPackage lib;
 	public final File output;
 	public final JavaSymbolSolver solver;
 	public final HashMap<String, Task> tasks = new HashMap<>();
@@ -49,7 +44,7 @@ public final class JavaTranspiler {
 
 	public JavaTranspiler(File crate) {
 		this.output = new File(crate, "src");
-		this.lib = RustModule.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(crate.getName())));
+		this.lib = RustPackage.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(crate.getName())));
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.setExceptionHandler(CombinedTypeSolver.ExceptionHandlers.IGNORE_ALL);
 		solvers.add(new ReflectionTypeSolver(false));
@@ -57,7 +52,7 @@ public final class JavaTranspiler {
 
 	public JavaTranspiler(String lib) {
 		this.output = null;
-		this.lib = RustModule.lib(lib);
+		this.lib = RustPackage.lib(lib);
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.add(new ReflectionTypeSolver());
 	}
@@ -277,16 +272,16 @@ public final class JavaTranspiler {
 		return generate(task, _ -> {}, _ -> {});
 	}
 
-	private boolean addSubItem(File input, File root, RustModule parentModule) {
+	private boolean addSubItem(File input, File root, RustPackage parentModule) {
 		String moduleName = FilenameUtils.removeExtension(input.getName());
-		RustModule module = parentModule.submodule(moduleName, RustVisibility.PUB);
+		RustPackage module = parentModule.submodule(moduleName, RustVisibility.PUB);
 		boolean added = addItem(input, root, module);
 		if (!added)
 			module.delete();
 		return added;
 	}
 
-	private boolean addItem(File input, File root, RustModule module) {
+	private boolean addItem(File input, File root, RustPackage module) {
 		File[] children = input.listFiles();
 		if (children == null) {
 			if (input.getPath().endsWith(".java")) {
@@ -309,13 +304,13 @@ public final class JavaTranspiler {
 		public final File input;
 		public final String code;
 		public final File output;
-		public final RustModule module;
+		public final RustPackage module;
 		public final Path relativePath;
 		public CompilationUnit unit;
 		public Throwable exception;
 		public ParseProblemException problem;
 
-		Task(File input, File root, File output, RustModule mod) {
+		Task(File input, File root, File output, RustPackage mod) {
 			this.input = input;
 			this.code = null;
 
@@ -330,7 +325,7 @@ public final class JavaTranspiler {
 			this.output = new File(outputPath.toString());
 		}
 
-		Task(String filename, String java, RustModule module) {
+		Task(String filename, String java, RustPackage module) {
 			this.input = null;
 			this.output = null;
 			this.relativePath = Path.of(filename);

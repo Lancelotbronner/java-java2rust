@@ -16,7 +16,7 @@ public class RustEnum extends RustItem {
 
 	public final List<RustField> fields = new ArrayList<>();
 
-	RustEnum(EnumDeclaration java, RustModule module) {
+	RustEnum(EnumDeclaration java, RustPackage module) {
 		super(java.getNameAsString(), module, RustVisibility.pub(java.isPublic()));
 		this.java = java;
 		this.resolved = java.resolve();

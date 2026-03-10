@@ -18,7 +18,7 @@ public class RustRecord extends RustItem {
 
 	RustRecord(
 		String name,
-		RustModule module,
+		RustPackage module,
 		ResolvedRecordDeclaration decl,
 		RustVisibility visibility
 	) {

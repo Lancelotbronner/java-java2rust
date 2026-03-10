@@ -12,11 +12,11 @@ import java.util.List;
 public abstract class RustItem {
 	/// The Rust name of this item.
 	public final String name;
-	public final RustModule module;
+	public final RustPackage module;
 	public final RustVisibility visibility;
 	public final List<RustMethod> methods = new ArrayList<>();
 
-	protected RustItem(String name, RustModule module, RustVisibility visibility) {
+	protected RustItem(String name, RustPackage module, RustVisibility visibility) {
 		this.name = name;
 		this.module = module;
 		this.visibility = visibility;

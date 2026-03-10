@@ -15,7 +15,7 @@ public class RustInterface extends RustItem {
 
 	RustInterface(
 		String name,
-		RustModule module,
+		RustPackage module,
 		ResolvedInterfaceDeclaration decl,
 		RustVisibility visibility
 	) {

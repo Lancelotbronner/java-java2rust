@@ -3,13 +3,12 @@ package cli;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import java2rust.JavaTranspiler;
-import java2rust.rust.RustModule;
+import java2rust.rust.RustPackage;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
-import java.nio.file.Path;
 
 @CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
@@ -76,9 +75,9 @@ public class Main implements Runnable {
 		transpiler.lib.generate(crate.toPath().resolve("src"));
 	}
 
-	void print(RustModule mod) {
+	void print(RustPackage mod) {
 		System.out.printf("==> %s\n%s", mod.path, mod);
-		for (RustModule submodule : mod.submodules())
+		for (RustPackage submodule : mod.submodules())
 			print(submodule);
 	}
 }
