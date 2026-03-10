@@ -23,6 +23,8 @@ public class RustMethod {
 	public final RustTyParams typarams = new RustTyParams();
 	public final RustParams params;
 	public final Set<ResolvedType> thrown = new HashSet<>();
+	public final Set<RustMethod> callers = new HashSet<>();
+	public final Set<RustMethod> callees = new HashSet<>();
 	private String returnType;
 	private String body;
 

@@ -17,6 +17,11 @@ public class AnalyzerVisitor extends VoidVisitorAdapter<Object> {
 		this.method = method;
 	}
 
+	//TODO: Support multiple method analysis (on the whole unit) by using a stack of methods
+
+	//TODO: intercept anything that could be a call to a Param or Field and check mutability
+	// eg. Mutability is Immutable by default, Mutable if guaranteed by the expr, DeferredTo(Mutability) if it depends on other fields
+
 	@Override
 	public void visit(MethodCallExpr n, Object arg) {
 		ResolvedMethodDeclaration resolved = n.resolve();
@@ -27,6 +32,8 @@ public class AnalyzerVisitor extends VoidVisitorAdapter<Object> {
 			method.thrown.addAll(rust.thrown);
 		method.thrown.addAll(resolved.getSpecifiedExceptions());
 		//TODO: This is running once at Decl, then at Analyze. Is it enough to catch all?
+		// Note: no, should instead build a list of callers/callees.
+		// Then build & cache the thrown list as needed by querying callees.
 
 		super.visit(n, arg);
 	}

@@ -115,7 +115,7 @@ public final class JavaTranspiler {
 			onCompile.accept(task);
 			task.compile();
 			if (task.unit != null)
-				new DeclVisitor(this, task).visit(task.unit, null);
+				new DeclVisitor(this, task.module).visit(task.unit, null);
 		}
 	}
 

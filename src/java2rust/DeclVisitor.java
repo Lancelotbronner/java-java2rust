@@ -10,16 +10,14 @@ import java.util.Stack;
 
 public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	public final JavaTranspiler transpiler;
-	public final JavaTranspiler.Task task;
 	private final Stack<RustPackage> modules = new Stack<>();
 	private final Stack<RustItem> items = new Stack<>();
 	private final Stack<FieldDeclaration> fields = new Stack<>();
 	private final Stack<MethodDeclaration> methods = new Stack<>();
 
-	public DeclVisitor(JavaTranspiler transpiler, JavaTranspiler.Task task) {
+	public DeclVisitor(JavaTranspiler transpiler, RustPackage module) {
 		this.transpiler = transpiler;
-		this.task = task;
-		modules.push(task.module);
+		modules.push(module);
 	}
 
 	@Override

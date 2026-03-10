@@ -18,4 +18,8 @@ public final class RustJar {
 		this.lib = lib;
 		this.main = main;
 	}
+
+	//TODO: The transpiler will directly parse source Jars and Java files into CompilationUnit and go through DeclVisitor.
+	// Then the analysis can be made on the workspace as a whole.
+	// Then the Rust hierarchy will be written to files.
 }
