@@ -14,7 +14,7 @@ The forked code serves only as a reminder for features to implement, it isn't ca
   - *currently no analysis for `mut` parameters*
   - *currently no analysis for `&mut` parameter types*
 - Converts statements and expressions to Rust
-  - *currently no support for `try-catch`*
+  - *some support for simple `try-catch` statements*
   - *currently no analysis for `mut` locals*
 - Support for specifying maven dependencies in order to improve analysis
 

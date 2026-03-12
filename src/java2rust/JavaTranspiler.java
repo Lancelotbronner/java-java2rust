@@ -88,24 +88,27 @@ public final class JavaTranspiler {
 
 	public void addSourceZip(String id, String name, Path path) throws IOException {
 		SourceZip zip = new SourceZip(path, StaticJavaParser.getParserConfiguration());
-		RustJar jar = new RustJar(id, name, zip);
 		SourceZipTypeSolver solver = new SourceZipTypeSolver(zip);
-		crates.add(jar);
 		solvers.add(solver);
+
 		System.out.println("\tParsing sources jar...");
 		solver.parseIfNecessary();
 		for (Path file : solver.paths)
 			System.out.printf("\t%s\n", file);
 		System.out.printf("\tParsed %s source files%n", solver.paths.size());
 		System.out.printf("\tRegistered %s types%n", solver.types.size());
+
+		RustJar jar = new RustJar(id, name, zip);
+		addJar(jar);
 	}
 
 	public void addJar(RustJar jar) {
-		//TODO: ensure preliminary visits are made
+		//TODO: ensure preliminary visits are made?
 		crates.add(jar);
 	}
 
 	public void addPackage(File input) {
+		//TODO: create RustJar and add units individually
 		if (directories.contains(input))
 			return;
 		if (!addItem(input, input, lib))

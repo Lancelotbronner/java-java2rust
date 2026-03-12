@@ -14,16 +14,13 @@ import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Stream;
 
 public final class RustPackage extends RustItem {
 	public final String path;
-	private final List<RustUse> uses = new ArrayList<>();
-	private final List<RustPackage> submodules = new ArrayList<>();
+	private final List<RustImport> imports = new ArrayList<>();
+	private final List<RustPackage> subpackages = new ArrayList<>();
 	private final List<RustItem> items = new ArrayList<>();
 
 	RustPackage(String name, RustPackage module, RustVisibility visibility) {
@@ -48,7 +45,7 @@ public final class RustPackage extends RustItem {
 	}
 
 	public void delete() {
-		module.submodules.remove(this);
+		module.subpackages.remove(this);
 	}
 
 	public @Nullable RustPackage parent() {
@@ -56,7 +53,7 @@ public final class RustPackage extends RustItem {
 	}
 
 	public @NonNull List<RustPackage> submodules() {
-		return submodules;
+		return subpackages;
 	}
 
 	public @NonNull List<RustItem> items() {
@@ -65,8 +62,14 @@ public final class RustPackage extends RustItem {
 
 	/// Creates and returns a directory new submodule.
 	public RustPackage submodule(String name, RustVisibility visibility) {
+		Optional<RustPackage> existing = subpackages
+			.stream()
+			.filter(m -> Objects.equals(m.name, name))
+			.findFirst();
+		if (existing.isPresent())
+			return existing.get();
 		RustPackage mod = new RustPackage(Java2Rust.camelCaseToSnakeCase(name), this, visibility);
-		submodules.add(mod);
+		subpackages.add(mod);
 		return mod;
 	}
 
@@ -120,11 +123,11 @@ public final class RustPackage extends RustItem {
 	}
 
 	/// Declares and returns a new use.
-	public RustUse use(
+	public RustImport use(
 		ImportDeclaration java
 	) {
-		RustUse item = new RustUse(java, this);
-		uses.add(item);
+		RustImport item = new RustImport(java, this);
+		imports.add(item);
 		return item;
 	}
 
@@ -132,8 +135,18 @@ public final class RustPackage extends RustItem {
 		super.analyze(transpiler);
 		for (RustItem item : items)
 			item.analyze(transpiler);
-		for (RustPackage mod : submodules)
+		for (RustPackage mod : subpackages)
 			mod.analyze(transpiler);
+	}
+
+	@Override
+	public String id() {
+		return path;
+	}
+
+	@Override
+	public String path() {
+		return path;
 	}
 
 	public void generate(Path parent) {
@@ -143,7 +156,7 @@ public final class RustPackage extends RustItem {
 		if (module == null) {
 			dir = parent;
 			file = parent.resolve("lib.rs");
-		} else if (submodules.isEmpty()) {
+		} else if (subpackages.isEmpty()) {
 			dir = parent;
 			file = parent.resolve(name + ".rs");
 		} else {
@@ -159,36 +172,26 @@ public final class RustPackage extends RustItem {
 			System.err.println(e.getLocalizedMessage());
 		}
 
-		for (RustPackage mod : submodules)
+		for (RustPackage mod : subpackages)
 			mod.generate(dir);
-	}
-
-	@Override
-	public String id() {
-		return path;
-	}
-
-	@Override
-	public String path() {
-		return path;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		if (!submodules.isEmpty()) {
-			for (RustPackage submodule : submodules)
+		if (!subpackages.isEmpty()) {
+			for (RustPackage submodule : subpackages)
 				sb.append("%smod %s;\n".formatted(submodule.visibility, submodule.name));
-			sb.append("\n");
 		}
 
-		StringJoiner items = new StringJoiner("\n\n");
-		for (RustItem item : this.items)
-			items.add(item.toString());
-		sb.append(items);
+		if (!items.isEmpty()) {
+			StringJoiner items = new StringJoiner("\n\n");
+			for (RustItem item : this.items)
+				items.add(item.toString());
+			sb.append(items);
+		}
 
-		sb.append("\n");
 		return sb.toString();
 	}
 }

@@ -3,13 +3,13 @@ package java2rust.rust;
 import com.github.javaparser.ast.ImportDeclaration;
 import java2rust.JavaTranspiler;
 
-public final class RustUse {
+public final class RustImport {
 	public final ImportDeclaration java;
 
 	public final RustPackage module;
 	private String path;
 
-	public RustUse(ImportDeclaration java, RustPackage mod) {
+	public RustImport(ImportDeclaration java, RustPackage mod) {
 		this.java = java;
 		this.module = mod;
 	}

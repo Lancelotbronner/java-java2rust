@@ -3,12 +3,15 @@ package cli;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import java2rust.JavaTranspiler;
+import java2rust.rust.RustJar;
 import java2rust.rust.RustPackage;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 @CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
@@ -59,11 +62,11 @@ public class Main implements Runnable {
 			files = transpiler.tasks.size();
 		}
 
-		System.out.printf("=> Compiling %s Java files...\n", transpiler.tasks.size());
+		System.out.printf("==> Compiling %s Java files...\n", transpiler.tasks.size());
 		transpiler.compile(t -> System.out.printf("\t%s\n", t.relativePath));
 
 		long total = transpiler.numberOfTasksToAnalyze();
-		System.out.printf("=> Analyzing %s Java files...\n", total);
+		System.out.printf("==> Analyzing %s Java files...\n", total);
 		transpiler.analyze();
 
 		/*
@@ -71,8 +74,19 @@ public class Main implements Runnable {
 		print(transpiler.lib);
 		 */
 
-		System.out.printf("=> Writing Rust files to %s...\n", crate);
-		transpiler.lib.generate(crate.toPath().resolve("src"));
+		Path outputPath = crate.toPath();
+
+		System.out.printf("==> Writing Rust files to %s...\n", crate);
+		transpiler.lib.generate(outputPath.resolve("current/src"));
+
+		for (RustJar jar : transpiler.crates) {
+			System.out.printf("==> Generating '%s' crate...\n", jar.name);
+			try {
+				jar.generate(outputPath);
+			} catch (IOException e) {
+				System.err.printf("Failed to write: %s\n", e.getLocalizedMessage());
+			}
+		}
 	}
 
 	void print(RustPackage mod) {
