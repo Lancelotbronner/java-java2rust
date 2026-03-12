@@ -16,7 +16,9 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import com.github.javaparser.utils.SourceZip;
 import java2rust.rust.*;
+import javaparser.SourceZipTypeSolver;
 import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -44,7 +46,8 @@ public final class JavaTranspiler {
 
 	public JavaTranspiler(File crate) {
 		this.output = new File(crate, "src");
-		this.lib = RustPackage.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(crate.getName())));
+		this.lib = RustPackage.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(
+			crate.getName())));
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.setExceptionHandler(CombinedTypeSolver.ExceptionHandlers.IGNORE_ALL);
 		solvers.add(new ReflectionTypeSolver(false));
@@ -71,19 +74,35 @@ public final class JavaTranspiler {
 			.toRealPath();
 
 		if (Files.exists(sources)) {
-			//TODO: Add this source jar as a Task, this is waiting for the Crate/File/Mod split
-			// Java files/packages are Rust modules, Java jars are Crates.
-			// each dependency will generate its own crate, the generated result is a workspace.
-			// This source zip will be turned into a RustCrate and all compilation units into RustModule
-			System.out.println("\tfound sources, will generate as a Rust crate (TODO)");
+			addSourceZip(maven, components[1], sources);
+			return;
 		}
+		System.out.println("\tCould not locate sources jar");
 
-		Path jar = resolved
-			.resolve(components[1] + "-" + components[2] + ".jar")
-			.toRealPath();
+		Path jar = resolved.resolve(components[1] + "-" + components[2] + ".jar").toRealPath();
 		if (!Files.exists(jar))
 			throw new Exception("Could not locate '%s' at '%s'".formatted(maven, jar));
+		System.out.println("\tRegistered jar");
 		solvers.add(new JarTypeSolver(jar));
+	}
+
+	public void addSourceZip(String id, String name, Path path) throws IOException {
+		SourceZip zip = new SourceZip(path, StaticJavaParser.getParserConfiguration());
+		RustJar jar = new RustJar(id, name, zip);
+		SourceZipTypeSolver solver = new SourceZipTypeSolver(zip);
+		crates.add(jar);
+		solvers.add(solver);
+		System.out.println("\tParsing sources jar...");
+		solver.parseIfNecessary();
+		for (Path file : solver.paths)
+			System.out.printf("\t%s\n", file);
+		System.out.printf("\tParsed %s source files%n", solver.paths.size());
+		System.out.printf("\tRegistered %s types%n", solver.types.size());
+	}
+
+	public void addJar(RustJar jar) {
+		//TODO: ensure preliminary visits are made
+		crates.add(jar);
 	}
 
 	public void addPackage(File input) {
@@ -165,6 +184,8 @@ public final class JavaTranspiler {
 				case FLOAT -> "f32";
 				case DOUBLE -> "f64";
 			};
+		if (ty.isArray())
+			return "&[%s]".formatted(describe(ty.asArrayType().getComponentType()));
 		if (ty.isReferenceType())
 			return this.describeViaId(
 				ty.asReferenceType().getId(),
@@ -172,6 +193,10 @@ public final class JavaTranspiler {
 		if (ty.isTypeVariable())
 			return ty.asTypeVariable().describe();
 		throw new UnsupportedOperationException("Unknown ResolvedType " + ty);
+	}
+
+	public String describe(@NotNull ResolvedReferenceTypeDeclaration ty) {
+		return describeViaId(ty.getId(), ty.getName());
 	}
 
 	private String describeViaId(@NotNull String id, String insert) {
@@ -184,12 +209,8 @@ public final class JavaTranspiler {
 		//		String name = insert.get().replace(".", "::");
 		//		return names.put(id, name);
 		if (unknownNames.add(id))
-			System.err.printf("Unknown identifier '%s'%n", id);
+			System.err.printf("Unknown identifier (not related to type solving) '%s'%n", id);
 		return "/* Java */ %s /**/".formatted(id);
-	}
-
-	public String describe(@NotNull ResolvedReferenceTypeDeclaration ty) {
-		return describeViaId(ty.getId(), ty.getName());
 	}
 
 	private String describeViaId(@NotNull String id, String insert, UnaryOperator<String> convert) {
