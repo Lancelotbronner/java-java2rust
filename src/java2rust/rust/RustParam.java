@@ -5,20 +5,18 @@ import java2rust.Java2Rust;
 import java2rust.JavaTranspiler;
 
 public class RustParam {
-	public final RustMethod method;
 	public final Parameter java;
 	public boolean isMutable;
-	private String name;
+	private final String name;
 	private String type;
 	private String cache;
 
-	public RustParam(RustMethod method, Parameter java) {
-		this.method = method;
+	public RustParam(Parameter java) {
 		this.java = java;
+		name = Java2Rust.camelCaseToSnakeCase(java.getNameAsString());
 	}
 
 	public void analyze(JavaTranspiler transpiler) {
-		name = Java2Rust.camelCaseToSnakeCase(java.getNameAsString());
 		type = transpiler.describe(java.getType());
 		cache = toRust();
 	}

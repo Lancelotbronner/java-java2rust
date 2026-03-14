@@ -2,10 +2,14 @@ package java2rust;
 
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 import java2rust.rust.*;
 
+import java.util.Objects;
 import java.util.Stack;
 
 public class DeclVisitor extends VoidVisitorAdapter<Object> {
@@ -13,7 +17,8 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	private final Stack<RustPackage> modules = new Stack<>();
 	private final Stack<RustItem> items = new Stack<>();
 	private final Stack<FieldDeclaration> fields = new Stack<>();
-	private final Stack<MethodDeclaration> methods = new Stack<>();
+	private final Stack<IRustFunction> functions = new Stack<>();
+	private boolean isMutableScope;
 
 	public DeclVisitor(JavaTranspiler transpiler, RustPackage module) {
 		this.transpiler = transpiler;
@@ -21,8 +26,11 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	@Override
-	public void visit(BlockStmt n, Object arg) {
-		// Voluntarely ignore to ensure VariableDeclarator is only the struct fields.
+	public void visit(AssignExpr n, Object arg) {
+		isMutableScope = true;
+		n.getTarget().accept(this, arg);
+		isMutableScope = false;
+		n.getValue().accept(this, arg);
 	}
 
 	@Override
@@ -51,6 +59,20 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	@Override
+	public void visit(ConstructorDeclaration n, Object arg) {
+		try {
+			RustConstructor method = items.peek().constructor(n);
+			transpiler.registerName(method.id, method.name);
+			functions.push(method);
+			super.visit(n, arg);
+			functions.pop();
+		} catch (Throwable e) {
+			System.err.println(e);
+			//TODO: push error method.
+		}
+	}
+
+	@Override
 	public void visit(EnumDeclaration n, Object arg) {
 		RustItem item = modules.peek().enumeration(n);
 		transpiler.register(item);
@@ -68,21 +90,65 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	@Override
+	public void visit(MethodCallExpr n, Object arg) {
+		IRustFunction function = functions.peek();
+		if (function == null)
+			return; //TODO: handle lambdas
+		function.calls().addCallee(n);
+		super.visit(n, arg);
+	}
+
+	@Override
 	public void visit(MethodDeclaration n, Object arg) {
 		try {
 			RustMethod method = items.peek().method(n);
 			transpiler.register(method);
 			transpiler.registerName(method.id, method.name);
-			if (n.getBody().isPresent())
-				n.getBody().get().accept(new AnalyzerVisitor(transpiler, method), null);
+			functions.push(method);
+			super.visit(n, arg);
+			functions.pop();
 		} catch (Throwable e) {
 			System.err.println(e);
 			//TODO: push error method.
 		}
+	}
 
-		methods.push(n);
+	@Override
+	public void visit(NameExpr n, Object arg) {
+		if (!isMutableScope)
+			return;
+		//TODO: global name metadata? method signature + name
+		ResolvedValueDeclaration resolved = n.resolve();
+		if (resolved.isParameter()) {
+			RustParam param = functions.peek().params().java(n.getNameAsString());
+			if (param != null)
+				param.isMutable = true;
+		}
+		if (resolved.isField())
+			if (Objects.equals(items.peek().id(), resolved.asField().declaringType().getId()))
+				functions.peek().params().mutateSelf();
 		super.visit(n, arg);
-		methods.pop();
+	}
+
+	@Override
+	public void visit(ThisExpr n, Object arg) {
+		if (!isMutableScope)
+			return;
+		//TODO: handle type name
+		functions.peek().params().mutateSelf();
+		super.visit(n, arg);
+	}
+
+	@Override
+	public void visit(ThrowStmt n, Object arg) {
+		super.visit(n, arg);
+		IRustFunction method = functions.peek();
+		try {
+			ResolvedType ty = n.getExpression().calculateResolvedType();
+			method.thrown().add(ty);
+		} catch (Throwable e) {
+			System.err.println(e);
+		}
 	}
 
 	@Override
@@ -104,6 +170,13 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			.field(n.getNameAsString(), n.getType(), n.getInitializer().orElse(null));
 		String id = "%s.%s".formatted(items.peek().id(), n.getName());
 		transpiler.registerName(id, field.name);
+	}
+
+	@Override
+	public void visit(LambdaExpr n, Object arg) {
+		functions.push(null);
+		super.visit(n, arg);
+		functions.pop();
 	}
 
 	@Override

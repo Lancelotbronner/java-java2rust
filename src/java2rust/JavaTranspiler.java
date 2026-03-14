@@ -4,6 +4,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
@@ -20,6 +21,7 @@ import com.github.javaparser.utils.SourceZip;
 import java2rust.rust.*;
 import javaparser.SourceZipTypeSolver;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -41,7 +43,7 @@ public final class JavaTranspiler {
 	private final CombinedTypeSolver solvers = new CombinedTypeSolver();
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
-	private final Set<String> unknownNames = new HashSet<>();
+	private final Set<String> errors = new HashSet<>();
 	private final Map<String, RustMethod> methods = new HashMap<>();
 
 	public JavaTranspiler(File crate) {
@@ -125,11 +127,25 @@ public final class JavaTranspiler {
 	}
 
 	public @Nullable RustMethod method(@NotNull String qualifiedSignature) {
-		return methods.get(qualifiedSignature);
+		RustMethod m = methods.get(qualifiedSignature);
+		if (m == null && errors.add(qualifiedSignature))
+			System.err.printf("Unknown method (not registered) '%s'\n".formatted(qualifiedSignature));
+		return m;
 	}
 
-	public @Nullable RustMethod method(@NotNull ResolvedMethodDeclaration decl) {
-		return methods.get(decl.getQualifiedSignature());
+	public @Nullable RustMethod method(@NotNull ResolvedMethodDeclaration resolved) {
+		return methods.get(resolved.getQualifiedSignature());
+	}
+
+	public @NonNull RustMethod method(@NotNull MethodDeclaration decl) {
+		ResolvedMethodDeclaration resolved = decl.resolve();
+		String signature = resolved.getQualifiedSignature();
+		RustMethod method = methods.get(signature);
+		if (method == null) {
+			method = new RustMethod(null, decl, resolved);
+			methods.put(signature, method);
+		}
+		return method;
 	}
 
 	public void compile(Consumer<Task> onCompile) {
@@ -209,11 +225,11 @@ public final class JavaTranspiler {
 	private String describeViaId(@NotNull String id, Supplier<String> insert) {
 		if (names.get(id) instanceof String name)
 			return name;
-		//		String name = insert.get().replace(".", "::");
-		//		return names.put(id, name);
-		if (unknownNames.add(id))
+		if (errors.add(id))
 			System.err.printf("Unknown identifier (not related to type solving) '%s'%n", id);
-		return "/* Java */ %s /**/".formatted(id);
+//		String name = insert.get().replace(".", "::");
+//		return names.put(id, name);
+		return "/* Java */ %s /**/".formatted(id.replace(".", "::"));
 	}
 
 	private String describeViaId(@NotNull String id, String insert, UnaryOperator<String> convert) {

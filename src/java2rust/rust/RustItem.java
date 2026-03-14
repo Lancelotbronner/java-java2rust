@@ -1,5 +1,6 @@
 package java2rust.rust;
 
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
@@ -14,7 +15,7 @@ public abstract class RustItem {
 	public final String name;
 	public final RustPackage module;
 	public final RustVisibility visibility;
-	public final List<RustMethod> methods = new ArrayList<>();
+	public final List<IRustFunction> methods = new ArrayList<>();
 
 	protected RustItem(String name, RustPackage module, RustVisibility visibility) {
 		this.name = name;
@@ -23,7 +24,7 @@ public abstract class RustItem {
 	}
 
 	public void analyze(JavaTranspiler transpiler) {
-		for (RustMethod method : methods)
+		for (IRustFunction method : methods)
 			method.analyze(transpiler);
 	}
 
@@ -40,7 +41,13 @@ public abstract class RustItem {
 	}
 
 	public RustMethod method(MethodDeclaration java) {
-		RustMethod rust = new RustMethod(this, java);
+		RustMethod rust = new RustMethod(this, java, java.resolve());
+		methods.add(rust);
+		return rust;
+	}
+
+	public RustConstructor constructor(ConstructorDeclaration java) {
+		RustConstructor rust = new RustConstructor(this, java, java.resolve());
 		methods.add(rust);
 		return rust;
 	}

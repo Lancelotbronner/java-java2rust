@@ -41,6 +41,10 @@ public class RustPrinter {
 		indented = false;
 	}
 
+	public void deleteLast(int count) {
+		buf.delete(buf.length() - count, buf.length());
+	}
+
 	private void makeIndent() {
 		buf.append(String.valueOf(indentation).repeat(Math.max(0, level)));
 	}

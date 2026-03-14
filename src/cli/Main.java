@@ -87,6 +87,8 @@ public class Main implements Runnable {
 				System.err.printf("Failed to write: %s\n", e.getLocalizedMessage());
 			}
 		}
+
+		System.out.println("==> Done!");
 	}
 
 	void print(RustPackage mod) {

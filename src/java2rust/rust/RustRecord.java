@@ -56,7 +56,7 @@ public class RustRecord extends RustItem {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("#[derive(Debug, Hash, Eq, PartialEq)]");
+		sb.append("#[derive(Debug, Hash, Eq, PartialEq)]\n");
 		sb.append(visibility);
 		sb.append("struct ");
 		sb.append(name);
@@ -80,7 +80,7 @@ public class RustRecord extends RustItem {
 			"\n\nimpl%s %s {\n".formatted(typarams, name),
 			"}");
 		impl.setEmptyValue("");
-		for (RustMethod method : methods)
+		for (IRustFunction method : methods)
 			impl.add(method.toString());
 		sb.append(impl);
 

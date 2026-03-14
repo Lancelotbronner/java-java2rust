@@ -11,7 +11,7 @@ public record RustVisibility(@NonNull String in) {
 	}
 
 	@Override
-	public String toString() {
+	public @NonNull String toString() {
 		if (this == INFERRED)
 			return "";
 		if (this == PUB)

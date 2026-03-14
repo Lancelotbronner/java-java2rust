@@ -19,6 +19,7 @@ import org.apache.commons.lang3.Strings;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static com.github.javaparser.utils.Utils.isNullOrEmpty;
@@ -1042,8 +1043,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			isVoid = resolved.getReturnType().isVoid();
 
 			RustMethod method = this.transpiler.method(resolved);
-			if (method != null && !method.thrown.isEmpty())
-				thrown = method.thrown;
+			if (method != null && !method.thrown().isEmpty())
+				thrown = method.thrown();
 
 			if (n.getScope().isEmpty())
 				scope = resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self";
@@ -1924,10 +1925,11 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(TextBlockLiteralExpr n, Object arg) {
-		printer.startComment();
-		printer.print("TextBlockLiteralExpr");
-		printer.println(n.toString());
-		printer.endComment();
+		printer.println("r#\"");
+		List<String> lines = n.stripIndentOfLines().collect(Collectors.toList());
+		lines.removeLast();
+		lines.forEach(printer::println);
+		printer.print("\"#");
 	}
 
 	@Override
