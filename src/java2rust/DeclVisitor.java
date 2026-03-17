@@ -1,6 +1,7 @@
 package java2rust;
 
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.ThrowStmt;
@@ -10,6 +11,7 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import java2rust.rust.*;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Stack;
 
 public class DeclVisitor extends VoidVisitorAdapter<Object> {
@@ -67,7 +69,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			super.visit(n, arg);
 			functions.pop();
 		} catch (Throwable e) {
-			System.err.println(e);
+			System.err.printf("In ConstructorDeclaration: %s\n", e.getLocalizedMessage());
 			//TODO: push error method.
 		}
 	}
@@ -90,7 +92,29 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 	}
 
 	@Override
+	public void visit(InitializerDeclaration n, Object arg) {
+		try {
+			RustInitializer method = items.peek().initializer(n);
+			functions.push(method);
+			super.visit(n, arg);
+			functions.pop();
+		} catch (Throwable e) {
+			System.err.printf("In InitializerDeclaration: %s\n", e.getLocalizedMessage());
+			//TODO: push error method.
+		}
+	}
+
+	@Override
 	public void visit(MethodCallExpr n, Object arg) {
+		if (functions.isEmpty()) {
+			Optional<Node> n1 = n.getParentNode();
+			while (n1.isPresent() && !(n1.get() instanceof BodyDeclaration<?>))
+				n1 = n1.get().getParentNode();
+			System.err.printf(
+				"Unhandled method call context: %s\n",
+				n1.map(n2 -> n2.getMetaModel().getTypeName()).orElse("UNKNOWN"));
+			return;
+		}
 		IRustFunction function = functions.peek();
 		if (function == null)
 			return; //TODO: handle lambdas
@@ -108,7 +132,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			super.visit(n, arg);
 			functions.pop();
 		} catch (Throwable e) {
-			System.err.println(e);
+			System.err.printf("In MethodDeclaration: %s\n", e.getLocalizedMessage());
 			//TODO: push error method.
 		}
 	}
@@ -147,7 +171,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			ResolvedType ty = n.getExpression().calculateResolvedType();
 			method.thrown().add(ty);
 		} catch (Throwable e) {
-			System.err.println(e);
+			System.err.printf("In ThrowStmt: %s\n", e.getLocalizedMessage());
 		}
 	}
 

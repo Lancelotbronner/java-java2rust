@@ -15,11 +15,11 @@ import java.nio.file.Path;
 
 @CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
-	@Parameters(paramLabel = "<crate>", description = "the root of the crate to generate", index = "0")
-	private File crate;
+	@Parameters(paramLabel = "<output>", description = "The directory in which to generate Rust crates.", index = "0")
+	private File output;
 
-	@Parameters(paramLabel = "<java>", description = "Java files or directories to convert to Rust.", index = "1..")
-	private File[] input;
+	@Option(names = "--sources", description = "Java files or directories to convert to Rust crates.")
+	private File[] sources;
 
 	@Option(names = "--maven")
 	private String[] maven;
@@ -38,13 +38,21 @@ public class Main implements Runnable {
 		config.setLanguageLevel(languageLevel);
 		StaticJavaParser.setConfiguration(config);
 
-		JavaTranspiler transpiler = new JavaTranspiler(crate);
+		JavaTranspiler transpiler = new JavaTranspiler();
 		config.setSymbolResolver(transpiler.solver);
+
+		for (int i = 0; i < sources.length; i++) {
+			try {
+				sources[i] = sources[i].getCanonicalFile();
+			} catch (IOException e) {
+				System.err.printf("Failed to resolve sources: %s\n ", e);
+			}
+		}
 
 		boolean hasError = false;
 		for (String dep : maven) {
+			System.out.println("=> " + dep);
 			try {
-				System.out.println("=> " + dep);
 				transpiler.addMavenDependency(dep);
 			} catch (Exception e) {
 				System.err.println(e);
@@ -54,46 +62,27 @@ public class Main implements Runnable {
 		if (hasError)
 			return;
 
-		int files = 0;
-		for (File input : this.input) {
-			System.out.printf("=> %s\n", input.toString());
-			transpiler.addPackage(input);
-			System.out.printf("\t%s files added\n", transpiler.tasks.size() - files);
-			files = transpiler.tasks.size();
+		for (File sources : this.sources) {
+			System.out.printf("=> %s\n", sources);
+			transpiler.addSources(sources);
 		}
 
-		System.out.printf("==> Compiling %s Java files...\n", transpiler.tasks.size());
-		transpiler.compile(t -> System.out.printf("\t%s\n", t.relativePath));
+		System.out.printf("==> Processing %s Java files...\n", transpiler.crates.size());
+		transpiler.preanalyze();
 
-		long total = transpiler.numberOfTasksToAnalyze();
-		System.out.printf("==> Analyzing %s Java files...\n", total);
+		System.out.printf("==> Analyzing %s Java files...\n", transpiler.numberOfTasksToAnalyze());
 		transpiler.analyze();
 
-		/*
-		System.out.print("=> Printing analysis results\n");
-		print(transpiler.lib);
-		 */
-
-		Path outputPath = crate.toPath();
-
-		System.out.printf("==> Writing Rust files to %s...\n", crate);
-		transpiler.lib.generate(outputPath.resolve("current/src"));
-
+		System.out.printf("==> Generating '%s' crates...\n", transpiler.crates.size());
 		for (RustJar jar : transpiler.crates) {
-			System.out.printf("==> Generating '%s' crate...\n", jar.name);
+			System.out.printf("\t%s\n", jar.name);
 			try {
-				jar.generate(outputPath);
+				jar.generate(output.toPath());
 			} catch (IOException e) {
-				System.err.printf("Failed to write: %s\n", e.getLocalizedMessage());
+				System.err.printf("\tFailed to write: %s\n", e.getLocalizedMessage());
 			}
 		}
 
 		System.out.println("==> Done!");
-	}
-
-	void print(RustPackage mod) {
-		System.out.printf("==> %s\n%s", mod.path, mod);
-		for (RustPackage submodule : mod.submodules())
-			print(submodule);
 	}
 }

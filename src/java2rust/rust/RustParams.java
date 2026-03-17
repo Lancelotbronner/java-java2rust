@@ -4,11 +4,14 @@ import com.github.javaparser.ast.body.Parameter;
 import java2rust.JavaTranspiler;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class RustParams {
+	public static final RustParams EMPTY = new RustParams(null, Collections.emptyList());
+
 	private final List<RustParam> params;
 	public @Nullable RustSelf self;
 	private String cache;

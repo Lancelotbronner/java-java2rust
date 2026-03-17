@@ -1,6 +1,7 @@
 package java2rust.rust;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
@@ -48,6 +49,12 @@ public abstract class RustItem {
 
 	public RustConstructor constructor(ConstructorDeclaration java) {
 		RustConstructor rust = new RustConstructor(this, java, java.resolve());
+		methods.add(rust);
+		return rust;
+	}
+
+	public RustInitializer initializer(InitializerDeclaration java) {
+		RustInitializer rust = new RustInitializer(this, java);
 		methods.add(rust);
 		return rust;
 	}

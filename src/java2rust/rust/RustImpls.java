@@ -27,7 +27,11 @@ public class RustImpls {
 	}
 
 	public void analyze(ResolvedClassDeclaration decl, JavaTranspiler transpiler) {
-		analyze(decl.getAllInterfaces(), transpiler);
+		try {
+			analyze(decl.getAllInterfaces(), transpiler);
+		} catch (Throwable e) {
+			System.err.printf("In RustImpl analysis: %s\n", e.getLocalizedMessage());
+		}
 	}
 
 	private void analyze(
@@ -39,7 +43,7 @@ public class RustImpls {
 			try {
 				traits.add(transpiler.describe(i));
 			} catch (Throwable e) {
-				System.err.println(e);
+				System.err.printf("In RustImpl analysis: %s\n", e.getLocalizedMessage());
 				problems.add("%s".formatted(e.getMessage()));
 			}
 		}

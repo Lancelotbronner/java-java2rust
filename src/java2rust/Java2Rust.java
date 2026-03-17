@@ -6,19 +6,19 @@ import org.apache.commons.lang3.ArrayUtils;
 
 
 public class Java2Rust {
-	public static String test(String java) {
-		ParserConfiguration config = new ParserConfiguration();
-		config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
-		StaticJavaParser.setConfiguration(config);
-
-		JavaTranspiler transpiler = new JavaTranspiler("test");
-		config.setSymbolResolver(transpiler.solver);
-
-		transpiler.addCode("test.java", java);
-		transpiler.compile(_ -> {});
-		transpiler.analyze();
-		return transpiler.lib.toString();
-	}
+//	public static String test(String java) {
+//		ParserConfiguration config = new ParserConfiguration();
+//		config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
+//		StaticJavaParser.setConfiguration(config);
+//
+//		JavaTranspiler transpiler = new JavaTranspiler("test");
+//		config.setSymbolResolver(transpiler.solver);
+//
+//		transpiler.addCode("test.java", java);
+//		transpiler.compile(_ -> {});
+//		transpiler.analyze();
+//		return transpiler.lib.toString();
+//	}
 
 	/*
 	public static String convert(CompilationUnit unit, RustModule mod) {

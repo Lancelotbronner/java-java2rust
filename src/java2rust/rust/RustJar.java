@@ -6,6 +6,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceZip;
 import java2rust.DeclVisitor;
+import java2rust.JavaTranspiler;
 import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -57,12 +58,21 @@ public final class RustJar {
 			RustUnit unit = new RustUnit(RustJar.this, jar.getZipPath().resolve(relativeZipEntryPath), pkg, result);
 			RustJar.this.units.add(unit);
 		});
-		//TODO: figure out how to re-assign each unit to its correct RustPackage
 	}
 
 	//TODO: The transpiler will directly parse source Jars and Java files into CompilationUnit and go through DeclVisitor.
 	// Then the analysis can be made on the workspace as a whole.
 	// Then the Rust hierarchy will be written to files.
+
+	public void preanalyze(JavaTranspiler transpiler) {
+		for (RustUnit unit : units)
+			unit.preanalyze(transpiler);
+	}
+
+	public void analyze(JavaTranspiler transpiler) {
+		if (lib != null) lib.analyze(transpiler);
+		if (main != null) main.analyze(transpiler);
+	}
 
 	public void generate(Path path) throws IOException {
 		Path crate = path.resolve(name);

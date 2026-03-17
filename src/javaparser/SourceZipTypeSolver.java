@@ -46,8 +46,6 @@ public class SourceZipTypeSolver implements TypeSolver {
 	public final SourceZip sources;
 	public final List<Path> paths = new ArrayList<>();
 	public final HashMap<String, TypeDeclaration<?>> types = new HashMap<>();
-	private final JavaParserFacade facade;
-	private final Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
 	private String commonPrefix = "";
 	private TypeSolver parent;
 
@@ -57,16 +55,6 @@ public class SourceZipTypeSolver implements TypeSolver {
 
 	public SourceZipTypeSolver(SourceZip sources, int cacheSizeLimit) throws IOException {
 		this.sources = sources;
-		foundTypes = BuildCache(cacheSizeLimit);
-		facade = JavaParserFacade.get(this);
-	}
-
-	private <TKey, TValue> Cache<TKey, TValue> BuildCache(long cacheSizeLimit) {
-		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
-		if (cacheSizeLimit != CACHE_SIZE_UNSET) {
-			cacheBuilder.maximumSize(cacheSizeLimit);
-		}
-		return new GuavaCache<>(cacheBuilder.build());
 	}
 
 	@Override
@@ -93,27 +81,6 @@ public class SourceZipTypeSolver implements TypeSolver {
 
 	@Override
 	public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-		Optional<SymbolReference<ResolvedReferenceTypeDeclaration>> cachedValue = foundTypes.get(
-			name);
-		if (cachedValue.isPresent()) {
-			return cachedValue.get();
-		}
-
-		// Otherwise load it
-		SymbolReference<ResolvedReferenceTypeDeclaration> result = tryToSolveTypeUncached(name);
-		foundTypes.put(name, result);
-		return result;
-	}
-
-	@Override
-	public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveTypeInModule(
-		String qualifiedModuleName,
-		String simpleTypeName
-	) {
-		return tryToSolveType(qualifiedModuleName + "." + simpleTypeName);
-	}
-
-	private SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveTypeUncached(String name) {
 		parseIfNecessary();
 		if (!name.startsWith(commonPrefix))
 			return SymbolReference.unsolved();
@@ -122,7 +89,15 @@ public class SourceZipTypeSolver implements TypeSolver {
 		if (td == null)
 			return SymbolReference.unsolved();
 
-		return SymbolReference.solved(facade.getTypeDeclaration(td));
+		return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(td));
+	}
+
+	@Override
+	public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveTypeInModule(
+		String qualifiedModuleName,
+		String simpleTypeName
+	) {
+		return tryToSolveType(qualifiedModuleName + "." + simpleTypeName);
 	}
 
 	public void parseIfNecessary() {

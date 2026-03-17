@@ -1,9 +1,6 @@
 package java2rust;
 
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
@@ -30,35 +27,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public final class JavaTranspiler {
 	public final List<RustJar> crates = new ArrayList<>();
-	public final RustPackage lib;
-	public final File output;
 	public final JavaSymbolSolver solver;
-	public final HashMap<String, Task> tasks = new HashMap<>();
 	private final CombinedTypeSolver solvers = new CombinedTypeSolver();
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
 	private final Set<String> errors = new HashSet<>();
 	private final Map<String, RustMethod> methods = new HashMap<>();
 
-	public JavaTranspiler(File crate) {
-		this.output = new File(crate, "src");
-		this.lib = RustPackage.lib(Java2Rust.camelCaseToSnakeCase(FilenameUtils.removeExtension(
-			crate.getName())));
+	public JavaTranspiler() {
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.setExceptionHandler(CombinedTypeSolver.ExceptionHandlers.IGNORE_ALL);
-		solvers.add(new ReflectionTypeSolver(false));
-	}
-
-	public JavaTranspiler(String lib) {
-		this.output = null;
-		this.lib = RustPackage.lib(lib);
-		this.solver = new JavaSymbolSolver(solvers);
 		solvers.add(new ReflectionTypeSolver());
 	}
 
@@ -109,17 +92,22 @@ public final class JavaTranspiler {
 		crates.add(jar);
 	}
 
-	public void addPackage(File input) {
-		//TODO: create RustJar and add units individually
-		if (directories.contains(input))
+	public void addSources(File input) {
+		File src = input.toPath().resolve("src").toFile();
+		RustPackage lib = RustPackage.lib(FilenameUtils.removeExtension(input.getName()));
+		RustJar jar = new RustJar(
+			input.getAbsolutePath(),
+			input.getName(),
+			src.toPath(),
+			lib,
+			null);
+		addJar(jar);
+		if (directories.contains(src))
 			return;
-		if (!addItem(input, input, lib))
+		if (!addItem(src, src, jar, lib))
 			return;
-		solvers.add(new JavaParserTypeSolver(input));
-	}
-
-	public void addCode(String filename, String java) {
-		tasks.put(filename, new Task(filename, java, lib));
+		solvers.add(new JavaParserTypeSolver(src));
+		System.out.printf("\tParsed %s source files%n", jar.units.size());
 	}
 
 	public void register(RustMethod method) {
@@ -148,21 +136,23 @@ public final class JavaTranspiler {
 		return method;
 	}
 
-	public void compile(Consumer<Task> onCompile) {
-		for (Task task : tasks.values()) {
-			onCompile.accept(task);
-			task.compile();
-			if (task.unit != null)
-				new DeclVisitor(this, task.module).visit(task.unit, null);
-		}
+	public long numberOfTasksToAnalyze() {
+		return this.crates.size();
 	}
 
-	public long numberOfTasksToAnalyze() {
-		return tasks.values().stream().filter(t -> t.unit != null).count();
+	public void preanalyze() {
+		for (RustJar jar : crates)
+			jar.preanalyze(this);
 	}
 
 	public void analyze() {
-		lib.analyze(this);
+		for (RustJar jar : crates)
+			jar.analyze(this);
+	}
+
+	public void generate(Path output) throws IOException {
+		for (RustJar jar : crates)
+			jar.generate(output);
 	}
 
 	public void register(RustItem item) {
@@ -185,7 +175,7 @@ public final class JavaTranspiler {
 			if (ty != null)
 				return describe(ty);
 		} catch (Throwable e) {
-			System.err.println(e);
+			System.err.printf("Couldn't describe type: %s\n", e.getLocalizedMessage());
 			return "/* %s */ %s".formatted(e.getMessage(), type);
 		}
 		return "/* Java */ %s".formatted(type);
@@ -227,8 +217,8 @@ public final class JavaTranspiler {
 			return name;
 		if (errors.add(id))
 			System.err.printf("Unknown identifier (not related to type solving) '%s'%n", id);
-//		String name = insert.get().replace(".", "::");
-//		return names.put(id, name);
+		//		String name = insert.get().replace(".", "::");
+		//		return names.put(id, name);
 		return "/* Java */ %s /**/".formatted(id.replace(".", "::"));
 	}
 
@@ -257,75 +247,24 @@ public final class JavaTranspiler {
 		return visitor.toString();
 	}
 
-	public void generate(
-		Consumer<Task> onProcess,
-		Consumer<Problem> onProblem,
-		Consumer<Throwable> onError
-	) {
-		for (Task task : tasks.values()) {
-			onProcess.accept(task);
-			String code = generate(task, onProblem, onError);
-
-			try {
-				Files.createDirectories(task.output.getParentFile().toPath());
-				Files.writeString(task.output.toPath(), code);
-			} catch (IOException e) {
-				onError.accept(e);
-			}
-		}
-	}
-
-	private String generate(Task task, Consumer<Problem> onProblem, Consumer<Throwable> onError) {
-		String code;
-
-		if (task.problem != null) {
-			StringBuilder sb = new StringBuilder("/*\n");
-
-			for (Problem problem : task.problem.getProblems()) {
-				sb.append("FIXME: ");
-				sb.append(problem.getVerboseMessage());
-				sb.append('\n');
-				onProblem.accept(problem);
-			}
-
-			sb.append("*/\n");
-			code = sb.toString();
-		} else {
-			try {
-				if (task.exception != null)
-					throw task.exception;
-				//				code = Java2Rust.convert(task.unit, task.module);
-				code = "TODO";
-			} catch (Throwable e) {
-				code = "/*\nFIXME: %s\n*/\n".formatted(e.toString());
-				onError.accept(e);
-			}
-		}
-
-		return code;
-	}
-
-	public String generate(String path) {
-		Task task = tasks.get(path);
-		if (task == null)
-			return null;
-		return generate(task, _ -> {}, _ -> {});
-	}
-
-	private boolean addSubItem(File input, File root, RustPackage parentModule) {
+	private boolean addSubItem(File input, File root, RustJar jar, RustPackage parentModule) {
 		String moduleName = FilenameUtils.removeExtension(input.getName());
 		RustPackage module = parentModule.submodule(moduleName, RustVisibility.PUB);
-		boolean added = addItem(input, root, module);
+		boolean added = addItem(input, root, jar, module);
 		if (!added)
 			module.delete();
 		return added;
 	}
 
-	private boolean addItem(File input, File root, RustPackage module) {
+	private boolean addItem(File input, File root, RustJar jar, RustPackage module) {
 		File[] children = input.listFiles();
 		if (children == null) {
 			if (input.getPath().endsWith(".java")) {
-				tasks.put(input.getAbsolutePath(), new Task(input, root, output, module));
+				try {
+					jar.add(input.toPath(), module);
+				} catch (IOException e) {
+					System.err.printf("Couldn't add unit to jar: %s\n", e);
+				}
 				return true;
 			}
 			return false;
@@ -333,57 +272,10 @@ public final class JavaTranspiler {
 
 		boolean containsSource = false;
 		for (File file : children)
-			if (addSubItem(file, root, module))
+			if (addSubItem(file, root, jar, module))
 				containsSource = true;
 		if (containsSource)
 			directories.add(input);
 		return true;
-	}
-
-	public static final class Task {
-		public final File input;
-		public final String code;
-		public final File output;
-		public final RustPackage module;
-		public final Path relativePath;
-		public CompilationUnit unit;
-		public Throwable exception;
-		public ParseProblemException problem;
-
-		Task(File input, File root, File output, RustPackage mod) {
-			this.input = input;
-			this.code = null;
-
-			module = mod;
-			relativePath = root.toPath().relativize(input.toPath());
-
-			Path outputPath = Path.of(
-				output.toString(),
-				relativePath.getParent().toString(),
-				"src",
-				module.name + ".rs");
-			this.output = new File(outputPath.toString());
-		}
-
-		Task(String filename, String java, RustPackage module) {
-			this.input = null;
-			this.output = null;
-			this.relativePath = Path.of(filename);
-			this.code = java;
-			this.module = module;
-		}
-
-		void compile() {
-			try {
-				if (input != null)
-					unit = StaticJavaParser.parse(input);
-				else if (code != null)
-					unit = StaticJavaParser.parse(code);
-			} catch (ParseProblemException e) {
-				problem = e;
-			} catch (Throwable e) {
-				exception = e;
-			}
-		}
 	}
 }

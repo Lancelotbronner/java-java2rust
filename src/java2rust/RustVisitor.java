@@ -819,8 +819,6 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				String id = "%s.%s".formatted(ty.asReferenceType().getId(), n.getNameAsString());
 				name = transpiler.nameOf(id, name);
 			}
-		} catch (UnsupportedOperationException e) {
-			System.err.println(e.getMessage());
 		} catch (UnsolvedSymbolException _) {
 			// Assume it's a local type instead
 			try {
@@ -828,10 +826,10 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				access = "::";
 				name = transpiler.nameOf(scope.describe() + "." + name, name);
 			} catch (Throwable e) {
-				System.err.println(e);
+				System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
 			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (Throwable e) {
+			System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
 		}
 
 		printer.print(access + name);
@@ -1048,8 +1046,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 			if (n.getScope().isEmpty())
 				scope = resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self";
-		} catch (UnsolvedSymbolException e) {
-			System.err.println(e.getMessage());
+		} catch (Throwable e) {
+			System.err.printf("In MethodCallExpr: %s\n", e.getLocalizedMessage());
 		}
 
 		if (isWithinTry && thrown != null)
@@ -1520,14 +1518,14 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		}
 		printer.println("break %s Ok(());".formatted(label));
 		printer.unindent();
-		printer.println("}");
+		printer.println("};");
 
 		if (n.getCatchClauses() != null) {
 			printer.println("match %s {".formatted(result));
 			printer.indent();
 			for (final CatchClause c : n.getCatchClauses()) {
-				printer.print("Err(");
-				c.getParameter().accept(this, arg);
+				printer.print("Err(e @ ");
+				c.getParameter().getType().accept(this, arg);
 				printer.print(") => ");
 				c.getBody().accept(this, arg);
 				printer.println(",");
@@ -1706,9 +1704,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		printJavaComment(n.getComment().orElse(null), arg);
 
 		List<Parameter> parameters = n.getParameters();
-		boolean printPar = false;
-		printPar = n.isEnclosingParameters();
+		boolean printPar = n.isEnclosingParameters();
 
+		printer.print("|");
 		if (printPar) {
 			printer.print("(");
 		}
@@ -1724,12 +1722,12 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		if (printPar) {
 			printer.print(")");
 		}
+		printer.print("|");
 
-		printer.print(" -> ");
 		Statement body = n.getBody();
-		if (body instanceof ExpressionStmt) {
+		if (body instanceof ExpressionStmt stmt) {
 			// Print the expression directly
-			((ExpressionStmt) body).getExpression().accept(this, arg);
+			stmt.getExpression().accept(this, arg);
 		} else {
 			body.accept(this, arg);
 		}

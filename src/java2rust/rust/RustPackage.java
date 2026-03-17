@@ -164,7 +164,6 @@ public final class RustPackage extends RustItem {
 			file = dir.resolve("mod.rs");
 		}
 
-		System.out.printf("\tWriting %s to %s%n", id(), file);
 		try {
 			Files.createDirectories(dir);
 			Files.writeString(file, toString());
