@@ -12,14 +12,17 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import java2rust.rust.IRustFunction;
+import java2rust.rust.RustClass;
+import java2rust.rust.RustItem;
 import java2rust.rust.RustMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.github.javaparser.utils.PositionUtils.sortByBeginPosition;
 import static com.github.javaparser.utils.Utils.isNullOrEmpty;
@@ -30,6 +33,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	private final RustPrinter printer = new RustPrinter("\t");
 	private final Stack<String> tryBlock = new Stack<>();
 	private boolean isVarDeclStmt = true;
+	public @Nullable RustItem item;
+	public @Nullable IRustFunction method;
 
 	public RustVisitor(
 		JavaTranspiler transpiler
@@ -826,10 +831,16 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				access = "::";
 				name = transpiler.nameOf(scope.describe() + "." + name, name);
 			} catch (Throwable e) {
-				System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
+				if (e.getLocalizedMessage() != null)
+					System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
+				else
+					System.err.printf("In FieldAccessExpr: %s\n", e);
 			}
 		} catch (Throwable e) {
-			System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
+			if (e.getLocalizedMessage() != null)
+				System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
+			else
+				System.err.printf("In FieldAccessExpr: %s\n", e);
 		}
 
 		printer.print(access + name);
@@ -1163,6 +1174,17 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final NameExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
+
+		if (item != null) {
+			try {
+				ResolvedValueDeclaration resolved = n.resolve();
+				if (resolved.isField())
+					if (Objects.equals(item.id(), resolved.asField().declaringType().getId()))
+						printer.print("self.");
+			} catch (Throwable t) {
+				// ignore
+			}
+		}
 
 		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(

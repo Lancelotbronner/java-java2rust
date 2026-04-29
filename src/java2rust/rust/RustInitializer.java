@@ -37,6 +37,9 @@ public class RustInitializer implements IRustFunction {
 	}
 
 	@Override
+	public RustItem item() { return item; }
+
+	@Override
 	public RustParams params() {
 		return RustParams.EMPTY;
 	}

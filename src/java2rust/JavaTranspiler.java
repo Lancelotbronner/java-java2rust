@@ -239,10 +239,13 @@ public final class JavaTranspiler {
 		return visitor.toString();
 	}
 
-	public String describe(Statement stmt) {
+	public String describe(Statement stmt, @Nullable IRustFunction method) {
 		if (stmt == null)
 			return "";
 		RustVisitor visitor = new RustVisitor(this);
+		visitor.method = method;
+		if (method != null)
+			visitor.item = method.item();
 		stmt.accept(visitor, null);
 		return visitor.toString();
 	}

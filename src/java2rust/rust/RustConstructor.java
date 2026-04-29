@@ -44,6 +44,9 @@ public class RustConstructor implements IRustFunction {
 	}
 
 	@Override
+	public RustItem item() { return item; }
+
+	@Override
 	public RustParams params() {
 		return params;
 	}
@@ -69,7 +72,7 @@ public class RustConstructor implements IRustFunction {
 		String successType = transpiler.describe(resolved.declaringType());
 		returnType = " -> %s ".formatted(successType);
 		//TODO: body should start with `let mut self = MyType {}` and end with `self`
-		body = transpiler.describe(java.getBody());
+		body = transpiler.describe(java.getBody(), this);
 		for (ReferenceType ty : java.getThrownExceptions())
 			thrown.add(ty.resolve());
 		if (!thrown.isEmpty()) {

@@ -2,6 +2,7 @@ package java2rust.rust;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
+import java2rust.Java2Rust;
 import java2rust.JavaTranspiler;
 import org.jspecify.annotations.Nullable;
 
@@ -13,7 +14,7 @@ public class RustField {
 	public String rustInitializer;
 
 	RustField(String name, Type javaType, @Nullable Expression javaInitializer) {
-		this.name = name;
+		this.name = Java2Rust.camelCaseToSnakeCase(name);
 		this.javaType = javaType;
 		this.javaInitializer = javaInitializer;
 	}

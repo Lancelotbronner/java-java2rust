@@ -186,7 +186,7 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			return;
 		}
 		if (fields.peek().isStatic()) {
-			//TODO: add as member
+			//TODO: add as impl member
 			return;
 		}
 		RustField field = items

@@ -46,7 +46,7 @@ public class RustMethod implements IRustFunction {
 		String successType = transpiler.describe(java.getType());
 		returnType = java.getType().isVoidType() ? " " : " -> %s ".formatted(successType);
 		if (java.getBody().isPresent())
-			body = transpiler.describe(java.getBody().orElse(null));
+			body = transpiler.describe(java.getBody().orElse(null), this);
 		else
 			body = ";";
 		for (ReferenceType ty : java.getThrownExceptions())
@@ -64,6 +64,9 @@ public class RustMethod implements IRustFunction {
 	public String toString() {
 		return visibility + "fn " + name + typarams + params + returnType + body;
 	}
+
+	@Override
+	public RustItem item() { return item; }
 
 	@Override
 	public RustParams params() {

@@ -6,6 +6,7 @@ import java2rust.JavaTranspiler;
 import java.util.Set;
 
 public interface IRustFunction {
+	RustItem item();
 	RustParams params();
 	RustCalls calls();
 	Set<ResolvedType> thrown();
