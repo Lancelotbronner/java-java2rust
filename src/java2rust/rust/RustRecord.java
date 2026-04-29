@@ -80,6 +80,8 @@ public class RustRecord extends RustItem {
 			"\n\nimpl%s %s {\n".formatted(typarams, name),
 			"}");
 		impl.setEmptyValue("");
+		for (RustStatic field : statics)
+			impl.add("\t" + field.toString().replace("\n", "\n\t"));
 		for (IRustFunction method : methods)
 			impl.add(method.toString());
 		sb.append(impl);

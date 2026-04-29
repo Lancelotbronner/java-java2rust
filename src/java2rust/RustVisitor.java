@@ -12,8 +12,9 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserParameterDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserVariableDeclaration;
 import java2rust.rust.IRustFunction;
-import java2rust.rust.RustClass;
 import java2rust.rust.RustItem;
 import java2rust.rust.RustMethod;
 import org.apache.commons.lang3.StringUtils;
@@ -32,9 +33,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public final JavaTranspiler transpiler;
 	private final RustPrinter printer = new RustPrinter("\t");
 	private final Stack<String> tryBlock = new Stack<>();
-	private boolean isVarDeclStmt = true;
 	public @Nullable RustItem item;
 	public @Nullable IRustFunction method;
+	private boolean isVarDeclStmt = true;
 
 	public RustVisitor(
 		JavaTranspiler transpiler
@@ -200,115 +201,57 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public void visit(final AssignExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
 		n.getTarget().accept(this, arg);
-		printer.print(" ");
-		switch (n.getOperator()) {
-		case ASSIGN:
-			printer.print("=");
-			break;
-		case BINARY_AND:
-			printer.print("&=");
-			break;
-		case BINARY_OR:
-			printer.print("|=");
-			break;
-		case XOR:
-			printer.print("^=");
-			break;
-		case PLUS:
-			printer.print("+=");
-			break;
-		case MINUS:
-			printer.print("-=");
-			break;
-		case REMAINDER:
-			printer.print("%=");
-			break;
-		case DIVIDE:
-			printer.print("/=");
-			break;
-		case MULTIPLY:
-			printer.print("*=");
-			break;
-		case LEFT_SHIFT:
-			printer.print("<<=");
-			break;
-		case SIGNED_RIGHT_SHIFT:
-			printer.print(">>=");
-			break;
-		case UNSIGNED_RIGHT_SHIFT:
-			printer.print(">>= /* >>>= */");
-			break;
-		}
-		printer.print(" ");
+		printer.print(" %s ".formatted(descriptionOf(n.getOperator())));
 		n.getValue().accept(this, arg);
+	}
+
+	private static String descriptionOf(AssignExpr.Operator op) {
+		return switch (op) {
+			case ASSIGN -> "=";
+			case BINARY_AND -> "&=";
+			case BINARY_OR -> "|=";
+			case XOR -> "^=";
+			case PLUS -> "+=";
+			case MINUS -> "-=";
+			case REMAINDER -> "%=";
+			case DIVIDE -> "/=";
+			case MULTIPLY -> "*=";
+			case LEFT_SHIFT -> "<<=";
+			case SIGNED_RIGHT_SHIFT -> "/* signed */ >>=";
+			case UNSIGNED_RIGHT_SHIFT -> "/* unsigned */ >>=";
+		};
 	}
 
 	@Override
 	public void visit(final BinaryExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
 		n.getLeft().accept(this, arg);
-		printer.print(" ");
-		switch (n.getOperator()) {
-		case OR:
-			printer.print("||");
-			break;
-		case AND:
-			printer.print("&&");
-			break;
-		case BINARY_OR:
-			printer.print("|");
-			break;
-		case BINARY_AND:
-			printer.print("&");
-			break;
-		case XOR:
-			printer.print("^");
-			break;
-		case EQUALS:
-			printer.print("==");
-			break;
-		case NOT_EQUALS:
-			printer.print("!=");
-			break;
-		case LESS:
-			printer.print("<");
-			break;
-		case GREATER:
-			printer.print(">");
-			break;
-		case LESS_EQUALS:
-			printer.print("<=");
-			break;
-		case GREATER_EQUALS:
-			printer.print(">=");
-			break;
-		case LEFT_SHIFT:
-			printer.print("<<");
-			break;
-		case SIGNED_RIGHT_SHIFT:
-			printer.print(">>");
-			break;
-		case UNSIGNED_RIGHT_SHIFT:
-			printer.print(">> /* >>> */");
-			break;
-		case PLUS:
-			printer.print("+");
-			break;
-		case MINUS:
-			printer.print("-");
-			break;
-		case MULTIPLY:
-			printer.print("*");
-			break;
-		case DIVIDE:
-			printer.print("/");
-			break;
-		case REMAINDER:
-			printer.print("%");
-			break;
-		}
-		printer.print(" ");
+		printer.print(" %s ".formatted(descriptionOf(n.getOperator())));
 		n.getRight().accept(this, arg);
+	}
+
+	private static String descriptionOf(BinaryExpr.Operator op) {
+		return switch (op) {
+			case OR -> "||";
+			case AND -> "&&";
+			case BINARY_OR -> "|";
+			case BINARY_AND -> "&";
+			case XOR -> "^";
+			case EQUALS -> "==";
+			case NOT_EQUALS -> "!=";
+			case LESS -> "<";
+			case GREATER -> ">";
+			case LESS_EQUALS -> "<=";
+			case GREATER_EQUALS -> ">=";
+			case LEFT_SHIFT -> "<<";
+			case SIGNED_RIGHT_SHIFT -> "/* signed */ >>";
+			case UNSIGNED_RIGHT_SHIFT -> "/* unsigned */ >>";
+			case PLUS -> "+";
+			case MINUS -> "-";
+			case MULTIPLY -> "*";
+			case DIVIDE -> "/";
+			case REMAINDER -> "%";
+		};
 	}
 
 	@Override
@@ -367,7 +310,6 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		n.getParameter().accept(this, arg);
 		printer.print(") ");
 		n.getBody().accept(this, arg);
-
 	}
 
 	@Override
@@ -683,9 +625,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public void visit(final EnclosedExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
 		printer.print("(");
-		if (n.getInner() != null) {
+		if (n.getInner() != null)
 			n.getInner().accept(this, arg);
-		}
 		printer.print(")");
 	}
 
@@ -832,9 +773,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 				name = transpiler.nameOf(scope.describe() + "." + name, name);
 			} catch (Throwable e) {
 				if (e.getLocalizedMessage() != null)
-					System.err.printf("In FieldAccessExpr: %s\n", e.getLocalizedMessage());
+					System.err.printf("In unsolved FieldAccessExpr: %s\n", e.getLocalizedMessage());
 				else
-					System.err.printf("In FieldAccessExpr: %s\n", e);
+					System.err.printf("In unsolved FieldAccessExpr: %s\n", e);
 			}
 		} catch (Throwable e) {
 			if (e.getLocalizedMessage() != null)
@@ -1175,16 +1116,21 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public void visit(final NameExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
 
-		if (item != null) {
-			try {
-				ResolvedValueDeclaration resolved = n.resolve();
-				if (resolved.isField())
-					if (Objects.equals(item.id(), resolved.asField().declaringType().getId()))
-						printer.print("self.");
-			} catch (Throwable t) {
-				// ignore
+		try {
+			ResolvedValueDeclaration resolved = n.resolve();
+			if (resolved.isField() && item != null) {
+				if (Objects.equals(item.id(), resolved.asField().declaringType().getId()))
+					printer.print("self.");
+			} else if (resolved instanceof JavaParserParameterDeclaration) {} else if (resolved instanceof JavaParserVariableDeclaration) {} else {
+				System.err.printf("In NameExpr: unknown resolved value: %s\n", resolved.getType());
 			}
+		} catch (Throwable t) {
+			if (t.getLocalizedMessage() != null)
+				System.err.printf("In NameExpr: %s\n", t.getLocalizedMessage());
+			else
+				System.err.printf("In NameExpr: %s\n", t);
 		}
+
 
 		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
@@ -1275,36 +1221,23 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		n.getType().accept(this, arg);
 	}
 
+	public static String descriptionOf(PrimitiveType.Primitive primitive) {
+		return switch (primitive) {
+			case BOOLEAN -> "bool";
+			case BYTE -> "i8";
+			case CHAR -> "char";
+			case DOUBLE -> "f64";
+			case FLOAT -> "f32";
+			case INT -> "i32";
+			case LONG -> "i64";
+			case SHORT -> "i16";
+		};
+	}
+
 	@Override
 	public void visit(final PrimitiveType n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
-
-		switch (n.getType()) {
-		case BOOLEAN:
-			printer.print("bool");
-			break;
-		case BYTE:
-			printer.print("i8");
-			break;
-		case CHAR:
-			printer.print("char");
-			break;
-		case DOUBLE:
-			printer.print("f64");
-			break;
-		case FLOAT:
-			printer.print("f32");
-			break;
-		case INT:
-			printer.print("i32");
-			break;
-		case LONG:
-			printer.print("i64");
-			break;
-		case SHORT:
-			printer.print("i16");
-			break;
-		}
+		printer.print(descriptionOf(n.getType()));
 	}
 
 	@Override

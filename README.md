@@ -6,6 +6,8 @@ The forked code serves only as a reminder for features to implement, it isn't ca
 ## Features
 
 - Converts Java names to Rust
+  - *currently no handling for reserved names*
+  - *currently no overload handling*
 - Converts classes, records and their local variants to structs
   - Parameters either take a primitive by value or a Java class by reference
   - Promotes to `const` when possible
@@ -14,10 +16,17 @@ The forked code serves only as a reminder for features to implement, it isn't ca
   - *currently no analysis for `mut` parameters*
   - *currently no analysis for `&mut` parameter types*
 - Converts statements and expressions to Rust
+  - Automatic `self.` for field access
   - *some support for simple `try-catch` statements*
   - *currently no analysis for `mut` locals*
-  - Automatic `self.`
+  - *currently no distinction between `>>` and `>>>`*
 - Support for specifying maven dependencies in order to improve analysis
+
+## Roadmap
+
+- Assign `RustPackage` to their `RustJar`, allowing imports to track the crate
+- Generate a `Cargo.toml` workspace containing all generated crates
+- Ensure all printed types use the full path
 
 ## Usage
 

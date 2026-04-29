@@ -7,6 +7,7 @@ import java2rust.JavaTranspiler;
 import org.jspecify.annotations.Nullable;
 
 public class RustField {
+	//TODO: modifiers
 	public final String name;
 	public final Type javaType;
 	public final @Nullable Expression javaInitializer;

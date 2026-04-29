@@ -88,6 +88,11 @@ public final class RustPackage extends RustItem {
 		return item;
 	}
 
+//	public <T extends RustItem> item(T item) {
+//		items.add(item);
+//		return item;
+//	}
+
 	/// Declares and returns a new record.
 	public RustRecord record(
 		String name,
@@ -135,6 +140,8 @@ public final class RustPackage extends RustItem {
 		super.analyze(transpiler);
 		for (RustItem item : items)
 			item.analyze(transpiler);
+		for (RustImport imp : imports)
+			imp.analyze(transpiler);
 		for (RustPackage mod : subpackages)
 			mod.analyze(transpiler);
 	}
@@ -182,6 +189,12 @@ public final class RustPackage extends RustItem {
 		if (!subpackages.isEmpty()) {
 			for (RustPackage submodule : subpackages)
 				sb.append("%smod %s;\n".formatted(submodule.visibility, submodule.name));
+		}
+
+		if (!imports.isEmpty()) {
+			for (RustImport imp : imports)
+				sb.append("%s\n".formatted(imp.toString()));
+			sb.append("\n");
 		}
 
 		if (!items.isEmpty()) {

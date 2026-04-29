@@ -1,8 +1,6 @@
 package java2rust.rust;
 
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.InitializerDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
 import java2rust.JavaTranspiler;
@@ -17,6 +15,7 @@ public abstract class RustItem {
 	public final RustPackage module;
 	public final RustVisibility visibility;
 	public final List<IRustFunction> methods = new ArrayList<>();
+	public final List<RustStatic> statics = new ArrayList<>();
 
 	protected RustItem(String name, RustPackage module, RustVisibility visibility) {
 		this.name = name;
@@ -25,6 +24,8 @@ public abstract class RustItem {
 	}
 
 	public void analyze(JavaTranspiler transpiler) {
+		for (RustStatic field : statics)
+			field.analyze(transpiler);
 		for (IRustFunction method : methods)
 			method.analyze(transpiler);
 	}
@@ -39,6 +40,12 @@ public abstract class RustItem {
 
 	public RustField field(String name, Type type, @Nullable Expression initializer) {
 		return null;
+	}
+
+	public RustStatic staticField(FieldDeclaration field, VariableDeclarator declarator) {
+		RustStatic tmp = new RustStatic(this, field, declarator);
+		statics.add(tmp);
+		return tmp;
 	}
 
 	public RustMethod method(MethodDeclaration java) {

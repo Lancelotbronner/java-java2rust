@@ -16,7 +16,7 @@ public final class RustImport {
 
 	public void analyze(JavaTranspiler transpiler) {
 		// TODO: resolve names, start from root qualifier and resolve using lib
-		path = java.getNameAsString();
+		path = java.getNameAsString().replace(".", "::");
 	}
 
 	@Override

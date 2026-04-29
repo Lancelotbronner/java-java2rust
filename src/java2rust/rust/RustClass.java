@@ -79,6 +79,8 @@ public class RustClass extends RustItem {
 			"\n\nimpl%s %s {\n".formatted(typarams, name),
 			"\n}");
 		impl.setEmptyValue("");
+		for (RustStatic field : statics)
+			impl.add("\t" + field.toString().replace("\n", "\n\t"));
 		for (IRustFunction method : methods)
 			impl.add("\t" + method.toString().replace("\n", "\n\t"));
 		sb.append(impl);
