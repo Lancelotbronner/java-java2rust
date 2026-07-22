@@ -3,12 +3,11 @@ package java2rust;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.type.ReferenceType;
-import com.github.javaparser.resolution.Navigator;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
-import java2rust.rust.*;
+import java2rust.rust.RustJar;
+import java2rust.rust.RustUnit;
 
 import java.util.HashMap;
 
@@ -35,7 +34,8 @@ public final class TranspilerTypeSolver implements TypeSolver {
 	@Override
 	public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
 		SymbolReference<ResolvedReferenceTypeDeclaration> result = types.get(name);
-		if (result == null) return UNSOLVED;
+		if (result == null)
+			return UNSOLVED;
 		return result;
 	}
 

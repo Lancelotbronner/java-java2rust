@@ -4,21 +4,27 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import org.apache.commons.lang3.ArrayUtils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class Java2Rust {
-//	public static String test(String java) {
-//		ParserConfiguration config = new ParserConfiguration();
-//		config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
-//		StaticJavaParser.setConfiguration(config);
-//
-//		JavaTranspiler transpiler = new JavaTranspiler("test");
-//		config.setSymbolResolver(transpiler.solver);
-//
-//		transpiler.addCode("test.java", java);
-//		transpiler.compile(_ -> {});
-//		transpiler.analyze();
-//		return transpiler.lib.toString();
-//	}
+	public static String test(String java) {
+		JavaTranspiler transpiler = new JavaTranspiler();
+
+		ParserConfiguration config = new ParserConfiguration();
+		config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
+		config.setSymbolResolver(transpiler.solver);
+		StaticJavaParser.setConfiguration(config);
+
+		transpiler.addSourceCode("test.java", java);
+		transpiler.preanalyze();
+		transpiler.analyze();
+		return transpiler.crates.getFirst().lib.toString().trim();
+	}
+
+	public static void assertConversion(String java, String rust) {
+		assertEquals(rust.trim(), test(java).trim());
+	}
 
 	/*
 	public static String convert(CompilationUnit unit, RustModule mod) {

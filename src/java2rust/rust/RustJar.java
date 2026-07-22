@@ -79,6 +79,17 @@ public final class RustJar {
 		if (main != null) main.analyze(transpiler);
 	}
 
+	public String cargo() {
+		return """
+		[package]
+		name = "%s"
+		version = "0.1.0"
+		edition = "2024"
+		
+		[dependencies]
+		""".formatted(name);
+	}
+
 	public void generate(Path path) throws IOException {
 		Path crate = path.resolve(name);
 		Path src = crate.resolve("src");
@@ -88,15 +99,7 @@ public final class RustJar {
 		if (main != null)
 			main.generate(src);
 
-		String cargo = """
-		[package]
-		name = "%s"
-		version = "0.1.0"
-		edition = "2024"
-		
-		[dependencies]
-		""".formatted(name);
 		//TODO: version, metadata, dependencies, etc.
-		Files.writeString(crate.resolve("Cargo.toml"), cargo);
+		Files.writeString(crate.resolve("Cargo.toml"), cargo());
 	}
 }
