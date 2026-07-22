@@ -56,11 +56,11 @@ public class RustTyParams {
 		for (Pair<String, String> param : this.params) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(param.a);
-			if (param.b.isEmpty())
-				continue;
-			sb.append(": ");
-			sb.append(param.b);
-			params.add(sb);
+			if (!param.b.isEmpty()) {
+				sb.append(": ");
+				sb.append(param.b);
+			}
+			params.add(sb.toString());
 		}
 		return params.toString();
 	}

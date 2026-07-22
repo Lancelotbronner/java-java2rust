@@ -137,7 +137,7 @@ public class DeclarationsTest {
 	public void canConvertInterfaceWithImplements() {
 		Java2Rust.assertConversion(
 			"interface B {}; class A implements B { }", """
-				trait B {}
+				trait B;
 				
 				struct A;
 				
@@ -149,6 +149,10 @@ public class DeclarationsTest {
 	public void canConvertClassWithMultipleImplementations() {
 		Java2Rust.assertConversion(
 			"interface B {}; interface C {}; class A implements B, C { }", """
+				trait B;
+				
+				trait C;
+				
 				struct A;
 				
 				impl B for A {}
@@ -168,7 +172,8 @@ public class DeclarationsTest {
 					x: i32 = 10,
 				}
 				
-				struct B extends A {
+				struct B {
+					base: A,
 					y: i32 = 20,
 				}
 				""");
