@@ -43,6 +43,11 @@ public final class RustJar {
 		units.add(new RustUnit(this, pkg, path));
 	}
 
+	public void addSourceCode(Path path, RustPackage pkg, String code) {
+		JavaParser parser = new JavaParser(StaticJavaParser.getParserConfiguration());
+		units.add(new RustUnit(this, path, pkg, parser.parse(code)));
+	}
+
 	/// Parses a source jar, creating units for each source file within.
 	public RustJar(String id, String name, SourceZip jar) throws IOException {
 		this.id = id;

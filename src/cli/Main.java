@@ -4,14 +4,12 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import java2rust.JavaTranspiler;
 import java2rust.rust.RustJar;
-import java2rust.rust.RustPackage;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 @CommandLine.Command(name = "java2rust", version = "java2rust 1.0", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
@@ -64,7 +62,7 @@ public class Main implements Runnable {
 
 		for (File sources : this.sources) {
 			System.out.printf("=> %s\n", sources);
-			transpiler.addSources(sources);
+			transpiler.addSourceDirectory(sources);
 		}
 
 		System.out.printf("==> Processing %s Java files...\n", transpiler.crates.size());

@@ -34,6 +34,7 @@ public final class JavaTranspiler {
 	public final List<RustJar> crates = new ArrayList<>();
 	public final JavaSymbolSolver solver;
 	private final CombinedTypeSolver solvers = new CombinedTypeSolver();
+	private final TranspilerTypeSolver externalTypeSolver;
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
 	private final Set<String> errors = new HashSet<>();
@@ -43,6 +44,8 @@ public final class JavaTranspiler {
 		this.solver = new JavaSymbolSolver(solvers);
 		solvers.setExceptionHandler(CombinedTypeSolver.ExceptionHandlers.IGNORE_ALL);
 		solvers.add(new ReflectionTypeSolver());
+		externalTypeSolver = new TranspilerTypeSolver(this);
+		solvers.add(externalTypeSolver);
 	}
 
 	public void addMavenDependency(String maven) throws Exception {
@@ -92,7 +95,7 @@ public final class JavaTranspiler {
 		crates.add(jar);
 	}
 
-	public void addSources(File input) {
+	public void addSourceDirectory(File input) {
 		File src = input.toPath().resolve("src").toFile();
 		RustPackage lib = RustPackage.lib(FilenameUtils.removeExtension(input.getName()));
 		RustJar jar = new RustJar(
@@ -106,8 +109,16 @@ public final class JavaTranspiler {
 			return;
 		if (!addItem(src, src, jar, lib))
 			return;
-		solvers.add(new JavaParserTypeSolver(src));
 		System.out.printf("\tParsed %s source files%n", jar.units.size());
+	}
+
+	public void addSourceCode(String filename, String code) {
+		if (crates.isEmpty()) {
+			RustPackage lib = RustPackage.lib("test");
+			crates.add(new RustJar("test", "test", Path.of("test"), lib, null));
+		}
+		RustJar jar = crates.getFirst();
+		jar.addSourceCode(Path.of(filename), jar.lib, code);
 	}
 
 	public void register(RustMethod method) {
@@ -141,6 +152,7 @@ public final class JavaTranspiler {
 	}
 
 	public void preanalyze() {
+		externalTypeSolver.reload();
 		for (RustJar jar : crates)
 			jar.preanalyze(this);
 	}

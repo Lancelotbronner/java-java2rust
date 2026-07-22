@@ -60,6 +60,10 @@ public final class RustPackage extends RustItem {
 		return items;
 	}
 
+	public String qualifiedName() {
+		return StringUtils.join(ancestors().skip(1).map(RustPackage::use).toList().reversed(), ".");
+	}
+
 	/// Creates and returns a directory new submodule.
 	public RustPackage submodule(String name, RustVisibility visibility) {
 		Optional<RustPackage> existing = subpackages
