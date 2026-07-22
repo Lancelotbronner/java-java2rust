@@ -47,7 +47,7 @@ public final class JavaTranspiler {
 
 	public void addMavenDependency(String maven) throws Exception {
 		String[] components = maven.split(":", 4);
-		if (components.length == 4)
+		if (components.length != 3)
 			throw new Exception("Invalid maven dependency string '" + maven + "'");
 		String[] path = components[0].split("\\.");
 		Path resolved = Paths

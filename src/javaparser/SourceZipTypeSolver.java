@@ -21,6 +21,7 @@
 
 package javaparser;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.cache.Cache;
@@ -49,12 +50,13 @@ public class SourceZipTypeSolver implements TypeSolver {
 	private String commonPrefix = "";
 	private TypeSolver parent;
 
-	public SourceZipTypeSolver(SourceZip sources) throws IOException {
+	public SourceZipTypeSolver(SourceZip sources) {
 		this(sources, CACHE_SIZE_UNSET);
 	}
 
-	public SourceZipTypeSolver(SourceZip sources, int cacheSizeLimit) throws IOException {
+	public SourceZipTypeSolver(SourceZip sources, int cacheSizeLimit) {
 		this.sources = sources;
+		parseIfNecessary();
 	}
 
 	@Override
@@ -81,7 +83,6 @@ public class SourceZipTypeSolver implements TypeSolver {
 
 	@Override
 	public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-		parseIfNecessary();
 		if (!name.startsWith(commonPrefix))
 			return SymbolReference.unsolved();
 
@@ -109,7 +110,7 @@ public class SourceZipTypeSolver implements TypeSolver {
 				if (result.getResult().isEmpty())
 					return;
 				for (TypeDeclaration<?> td : result.getResult().get().getTypes())
-					types.put(td.getFullyQualifiedName().orElse(td.getNameAsString()), td);
+					accept(td);
 			});
 			commonPrefix = StringUtils.getCommonPrefix(types.keySet().toArray(new String[0]));
 		} catch (IOException e) {
@@ -117,5 +118,11 @@ public class SourceZipTypeSolver implements TypeSolver {
 				"Issue while parsing while type solving: " + sources.getZipPath().toAbsolutePath(),
 				e);
 		}
+	}
+
+	private void accept(Node node) {
+		if (node instanceof TypeDeclaration<?> td)
+			types.put(td.getFullyQualifiedName().orElse(td.getNameAsString()), td);
+		node.getChildNodes().forEach(this::accept);
 	}
 }

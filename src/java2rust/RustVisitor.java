@@ -12,8 +12,11 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumConstantDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserFieldDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserParameterDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserVariableDeclaration;
+import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionEnumConstantDeclaration;
 import java2rust.rust.IRustFunction;
 import java2rust.rust.RustItem;
 import java2rust.rust.RustMethod;
@@ -1115,22 +1118,44 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final NameExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
+		String name = toSnakeIfNecessary(n.getNameAsString());
+		boolean error = false;
 
 		try {
 			ResolvedValueDeclaration resolved = n.resolve();
 			if (resolved.isField() && item != null) {
-				if (Objects.equals(item.id(), resolved.asField().declaringType().getId()))
+				if (Objects.equals(item.id(), resolved.asField().declaringType().getId())) {
 					printer.print("self.");
-			} else if (resolved instanceof JavaParserParameterDeclaration) {} else if (resolved instanceof JavaParserVariableDeclaration) {} else {
+					printer.print(name);
+				}
+			} else if (resolved instanceof JavaParserEnumConstantDeclaration || resolved instanceof ReflectionEnumConstantDeclaration) {
+				//TODO: Print the type access first?
+				printer.print(n.getNameAsString());
+			} else if (resolved instanceof JavaParserParameterDeclaration || resolved instanceof JavaParserVariableDeclaration || resolved instanceof JavaParserFieldDeclaration) {
+				printer.print(name);
+			} else {
 				System.err.printf("In NameExpr: unknown resolved value: %s\n", resolved.getType());
+				error = true;
 			}
+		} catch (UnsolvedSymbolException e) {
+			//TODO: Check that this name actually resolves to a type first
+			printer.print(n.getNameAsString());
 		} catch (Throwable t) {
 			if (t.getLocalizedMessage() != null)
 				System.err.printf("In NameExpr: %s\n", t.getLocalizedMessage());
 			else
 				System.err.printf("In NameExpr: %s\n", t);
+			error = true;
 		}
 
+		if (error) {
+			printer.startComment();
+			printer.print("Java");
+			printer.endComment();
+			printer.print(name);
+			printer.startComment();
+			printer.endComment();
+		}
 
 		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
@@ -1142,7 +1167,6 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			printer.print("self.");
 		}
 		*/
-		printer.print(toSnakeIfNecessary(n.getName().asString()));
 
 		printOrphanCommentsEnding(n);
 	}

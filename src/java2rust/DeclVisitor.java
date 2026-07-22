@@ -6,6 +6,7 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import java2rust.rust.*;
@@ -110,9 +111,14 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 			Optional<Node> n1 = n.getParentNode();
 			while (n1.isPresent() && !(n1.get() instanceof BodyDeclaration<?>))
 				n1 = n1.get().getParentNode();
-			System.err.printf(
-				"Unhandled method call context: %s\n",
-				n1.map(n2 -> n2.getMetaModel().getTypeName()).orElse("UNKNOWN"));
+			if (n1.isEmpty())
+				System.err.printf("Unhandled method call context: <none>\n");
+			else if (n1.get() instanceof EnumConstantDeclaration decl)
+				return; //TODO: Handle enum constant decls
+			else
+				System.err.printf(
+					"Unhandled method call context: %s\n",
+					n1.map(n2 -> n2.getMetaModel().getTypeName()).orElse("UNKNOWN"));
 			return;
 		}
 		IRustFunction function = functions.peek();
@@ -142,15 +148,19 @@ public class DeclVisitor extends VoidVisitorAdapter<Object> {
 		if (!isMutableScope)
 			return;
 		//TODO: global name metadata? method signature + name
-		ResolvedValueDeclaration resolved = n.resolve();
-		if (resolved.isParameter()) {
-			RustParam param = functions.peek().params().java(n.getNameAsString());
-			if (param != null)
-				param.isMutable = true;
+		try {
+			ResolvedValueDeclaration resolved = n.resolve();
+			if (resolved.isParameter()) {
+				RustParam param = functions.peek().params().java(n.getNameAsString());
+				if (param != null)
+					param.isMutable = true;
+			}
+			if (resolved.isField())
+				if (Objects.equals(items.peek().id(), resolved.asField().declaringType().getId()))
+					functions.peek().params().mutateSelf();
+		} catch (UnsolvedSymbolException _) {
+			//TODO: This name is a type name, like Optional in Optional.map
 		}
-		if (resolved.isField())
-			if (Objects.equals(items.peek().id(), resolved.asField().declaringType().getId()))
-				functions.peek().params().mutateSelf();
 		super.visit(n, arg);
 	}
 

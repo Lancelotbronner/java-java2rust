@@ -2,6 +2,7 @@ package java2rust;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RustPrinter {
 	private final String indentation;
@@ -46,7 +47,7 @@ public class RustPrinter {
 	}
 
 	private void makeIndent() {
-		buf.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+		buf.repeat(Objects.requireNonNull(String.valueOf(indentation)), Math.max(0, level));
 	}
 
 	public void startComment() {
