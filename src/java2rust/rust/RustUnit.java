@@ -36,6 +36,14 @@ public final class RustUnit {
 		java.getResult().get().accept(new DeclVisitor(transpiler, pkg), null);
 	}
 
+	public boolean isSuccessful() {
+		return java.isSuccessful();
+	}
+
+	public boolean hasProblems() {
+		return !java.isSuccessful();
+	}
+
 	@Override
 	public String toString() {
 		StringJoiner problems = new StringJoiner("\n");

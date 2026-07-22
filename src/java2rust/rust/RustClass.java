@@ -55,24 +55,22 @@ public class RustClass extends RustItem {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-
 		sb.append(visibility);
 		sb.append("struct ");
 		sb.append(name);
 		sb.append(typarams);
 
-		if (fields.isEmpty()) {
+		if (fields.isEmpty())
 			sb.append(';');
-			return sb.toString();
+		else {
+			sb.append(" {\n");
+			for (RustField field : fields) {
+				sb.append('\t');
+				sb.append(field);
+				sb.append(",\n");
+			}
+			sb.append('}');
 		}
-
-		sb.append(" {\n");
-		for (RustField field : fields) {
-			sb.append('\t');
-			sb.append(field);
-			sb.append(",\n");
-		}
-		sb.append('}');
 
 		StringJoiner impl = new StringJoiner(
 			"\n\n",

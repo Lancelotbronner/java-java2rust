@@ -121,6 +121,15 @@ public final class JavaTranspiler {
 		jar.addSourceCode(Path.of(filename), jar.lib, code);
 	}
 
+	public void addScript(String filename, String code) {
+		if (crates.isEmpty()) {
+			RustPackage lib = RustPackage.lib("test");
+			crates.add(new RustJar("test", "test", Path.of("test"), lib, null));
+		}
+		RustJar jar = crates.getFirst();
+		jar.addSourceCode(Path.of(filename), jar.lib, code);
+	}
+
 	public void register(RustMethod method) {
 		methods.put(method.resolved.getQualifiedSignature(), method);
 	}

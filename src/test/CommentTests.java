@@ -65,6 +65,19 @@ public class CommentTests {
 
 	@Test
 	public void caseTest() {
-		assertEquals("glfw_error_capture", Java2Rust.camelCaseToSnakeCase("GLFWErrorCapture"));
+		Java2Rust.assertConversion(
+			"""
+				public class C {
+					public void glfwErrorCapture() {
+					}
+				}
+				""", """
+                pub struct C {}
+                
+                impl C {
+                    fn glfw_error_capture(&self) {
+                    }
+                }
+                """);
 	}
 }

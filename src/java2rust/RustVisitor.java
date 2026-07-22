@@ -849,7 +849,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 		}
 
 		encapsulateIfNotBlock(n.getBody(), arg);
-		printer.println("");
+		printer.println();
 		if (n.getUpdate() != null && !n.getUpdate().isEmpty()) {
 			for (final Expression e : n.getUpdate()) {
 				e.accept(this, arg);
