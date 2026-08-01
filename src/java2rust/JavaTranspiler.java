@@ -3,6 +3,7 @@ package java2rust;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.quality.NotNull;
@@ -12,7 +13,6 @@ import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.SourceZip;
 import java2rust.rust.*;
@@ -33,8 +33,8 @@ import java.util.function.UnaryOperator;
 public final class JavaTranspiler {
 	public final List<RustJar> crates = new ArrayList<>();
 	public final JavaSymbolSolver solver;
+	public final TranspilerTypeSolver externalTypeSolver;
 	private final CombinedTypeSolver solvers = new CombinedTypeSolver();
-	private final TranspilerTypeSolver externalTypeSolver;
 	private final Set<File> directories = new HashSet<>();
 	private final HashMap<String, String> names = new HashMap<>();
 	private final Set<String> errors = new HashSet<>();
@@ -46,6 +46,21 @@ public final class JavaTranspiler {
 		solvers.add(new ReflectionTypeSolver());
 		externalTypeSolver = new TranspilerTypeSolver(this);
 		solvers.add(externalTypeSolver);
+	}
+
+	public @Nullable RustPackage locate(Name name) {
+		while (true) {
+			for (RustJar crate : crates) {
+				String path = name.asString();
+				RustPackage pkg = crate.lib.locate(path);
+				if (pkg != null)
+					return pkg;
+			}
+			Optional<Name> qualifier = name.getQualifier();
+			if (qualifier.isEmpty())
+				return null;
+			name = qualifier.get();
+		}
 	}
 
 	public void addMavenDependency(String maven) throws Exception {
@@ -86,7 +101,7 @@ public final class JavaTranspiler {
 		System.out.printf("\tParsed %s source files%n", solver.paths.size());
 		System.out.printf("\tRegistered %s types%n", solver.types.size());
 
-		RustJar jar = new RustJar(id, name, zip);
+		RustJar jar = RustJar.sources(id, name, zip);
 		addJar(jar);
 	}
 
@@ -97,35 +112,29 @@ public final class JavaTranspiler {
 
 	public void addSourceDirectory(File input) {
 		File src = input.toPath().resolve("src").toFile();
-		RustPackage lib = RustPackage.lib(FilenameUtils.removeExtension(input.getName()));
 		RustJar jar = new RustJar(
 			input.getAbsolutePath(),
-			input.getName(),
-			src.toPath(),
-			lib,
-			null);
+			FilenameUtils.removeExtension(input.getName()),
+			src.toPath());
 		addJar(jar);
 		if (directories.contains(src))
 			return;
-		if (!addItem(src, src, jar, lib))
+		if (!addItem(src, src, jar, jar.lib))
 			return;
 		System.out.printf("\tParsed %s source files%n", jar.units.size());
 	}
 
 	public void addSourceCode(String filename, String code) {
 		if (crates.isEmpty()) {
-			RustPackage lib = RustPackage.lib("test");
-			crates.add(new RustJar("test", "test", Path.of("test"), lib, null));
+			crates.add(new RustJar("test", "test", Path.of("test")));
 		}
 		RustJar jar = crates.getFirst();
 		jar.addSourceCode(Path.of(filename), jar.lib, code);
 	}
 
 	public void addScript(String filename, String code) {
-		if (crates.isEmpty()) {
-			RustPackage lib = RustPackage.lib("test");
-			crates.add(new RustJar("test", "test", Path.of("test"), lib, null));
-		}
+		if (crates.isEmpty())
+			crates.add(new RustJar("test", "test", Path.of("test")));
 		RustJar jar = crates.getFirst();
 		jar.addSourceCode(Path.of(filename), jar.lib, code);
 	}
@@ -162,6 +171,7 @@ public final class JavaTranspiler {
 
 	public void preanalyze() {
 		externalTypeSolver.reload();
+		//TODO: Also build id-to-module cache? for import resolution
 		for (RustJar jar : crates)
 			jar.preanalyze(this);
 	}
@@ -169,6 +179,7 @@ public final class JavaTranspiler {
 	public void analyze() {
 		for (RustJar jar : crates)
 			jar.analyze(this);
+		//TODO: infer dependencies between crates?
 	}
 
 	public void generate(Path output) throws IOException {

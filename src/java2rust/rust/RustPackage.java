@@ -18,19 +18,39 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public final class RustPackage extends RustItem {
+	public final String id;
 	public final String path;
+	public final RustJar crate;
 	private final List<RustImport> imports = new ArrayList<>();
 	private final List<RustPackage> subpackages = new ArrayList<>();
 	private final List<RustItem> items = new ArrayList<>();
 
-	RustPackage(String name, RustPackage module, RustVisibility visibility) {
+	RustPackage(String name, RustPackage module, RustVisibility visibility, RustJar crate) {
 		super(name, module, visibility);
-		path = StringUtils.join(ancestors().map(RustPackage::use).toList().reversed(), "::");
+		this.crate = crate;
+		List<String> tmp = ancestorsWithoutTop().map(RustPackage::use).toList().reversed();
+		id = StringUtils.join(tmp, ".");
+		path = StringUtils.join(tmp, "::");
+	}
+
+	public boolean isEmpty() {
+		return items.isEmpty() && subpackages.isEmpty();
 	}
 
 	/// Returns a stream that iterates through parent modules starting at the current module.
 	public Stream<RustPackage> ancestors() {
 		return Stream.iterate(this, Objects::nonNull, m -> m.module);
+	}
+
+	private RustPackage moduleIfNotTop() {
+		if (module == null)
+			return null;
+		return module.module == null ? null : module;
+	}
+
+	/// Returns a stream that iterates through parent modules starting at the current module.
+	public Stream<RustPackage> ancestorsWithoutTop() {
+		return Stream.iterate(this, Objects::nonNull, RustPackage::moduleIfNotTop);
 	}
 
 	public String use() {
@@ -40,8 +60,15 @@ public final class RustPackage extends RustItem {
 			return name;
 	}
 
-	public static RustPackage lib(@NonNull String name) {
-		return new RustPackage(Java2Rust.camelCaseToSnakeCase(name), null, RustVisibility.INFERRED);
+	public @Nullable RustPackage locate(@NonNull String path) {
+		if (path.equals(this.id))
+			return this;
+		for (RustPackage sub : subpackages) {
+			RustPackage pkg = sub.locate(path);
+			if (pkg != null)
+				return pkg;
+		}
+		return null;
 	}
 
 	public void delete() {
@@ -72,14 +99,22 @@ public final class RustPackage extends RustItem {
 			.findFirst();
 		if (existing.isPresent())
 			return existing.get();
-		RustPackage mod = new RustPackage(Java2Rust.camelCaseToSnakeCase(name), this, visibility);
+		RustPackage mod = new RustPackage(
+			Java2Rust.camelCaseToSnakeCase(name),
+			this,
+			visibility,
+			crate);
 		subpackages.add(mod);
 		return mod;
 	}
 
 	/// Creates and returns a local module.
 	public RustPackage mod(String name, RustVisibility visibility) {
-		RustPackage mod = new RustPackage(Java2Rust.camelCaseToSnakeCase(name), this, visibility);
+		RustPackage mod = new RustPackage(
+			Java2Rust.camelCaseToSnakeCase(name),
+			this,
+			visibility,
+			crate);
 		items.add(mod);
 		return mod;
 	}
@@ -92,10 +127,10 @@ public final class RustPackage extends RustItem {
 		return item;
 	}
 
-//	public <T extends RustItem> item(T item) {
-//		items.add(item);
-//		return item;
-//	}
+	//	public <T extends RustItem> item(T item) {
+	//		items.add(item);
+	//		return item;
+	//	}
 
 	/// Declares and returns a new record.
 	public RustRecord record(
@@ -197,7 +232,7 @@ public final class RustPackage extends RustItem {
 
 		if (!imports.isEmpty()) {
 			for (RustImport imp : imports)
-				sb.append("%s\n".formatted(imp.toString()));
+				sb.append("%s\n".formatted(imp.toString(crate)));
 			sb.append("\n");
 		}
 
