@@ -11,5 +11,5 @@ public interface IRustFunction {
 	RustCalls calls();
 	Set<ResolvedType> thrown();
 
-	void analyze(JavaTranspiler transpiler);
+	void analyze(JavaTranspiler transpiler, RustItem item);
 }

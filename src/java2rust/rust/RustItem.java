@@ -26,9 +26,9 @@ public abstract class RustItem {
 
 	public void analyze(JavaTranspiler transpiler) {
 		for (RustStatic field : statics)
-			field.analyze(transpiler);
+			field.analyze(transpiler, this);
 		for (IRustFunction method : methods)
-			method.analyze(transpiler);
+			method.analyze(transpiler, this);
 	}
 
 	public abstract String id();

@@ -35,7 +35,7 @@ public class RustMethod implements IRustFunction {
 		params = new RustParams(RustSelf.REF, java.getParameters());
 	}
 
-	public void analyze(JavaTranspiler transpiler) {
+	public void analyze(JavaTranspiler transpiler, RustItem item) {
 		typarams.analyze(resolved, transpiler);
 		params.analyze(transpiler);
 		calls.analyze(transpiler);

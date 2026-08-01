@@ -54,7 +54,7 @@ public class RustInitializer implements IRustFunction {
 		return thrown;
 	}
 
-	public void analyze(JavaTranspiler transpiler) {
+	public void analyze(JavaTranspiler transpiler, RustItem item) {
 		calls.analyze(transpiler);
 		// Assign all thrown errors
 		for (IRustFunction callee : calls.callees)

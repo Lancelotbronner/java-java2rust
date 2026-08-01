@@ -61,7 +61,7 @@ public class RustConstructor implements IRustFunction {
 		return thrown;
 	}
 
-	public void analyze(JavaTranspiler transpiler) {
+	public void analyze(JavaTranspiler transpiler, RustItem item) {
 		typarams.analyze(resolved, transpiler);
 		params.analyze(transpiler);
 		calls.analyze(transpiler);

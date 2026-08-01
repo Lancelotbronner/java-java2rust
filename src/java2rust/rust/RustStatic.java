@@ -27,7 +27,7 @@ public class RustStatic {
 		id = resolved.declaringType().getId() + "." + declarator.getNameAsString();
 	}
 
-	public void analyze(JavaTranspiler transpiler) {
+	public void analyze(JavaTranspiler transpiler, RustItem item) {
 		this.rustType = transpiler.describe(resolved.getType());
 		if (java.getInitializer().isPresent())
 			this.rustInitializer = transpiler.describe(java.getInitializer().get());

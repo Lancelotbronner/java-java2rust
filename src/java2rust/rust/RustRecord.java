@@ -31,7 +31,7 @@ public class RustRecord extends RustItem {
 	public void analyze(JavaTranspiler transpiler) {
 		super.analyze(transpiler);
 		for (RustField field : fields)
-			field.analyze(transpiler);
+			field.analyze(transpiler, this);
 		typarams.analyze(decl, transpiler);
 		impls.analyze(decl, transpiler);
 	}

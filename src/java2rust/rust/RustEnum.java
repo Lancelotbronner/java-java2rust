@@ -26,7 +26,7 @@ public class RustEnum extends RustItem {
 	public void analyze(JavaTranspiler transpiler) {
 		super.analyze(transpiler);
 		for (RustField field : fields)
-			field.analyze(transpiler);
+			field.analyze(transpiler, this);
 	}
 
 	@Override
