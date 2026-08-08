@@ -109,9 +109,9 @@ impl ToStringStyle {
 		if array == null {
 			self.append_null_text(buffer, field_name);
 		} else if self.is_full_detail(full_detail) {
-			self.append_detail(buffer, field_name, array);
+			.appendDetail(buffer, field_name, array);
 		} else {
-			self.append_summary(buffer, field_name, array);
+			.appendSummary(buffer, field_name, array);
 		}
 		self.append_field_end(buffer, field_name);
 	}
@@ -127,9 +127,9 @@ impl ToStringStyle {
 		if array == null {
 			self.append_null_text(buffer, field_name);
 		} else if self.is_full_detail(full_detail) {
-			self.append_detail(buffer, field_name, array);
+			.appendDetail(buffer, field_name, array);
 		} else {
-			.appendSummary(buffer, field_name, array);
+			self.append_summary(buffer, field_name, array);
 		}
 		self.append_field_end(buffer, field_name);
 	}
@@ -163,7 +163,7 @@ impl ToStringStyle {
 		if array == null {
 			self.append_null_text(buffer, field_name);
 		} else if self.is_full_detail(full_detail) {
-			self.append_detail(buffer, field_name, array);
+			.appendDetail(buffer, field_name, array);
 		} else {
 			self.append_summary(buffer, field_name, array);
 		}
@@ -183,7 +183,7 @@ impl ToStringStyle {
 		} else if self.is_full_detail(full_detail) {
 			self.append_detail(buffer, field_name, array);
 		} else {
-			.appendSummary(buffer, field_name, array);
+			self.append_summary(buffer, field_name, array);
 		}
 		self.append_field_end(buffer, field_name);
 	}
@@ -199,9 +199,9 @@ impl ToStringStyle {
 		if array == null {
 			self.append_null_text(buffer, field_name);
 		} else if self.is_full_detail(full_detail) {
-			self.append_detail(buffer, field_name, array);
+			.appendDetail(buffer, field_name, array);
 		} else {
-			.appendSummary(buffer, field_name, array);
+			self.append_summary(buffer, field_name, array);
 		}
 		self.append_field_end(buffer, field_name);
 	}
@@ -241,7 +241,7 @@ impl ToStringStyle {
 		} else if self.is_full_detail(full_detail) {
 			.appendDetail(buffer, field_name, array);
 		} else {
-			self.append_summary(buffer, field_name, array);
+			.appendSummary(buffer, field_name, array);
 		}
 		self.append_field_end(buffer, field_name);
 	}
@@ -537,13 +537,13 @@ impl ToStringStyle {
 				if detail {
 					self.append_detail(buffer, field_name, value as Vec<i64>);
 				} else {
-					self.append_summary(buffer, field_name, value as Vec<i64>);
+					.appendSummary(buffer, field_name, value as Vec<i64>);
 				}
 			} else if value instanceof Vec<i32> {
 				if detail {
 					self.append_detail(buffer, field_name, value as Vec<i32>);
 				} else {
-					.appendSummary(buffer, field_name, value as Vec<i32>);
+					self.append_summary(buffer, field_name, value as Vec<i32>);
 				}
 			} else if value instanceof Vec<i16> {
 				if detail {
@@ -553,7 +553,7 @@ impl ToStringStyle {
 				}
 			} else if value instanceof Vec<i8> {
 				if detail {
-					self.append_detail(buffer, field_name, value as Vec<i8>);
+					.appendDetail(buffer, field_name, value as Vec<i8>);
 				} else {
 					.appendSummary(buffer, field_name, value as Vec<i8>);
 				}
@@ -573,7 +573,7 @@ impl ToStringStyle {
 				if detail {
 					self.append_detail(buffer, field_name, value as Vec<f32>);
 				} else {
-					self.append_summary(buffer, field_name, value as Vec<f32>);
+					.appendSummary(buffer, field_name, value as Vec<f32>);
 				}
 			} else if value instanceof Vec<bool> {
 				if detail {
@@ -1032,7 +1032,7 @@ impl JsonToStringStyle {
 		self.append_detail(buffer, field_name, value_as_string);
 	}
 
-	fn append_field_start(&self, buffer: &/* Java */ java::lang::StringBuffer /**/, field_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.UnsupportedOperationException | java.io.UncheckedIOException) */ {
+	fn append_field_start(&self, buffer: &/* Java */ java::lang::StringBuffer /**/, field_name: &/* Java */ java::lang::String /**/) /* thrown(java.io.UncheckedIOException | java.lang.UnsupportedOperationException) */ {
 		self.check_field_name(field_name)?;
 		super.append_field_start(buffer, self.FIELD_NAME_QUOTE + StringEscapeUtils::escape_json(field_name)? + self.FIELD_NAME_QUOTE);
 	}

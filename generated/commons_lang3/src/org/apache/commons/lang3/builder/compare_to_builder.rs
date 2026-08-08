@@ -470,15 +470,15 @@ impl CompareToBuilder {
 	fn append_array(&self, lhs: &/* Java */ java::lang::Object /**/, rhs: &/* Java */ java::lang::Object /**/, comparator: &/* Java */ java::util::Comparator /**/) {
 		// throws a ClassCastException if rhs is not the correct array type
 		if lhs instanceof Vec<i64> {
-			.append(lhs as Vec<i64>, rhs as Vec<i64>);
+			self.append(lhs as Vec<i64>, rhs as Vec<i64>);
 		} else if lhs instanceof Vec<i32> {
 			.append(lhs as Vec<i32>, rhs as Vec<i32>);
 		} else if lhs instanceof Vec<i16> {
-			self.append(lhs as Vec<i16>, rhs as Vec<i16>);
+			.append(lhs as Vec<i16>, rhs as Vec<i16>);
 		} else if lhs instanceof Vec<char> {
 			.append(lhs as Vec<char>, rhs as Vec<char>);
 		} else if lhs instanceof Vec<i8> {
-			self.append(lhs as Vec<i8>, rhs as Vec<i8>);
+			.append(lhs as Vec<i8>, rhs as Vec<i8>);
 		} else if lhs instanceof Vec<f64> {
 			self.append(lhs as Vec<f64>, rhs as Vec<f64>);
 		} else if lhs instanceof Vec<f32> {

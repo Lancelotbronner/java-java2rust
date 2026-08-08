@@ -33,7 +33,7 @@ impl MultilineRecursiveToStringStyle {
 	fn append_detail(&mut self, buffer: &/* Java */ java::lang::StringBuffer /**/, field_name: &/* Java */ java::lang::String /**/, array: &&[u16]) {
 		self.spaces += self.INDENT;
 		self.reset_indent();
-		super.appendDetail(buffer, field_name, array);
+		super.append_detail(buffer, field_name, array);
 		self.spaces -= self.INDENT;
 		self.reset_indent();
 	}
@@ -57,7 +57,7 @@ impl MultilineRecursiveToStringStyle {
 	fn append_detail(&mut self, buffer: &/* Java */ java::lang::StringBuffer /**/, field_name: &/* Java */ java::lang::String /**/, array: &&[i32]) {
 		self.spaces += self.INDENT;
 		self.reset_indent();
-		super.append_detail(buffer, field_name, array);
+		super.appendDetail(buffer, field_name, array);
 		self.spaces -= self.INDENT;
 		self.reset_indent();
 	}
@@ -93,7 +93,7 @@ impl MultilineRecursiveToStringStyle {
 	fn append_detail(&mut self, buffer: &/* Java */ java::lang::StringBuffer /**/, field_name: &/* Java */ java::lang::String /**/, array: &&[i16]) {
 		self.spaces += self.INDENT;
 		self.reset_indent();
-		super.append_detail(buffer, field_name, array);
+		super.appendDetail(buffer, field_name, array);
 		self.spaces -= self.INDENT;
 		self.reset_indent();
 	}

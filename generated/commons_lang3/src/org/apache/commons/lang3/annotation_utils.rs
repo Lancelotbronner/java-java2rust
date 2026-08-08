@@ -162,7 +162,7 @@ impl AnnotationUtils {
 		return true;
 	}
 
-	pub fn hash_code(&self, a: &/* Java */ java::lang::annotation::Annotation /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.lang.IllegalStateException) */ -> i32 {
+	pub fn hash_code(&self, a: &/* Java */ java::lang::annotation::Annotation /**/) /* thrown(java.lang.IllegalStateException | org.apache.commons.lang3.exception.UncheckedException) */ -> i32 {
 		let result: i32 = 0;
 		/* final */ let type: Class<? extends Annotation> = a.annotationType();
 		for /* final */ m in type.getDeclaredMethods() {
@@ -185,7 +185,7 @@ impl AnnotationUtils {
 		return result;
 	}
 
-	fn hash_member(&self, name: &/* Java */ java::lang::String /**/, value: &/* Java */ java::lang::Object /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.lang.IllegalStateException) */ -> i32 {
+	fn hash_member(&self, name: &/* Java */ java::lang::String /**/, value: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | org.apache.commons.lang3.exception.UncheckedException) */ -> i32 {
 		/* final */ let part1: i32 = name.hashCode() * 127;
 		if ObjectUtils::is_array(value) {
 			return part1 ^ org::apache::commons::lang3::annotation_utils::AnnotationUtils::array_member_hash(&value.getClass().getComponentType(), value);

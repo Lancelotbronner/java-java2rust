@@ -1,7 +1,5 @@
 use javaparser_core::com::github::javaparser::ParserConfiguration;
 use javaparser_core::com::github::javaparser::StaticJavaParser;
-use crate::java2rust::rust::RustJar;
-use crate::java2rust::rust::RustUnit;
 use commons_lang3::org::apache::commons::lang3::ArrayUtils;
 use commons_lang3::org::junit::jupiter::api::Assertions::assertEquals;
 
@@ -71,7 +69,7 @@ impl Java2Rust {
 
 	pub fn camel_case_to_snake_case(&self, java: &/* Java */ java::lang::String /**/) -> /* Java */ java::lang::String /**/ {
 		let sb: StringBuilder = StringBuilder::new();
-		let chars: Vec<Character> = ArrayUtils.toObject(&java.toCharArray());
+		let chars: Vec<Character> = ArrayUtils::to_object(&java.toCharArray());
 		let i: i32 = 0;
 		for c in chars {
 			if Character::isUpperCase(c) {

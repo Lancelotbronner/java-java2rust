@@ -16,7 +16,7 @@ impl ListReplacementChange {
 		self.newValue = new_value;
 	}
 
-	pub fn get_value(&self, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn get_value(&self, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::Object /**/ {
 		if property == self.observable_property {
 			let current_raw_value: Object = NoChange::new().get_value(property, node);
 			if current_raw_value instanceof Optional {

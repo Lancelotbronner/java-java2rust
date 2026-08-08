@@ -56,7 +56,7 @@ impl MethodInvokers {
 		return MethodHandles::lookup().unreflect(&org::apache::commons::lang3::function::method_invokers::MethodInvokers::require_method(method));
 	}
 
-	fn unreflect_unchecked(&self, method: &/* Java */ java::lang::reflect::Method /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedIllegalAccessException | java.lang.IllegalAccessException) */ -> /* Java */ java::lang::invoke::MethodHandle /**/ {
+	fn unreflect_unchecked(&self, method: &/* Java */ java::lang::reflect::Method /**/) /* thrown(java.lang.IllegalAccessException | org.apache.commons.lang3.exception.UncheckedIllegalAccessException) */ -> /* Java */ java::lang::invoke::MethodHandle /**/ {
 		let r0 = 'try0: {
 			return match org::apache::commons::lang3::function::method_invokers::MethodInvokers::unreflect(method) {
 				Err(e) => break 'try0 Err(e),

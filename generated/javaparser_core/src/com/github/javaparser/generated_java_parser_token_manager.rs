@@ -379,7 +379,7 @@ impl GeneratedJavaParserTokenManager {
 	}
 
 	fn create_markdown_comment(&self) {
-		while !self.markdown_comment_tokens.isEmpty() && /* Java*/ TokenTypes/* */ .isWhitespace(self.markdown_comment_tokens.peekFirst().kind) {
+		while !self.markdown_comment_tokens.isEmpty() && TokenTypes.isWhitespace(self.markdown_comment_tokens.peekFirst().kind) {
 			self.markdown_comment_tokens.removeFirst();
 		}
 		if !self.markdown_comment_tokens.isEmpty() {
@@ -415,7 +415,7 @@ impl GeneratedJavaParserTokenManager {
 				self.home_token = token.javaToken;
 			}
 			//     comment node.
-			if /* Java*/ TokenTypes/* */ .isEndOfLineToken(token.kind) {
+			if TokenTypes.isEndOfLineToken(token.kind) {
 				if self.expect_end_of_markdown_line {
 					// A newline is processed, but it's the first newline after a markdown comment line
 					// (expectEndOfMarkdownComment is still true), so it does not end the comment yet.
@@ -433,18 +433,18 @@ impl GeneratedJavaParserTokenManager {
 				// The next markdown line comment is processed, so add it to the buffer.
 				self.expect_end_of_markdown_line = true;
 				self.markdown_comment_tokens.add(token);
-			} else if self.expect_markdown_comment && /* Java*/ TokenTypes/* */ .isWhitespaceButNotEndOfLine(token.kind) {
+			} else if self.expect_markdown_comment && TokenTypes.isWhitespaceButNotEndOfLine(token.kind) {
 				// Non-newline whitespace characters are always included in the token range for the markdown comment, so
 				// add them to the buffer
 				self.markdown_comment_tokens.add(token);
-			} else if /* Java*/ TokenTypes/* */ .isComment(token.kind) {
+			} else if TokenTypes.isComment(token.kind) {
 				// A comment token is found, but not one that is a markdown line candidate (those are handled in an
 				// else above). This could be a line comment not starting with ///, or a block comment. At this point,
 				// end the markdown comment and handle the other comment separately.
 				self.create_markdown_comment();
 				let comment: Comment = com::github::javaparser::generated_java_parser_token_manager_base::GeneratedJavaParserTokenManagerBase::create_comment_from_token(token)?;
 				self.comments_collection.add_comment(comment);
-			} else if !/* Java*/ TokenTypes/* */ .isWhitespace(token.kind) {
+			} else if !TokenTypes.isWhitespace(token.kind) {
 				// Any non-whitespace token ends the markdown comment. If the markdownCommentTokens buffer is empty or
 				// only contains whitespace, it is simply cleared.
 				self.expect_markdown_comment = false;
@@ -4175,7 +4175,7 @@ impl GeneratedJavaParserTokenManager {
 		begin_column = self.input_stream.get_begin_column();
 		end_line = self.input_stream.get_end_line();
 		end_column = self.input_stream.get_end_column();
-		t = /* Java*/ Token/* */ .newToken(self.jjmatched_kind);
+		t = Token.newToken(self.jjmatched_kind);
 		t.kind = self.jjmatched_kind;
 		t.image = cur_token_image;
 		t.beginLine = begin_line;
@@ -4703,7 +4703,7 @@ impl GeneratedJavaParserTokenManager {
 					};
 					error_after =  if cur_pos <= 1 { "" } else { self.input_stream.get_image() };
 				}
-				break 'try2 Err(TokenMgrException::new(EOFSeen, self.cur_lex_state, error_line, error_column, error_after, self.cur_char, /* Java*/ TokenMgrException/* */ .LEXICAL_ERROR));
+				break 'try2 Err(TokenMgrException::new(EOFSeen, self.cur_lex_state, error_line, error_column, error_after, self.cur_char, TokenMgrException.LEXICAL_ERROR));
 			}
 	
 		}
@@ -4825,7 +4825,7 @@ impl GeneratedJavaParserTokenManager {
 
 	pub fn switch_to(&mut self, lex_state: i32) /* thrown(com.github.javaparser.TokenMgrException) */ {
 		if lex_state >= 4 || lex_state < 0 {
-			return Err(TokenMgrException::new("Error: Ignoring invalid lexical state : " + lex_state + ". State unchanged.", /* Java*/ TokenMgrException/* */ .INVALID_LEXICAL_STATE));
+			return Err(TokenMgrException::new("Error: Ignoring invalid lexical state : " + lex_state + ". State unchanged.", TokenMgrException.INVALID_LEXICAL_STATE));
 		}
 		else {self.cur_lex_state = lex_state;
 		}

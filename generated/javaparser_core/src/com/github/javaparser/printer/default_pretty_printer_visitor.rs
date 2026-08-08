@@ -98,7 +98,7 @@ impl DefaultPrettyPrinterVisitor {
 		if annotations.is_empty() {
 			return;
 		}
-		if prefix_with_a_space {
+		if prefix_witha_space {
 			self.printer.print(" ");
 		}
 		for annotation in annotations {

@@ -38,7 +38,7 @@ impl<T, E: /* Java */ java::lang::Exception /**/> AbstractConcurrentInitializer 
 
 	fn get_typed_exception(&self, e: &/* Java */ java::lang::Exception /**/) -> E ;
 
-	fn initialize(&self) /* thrown(java.lang.Throwable | E) */ -> T {
+	fn initialize(&self) /* thrown(E | java.lang.Throwable) */ -> T {
 		let r0 = 'try0: {
 			return self.initializer.get();
 			break 'try0 Ok(());

@@ -123,7 +123,7 @@ impl ResolvedReferenceType {
 
 	pub fn transform_type_parameters(&self, transformer: &com::github::javaparser::resolution::types::resolved_type_transformer::ResolvedTypeTransformer) -> com::github::javaparser::resolution::types::resolved_type::ResolvedType ;
 
-	pub fn replace_type_variables(&self, tp_to_replace: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, replaced: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, inferred_types: &/* Java */ java::util::Map /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn replace_type_variables(&self, tp_to_replace: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, replaced: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, inferred_types: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		if replaced == null {
 			return Err(IllegalArgumentException::new());
 		}
@@ -209,7 +209,7 @@ impl ResolvedReferenceType {
 		return Optional::of(self.type_declaration);
 	}
 
-	pub fn get_field_type(&self, name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> /* Java */ java::util::Optional /**/ {
+	pub fn get_field_type(&self, name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> /* Java */ java::util::Optional /**/ {
 		if !self.type_declaration.has_field(name) {
 			return Optional::empty();
 		}
@@ -300,7 +300,7 @@ impl ResolvedReferenceType {
 		return self.get_qualified_name().equals(&resolved_primitive_type.get_box_typeq_name());
 	}
 
-	fn compare_considering_type_parameters(&self, other: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> bool {
+	fn compare_considering_type_parameters(&self, other: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> bool {
 		if other.equals(self)? {
 			return true;
 		}
@@ -359,7 +359,7 @@ impl ResolvedReferenceType {
 		return false;
 	}
 
-	fn compare_considering_variable_type_parameters(&self, reference_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, type_variable: &com::github::javaparser::resolution::types::resolved_type_variable::ResolvedTypeVariable) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> bool {
+	fn compare_considering_variable_type_parameters(&self, reference_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, type_variable: &com::github::javaparser::resolution::types::resolved_type_variable::ResolvedTypeVariable) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> bool {
 		// verify if the ResolvedTypeVariable has only one type variable and the bound is
 		// not a reference type with a bound parameter
 		// for example EnumSet<E> noneOf(Class<E> elementType)
@@ -372,7 +372,7 @@ impl ResolvedReferenceType {
 		return false;
 	}
 
-	fn derive_params(&self, type_declaration: &com::github::javaparser::resolution::declarations::resolved_reference_type_declaration::ResolvedReferenceTypeDeclaration) /* thrown(java.lang.RuntimeException | java.lang.IllegalArgumentException) */ -> /* Java */ java::util::List /**/ {
+	fn derive_params(&self, type_declaration: &com::github::javaparser::resolution::declarations::resolved_reference_type_declaration::ResolvedReferenceTypeDeclaration) /* thrown(java.lang.IllegalArgumentException | java.lang.RuntimeException) */ -> /* Java */ java::util::List /**/ {
 		if type_declaration == null {
 			return Err(IllegalArgumentException::new("TypeDeclaration is not expected to be null"));
 		}

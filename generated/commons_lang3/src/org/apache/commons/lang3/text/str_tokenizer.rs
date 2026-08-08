@@ -393,7 +393,7 @@ impl StrTokenizer {
 
 	pub fn reset(&mut self, input: &&[u16]) -> org::apache::commons::lang3::text::str_tokenizer::StrTokenizer {
 		self.reset();
-		self.chars = ArrayUtils::clone(input);
+		self.chars = ArrayUtils.clone(input);
 		return self;
 	}
 

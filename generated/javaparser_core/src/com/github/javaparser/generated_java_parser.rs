@@ -70,7 +70,7 @@ impl GeneratedJavaParser {
 		return self.token_source;
 	}
 
-	pub fn compilation_unit(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::compilation_unit::CompilationUnit {
+	pub fn compilation_unit(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::compilation_unit::CompilationUnit {
 		let package_declaration: PackageDeclaration = null;
 		let imports: NodeList<ImportDeclaration> = self.empty_node_list();
 		let in: ImportDeclaration = null;
@@ -496,7 +496,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn compact_class_member(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn compact_class_member(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let member: BodyDeclaration<?>;
 		if self.jj_2_3(2147483647) {
 			member = self.field_declaration(modifier)?;
@@ -584,7 +584,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn package_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::package_declaration::PackageDeclaration {
+	pub fn package_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::package_declaration::PackageDeclaration {
 		let annotations: NodeList<AnnotationExpr> = NodeList<AnnotationExpr>::new();
 		let name: Name;
 		let begin: JavaToken = ;
@@ -618,7 +618,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn import_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::import_declaration::ImportDeclaration {
+	pub fn import_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::import_declaration::ImportDeclaration {
 		let name: Name;
 		let is_static: bool = false;
 		let is_asterisk: bool = false;
@@ -720,7 +720,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn modifiers(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::modifier_holder::ModifierHolder {
+	pub fn modifiers(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::modifier_holder::ModifierHolder {
 		let begin: JavaToken = ;
 		let modifiers: NodeList<Modifier> = NodeList<Modifier>::new();
 		let annotations: NodeList<AnnotationExpr> = NodeList<AnnotationExpr>::new();
@@ -734,7 +734,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::PUBLIC));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::PUBLIC));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -742,7 +742,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::STATIC));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::STATIC));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -750,7 +750,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::PROTECTED));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::PROTECTED));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -758,7 +758,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::PRIVATE));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::PRIVATE));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -766,7 +766,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::FINAL));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::FINAL));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -774,7 +774,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::ABSTRACT));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::ABSTRACT));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -782,7 +782,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::SYNCHRONIZED));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::SYNCHRONIZED));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -790,7 +790,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::NATIVE));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::NATIVE));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -798,7 +798,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::TRANSIENT));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::TRANSIENT));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -806,7 +806,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::VOLATILE));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::VOLATILE));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -814,7 +814,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::STRICTFP));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::STRICTFP));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -822,7 +822,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::TRANSITIVE));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::TRANSITIVE));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -830,7 +830,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::DEFAULT));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::DEFAULT));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -838,7 +838,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::SEALED));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::SEALED));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -846,7 +846,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						self.add(modifiers, Modifier::new(&self.token_range(), /* Java*/ Modifier/* */ .Keyword::NON_SEALED));
+						self.add(modifiers, Modifier::new(&self.token_range(), Modifier.Keyword::NON_SEALED));
 						begin = self.or_if_invalid(begin, &self.token());
 						break;
 					}
@@ -875,7 +875,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::class_or_interface_declaration::ClassOrInterfaceDeclaration {
+	pub fn class_or_interface_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::class_or_interface_declaration::ClassOrInterfaceDeclaration {
 		let is_interface: bool;
 		let name: SimpleName;
 		let type_par: RangedList<TypeParameter> = RangedList<TypeParameter>::new(&self.empty_node_list());
@@ -965,7 +965,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn record_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::record_declaration::RecordDeclaration {
+	pub fn record_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::record_declaration::RecordDeclaration {
 		let name: SimpleName;
 		let parameters: Pair<NodeList<Parameter>, ReceiverParameter>;
 		let type_par: RangedList<TypeParameter> = RangedList<TypeParameter>::new(&self.empty_node_list());
@@ -1010,7 +1010,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn extends_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn extends_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let extends_more_than_one: bool = false;
 		let ret: NodeList<ClassOrInterfaceType> = NodeList<ClassOrInterfaceType>::new();
 		let cit: ClassOrInterfaceType;
@@ -1043,7 +1043,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn implements_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn implements_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<ClassOrInterfaceType> = NodeList<ClassOrInterfaceType>::new();
 		let cit: ClassOrInterfaceType;
 		self.jj_consume_token()?;
@@ -1074,7 +1074,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn permits_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn permits_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<ClassOrInterfaceType> = NodeList<ClassOrInterfaceType>::new();
 		let cit: ClassOrInterfaceType;
 		self.jj_consume_token()?;
@@ -1105,7 +1105,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn enum_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::enum_declaration::EnumDeclaration {
+	pub fn enum_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::enum_declaration::EnumDeclaration {
 		let name: SimpleName;
 		let imp_list: NodeList<ClassOrInterfaceType> = self.empty_node_list();
 		let entry: EnumConstantDeclaration;
@@ -1440,7 +1440,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn enum_constant_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::enum_constant_declaration::EnumConstantDeclaration {
+	pub fn enum_constant_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::enum_constant_declaration::EnumConstantDeclaration {
 		let annotations: NodeList<AnnotationExpr> = NodeList<AnnotationExpr>::new();
 		let ann: AnnotationExpr;
 		let name: SimpleName;
@@ -1498,7 +1498,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_parameters(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ranged_list::RangedList {
+	pub fn type_parameters(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ranged_list::RangedList {
 		let ret: RangedList<TypeParameter> = RangedList<TypeParameter>::new(NodeList<TypeParameter>::new());
 		let tp: TypeParameter;
 		let annotations: NodeList<AnnotationExpr>;
@@ -1537,7 +1537,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_parameter(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type_parameter::TypeParameter {
+	pub fn type_parameter(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type_parameter::TypeParameter {
 		let name: SimpleName;
 		let type_bound: NodeList<ClassOrInterfaceType> = self.empty_node_list();
 		let begin: JavaToken;
@@ -1565,7 +1565,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_bound(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn type_bound(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<ClassOrInterfaceType> = self.empty_node_list();
 		let cit: ClassOrInterfaceType;
 		self.jj_consume_token()?;
@@ -1596,7 +1596,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_body(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn class_or_interface_body(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<BodyDeclaration<?>> = self.empty_node_list();
 		let member: BodyDeclaration;
 		self.jj_consume_token()?;
@@ -1825,7 +1825,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn record_body(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn record_body(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<BodyDeclaration<?>> = self.empty_node_list();
 		let member: BodyDeclaration;
 		self.jj_consume_token()?;
@@ -2054,7 +2054,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn record_body_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn record_body_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let modifiers: ModifierHolder;
 		let ret: BodyDeclaration<?>;
 		if self.jj_2_13(2) {
@@ -2273,7 +2273,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn compact_constructor_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::compact_constructor_declaration::CompactConstructorDeclaration {
+	pub fn compact_constructor_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::compact_constructor_declaration::CompactConstructorDeclaration {
 		let type_parameters: RangedList<TypeParameter> = RangedList<TypeParameter>::new(&self.empty_node_list());
 		let name: SimpleName;
 		let parameters: Pair<NodeList<Parameter>, ReceiverParameter> = Pair<NodeList<Parameter>, ReceiverParameter>::new(&self.empty_node_list(), null);
@@ -2342,7 +2342,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_body_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn class_or_interface_body_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let modifiers: ModifierHolder;
 		let ret: BodyDeclaration<?>;
 		if self.jj_2_19(2) {
@@ -2559,7 +2559,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn field_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::field_declaration::FieldDeclaration {
+	pub fn field_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::field_declaration::FieldDeclaration {
 		let partial_type: Type;
 		let variables: NodeList<VariableDeclarator> = NodeList<VariableDeclarator>::new();
 		let val: VariableDeclarator;
@@ -2594,7 +2594,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn variable_declarator(&mut self, partial_type: &com::github::javaparser::ast::type::type::Type) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::variable_declarator::VariableDeclarator {
+	pub fn variable_declarator(&mut self, partial_type: &com::github::javaparser::ast::type::type::Type) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::variable_declarator::VariableDeclarator {
 		let id: Pair<SimpleName, List<ArrayBracketPair>>;
 		let init: Expression = null;
 		id = self.variable_declarator_id()?;
@@ -2620,7 +2620,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn variable_declarator_id(&mut self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::utils::pair::Pair {
+	pub fn variable_declarator_id(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::utils::pair::Pair {
 		let name: SimpleName;
 		let begin: JavaToken;
 		let array_bracket_pair: ArrayBracketPair;
@@ -2641,7 +2641,7 @@ impl GeneratedJavaParser {
 					break 'label_17;
 				}
 			}
-			array_bracket_pair = self.array_bracket_pair(/* Java*/ Origin/* */ .NAME)?;
+			array_bracket_pair = self.array_bracket_pair(Origin.NAME)?;
 			array_bracket_pairs = self.add(array_bracket_pairs, array_bracket_pair);
 		}
 		if  {
@@ -2656,7 +2656,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn variable_initializer(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn variable_initializer(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
@@ -2784,7 +2784,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn array_initializer(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::array_initializer_expr::ArrayInitializerExpr {
+	pub fn array_initializer(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::array_initializer_expr::ArrayInitializerExpr {
 		let values: NodeList<Expression> = self.empty_node_list();
 		let val: Expression;
 		let begin: JavaToken;
@@ -2934,7 +2934,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn method_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::method_declaration::MethodDeclaration {
+	pub fn method_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::method_declaration::MethodDeclaration {
 		let type_parameters: RangedList<TypeParameter> = RangedList<TypeParameter>::new(&self.empty_node_list());
 		let type: Type;
 		let name: SimpleName;
@@ -2980,7 +2980,7 @@ impl GeneratedJavaParser {
 					break 'label_19;
 				}
 			}
-			array_bracket_pair = self.array_bracket_pair(/* Java*/ Origin/* */ .NAME)?;
+			array_bracket_pair = self.array_bracket_pair(Origin.NAME)?;
 			array_bracket_pairs = self.add(array_bracket_pairs, array_bracket_pair);
 		}
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
@@ -3042,7 +3042,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotated_reference_type(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::reference_type::ReferenceType {
+	pub fn annotated_reference_type(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::reference_type::ReferenceType {
 		let annotations: NodeList<AnnotationExpr>;
 		let type: ReferenceType;
 		annotations = self.annotations()?;
@@ -3056,7 +3056,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotated_type(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type::Type {
+	pub fn annotated_type(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type::Type {
 		let annotations: NodeList<AnnotationExpr>;
 		let type: Type;
 		annotations = self.annotations()?;
@@ -3070,7 +3070,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn parameters(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::utils::pair::Pair {
+	pub fn parameters(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::utils::pair::Pair {
 		let ret: NodeList<Parameter> = self.empty_node_list();
 		let par: Parameter;
 		let rp: ReceiverParameter = null;
@@ -3290,7 +3290,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn lambda_parameters(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn lambda_parameters(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Parameter> = null;
 		let par: Parameter;
 		par = self.parameter()?;
@@ -3320,7 +3320,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn inferred_lambda_parameters(&mut self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn inferred_lambda_parameters(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Parameter> = null;
 		let id: Pair<SimpleName, List<ArrayBracketPair>>;
 		id = self.variable_declarator_id()?;
@@ -3350,7 +3350,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn parameter(&mut self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::parameter::Parameter {
+	pub fn parameter(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::parameter::Parameter {
 		let modifier: ModifierHolder;
 		let partial_type: Type;
 		let is_var_arg: bool = false;
@@ -3385,7 +3385,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn receiver_parameter(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::receiver_parameter::ReceiverParameter {
+	pub fn receiver_parameter(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::receiver_parameter::ReceiverParameter {
 		let partial_type: Type;
 		let id: Name;
 		let annotations: NodeList<AnnotationExpr> = self.empty_node_list();
@@ -3401,7 +3401,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn receiver_parameter_id(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::name::Name {
+	pub fn receiver_parameter_id(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::name::Name {
 		let ret: Name = null;
 		if self.jj_2_22(2147483647) {
 			ret = self.name()?;
@@ -3419,7 +3419,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn constructor_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::constructor_declaration::ConstructorDeclaration {
+	pub fn constructor_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::constructor_declaration::ConstructorDeclaration {
 		let type_parameters: RangedList<TypeParameter> = RangedList<TypeParameter>::new(&self.empty_node_list());
 		let name: SimpleName;
 		let parameters: Pair<NodeList<Parameter>, ReceiverParameter> = Pair<NodeList<Parameter>, ReceiverParameter>::new(&self.empty_node_list(), null);
@@ -3489,7 +3489,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn explicit_constructor_invocation(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::explicit_constructor_invocation_stmt::ExplicitConstructorInvocationStmt {
+	pub fn explicit_constructor_invocation(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::explicit_constructor_invocation_stmt::ExplicitConstructorInvocationStmt {
 		let is_this: bool = false;
 		let args: NodeList<Expression>;
 		let expr: Expression = null;
@@ -3647,7 +3647,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn statements(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn statements(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Statement> = self.empty_node_list();
 		let stmt: Statement;
 		'label_25: while true {
@@ -3667,7 +3667,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn initializer_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::initializer_declaration::InitializerDeclaration {
+	pub fn initializer_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::initializer_declaration::InitializerDeclaration {
 		let body: BlockStmt;
 		let begin: JavaToken = ;
 		let is_static: bool = false;
@@ -3696,7 +3696,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type::Type {
+	pub fn type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type::Type {
 		let ret: Type;
 		if self.jj_2_26(2147483647) {
 			ret = self.reference_type(annotations)?;
@@ -3738,7 +3738,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn reference_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::reference_type::ReferenceType {
+	pub fn reference_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::reference_type::ReferenceType {
 		let type: Type;
 		let array_bracket_pair: ArrayBracketPair;
 		let array_bracket_pairs: List<ArrayBracketPair> = ArrayList<ArrayBracketPair>::new(0);
@@ -3762,7 +3762,7 @@ impl GeneratedJavaParser {
 					// Note that an array of primitives is considered a reference type.
 					type = self.primitive_type(annotations)?;
 					'label_26: while true {
-						array_bracket_pair = self.array_bracket_pair(/* Java*/ Origin/* */ .TYPE)?;
+						array_bracket_pair = self.array_bracket_pair(Origin.TYPE)?;
 						array_bracket_pairs = self.add(array_bracket_pairs, array_bracket_pair);
 						if self.jj_2_27(2147483647) {
 						} else {
@@ -3818,7 +3818,7 @@ impl GeneratedJavaParser {
 						} else {
 							break 'label_27;
 						}
-						array_bracket_pair = self.array_bracket_pair(/* Java*/ Origin/* */ .TYPE)?;
+						array_bracket_pair = self.array_bracket_pair(Origin.TYPE)?;
 						array_bracket_pairs = self.add(array_bracket_pairs, array_bracket_pair);
 					}
 					break;
@@ -3839,7 +3839,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn array_bracket_pair(&self, origin: &com::github::javaparser::ast::type::array_type::Origin) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::array_type::ArrayBracketPair {
+	pub fn array_bracket_pair(&self, origin: &com::github::javaparser::ast::type::array_type::Origin) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::array_type::ArrayBracketPair {
 		let annotations: NodeList<AnnotationExpr>;
 		let begin: JavaToken = ;
 		annotations = self.annotations()?;
@@ -3855,7 +3855,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn intersection_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::intersection_type::IntersectionType {
+	pub fn intersection_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::intersection_type::IntersectionType {
 		let begin: JavaToken = ;
 		let element_type: ReferenceType;
 		let elements: NodeList<ReferenceType> = self.empty_node_list();
@@ -3943,7 +3943,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotated_class_or_interface_type(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
+	pub fn annotated_class_or_interface_type(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
 		let annotations: NodeList<AnnotationExpr> = NodeList<AnnotationExpr>::new();
 		let cit: ClassOrInterfaceType;
 		annotations = self.annotations()?;
@@ -3957,7 +3957,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_type(&self, first_annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
+	pub fn class_or_interface_type(&self, first_annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
 		let ret: ClassOrInterfaceType;
 		let name: SimpleName;
 		let type_args: RangedList<Type> = RangedList<Type>::new(null);
@@ -3997,7 +3997,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_arguments(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ranged_list::RangedList {
+	pub fn type_arguments(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ranged_list::RangedList {
 		let ret: RangedList<Type> = RangedList<Type>::new(NodeList<Type>::new());
 		let type: Type;
 		self.jj_consume_token()?;
@@ -4100,7 +4100,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_argument(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type::Type {
+	pub fn type_argument(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type::Type {
 		let ret: Type;
 		let annotations: NodeList<AnnotationExpr>;
 		annotations = self.annotations()?;
@@ -4186,7 +4186,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn wildcard(&mut self, first_annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::wildcard_type::WildcardType {
+	pub fn wildcard(&mut self, first_annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::wildcard_type::WildcardType {
 		let ext: ReferenceType = null;
 		let sup: ReferenceType = null;
 		let begin: JavaToken;
@@ -4238,62 +4238,62 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primitive_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::primitive_type::PrimitiveType {
+	pub fn primitive_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::primitive_type::PrimitiveType {
 		let ret: PrimitiveType;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::BOOLEAN, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::BOOLEAN, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::CHAR, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::CHAR, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::BYTE, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::BYTE, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::SHORT, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::SHORT, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::INT, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::INT, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::LONG, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::LONG, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::FLOAT, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::FLOAT, annotations);
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = PrimitiveType::new(&self.token_range(), /* Java*/ PrimitiveType/* */ .Primitive::DOUBLE, annotations);
+					ret = PrimitiveType::new(&self.token_range(), PrimitiveType.Primitive::DOUBLE, annotations);
 					break;
 				}
 			}
@@ -4312,7 +4312,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn result_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type::Type {
+	pub fn result_type(&mut self, annotations: &com::github::javaparser::ast::node_list::NodeList) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type::Type {
 		let ret: Type;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
@@ -4397,7 +4397,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn name(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::name::Name {
+	pub fn name(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::name::Name {
 		let ret: Name;
 		self.identifier()?;
 		ret = Name::new(&self.token_range(), null, self.token.image);
@@ -4419,7 +4419,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn simple_name(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::simple_name::SimpleName {
+	pub fn simple_name(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::simple_name::SimpleName {
 		let ret: SimpleName;
 		self.identifier()?;
 		ret = SimpleName::new(&self.token_range(), self.token.image);
@@ -4432,7 +4432,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn identifier(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn identifier(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::String /**/ {
 		let ret: String;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
@@ -4572,7 +4572,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let op: AssignExpr.Operator;
 		let value: Expression;
@@ -4722,90 +4722,90 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn assignment_operator(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::assign_expr::Operator {
+	pub fn assignment_operator(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::assign_expr::Operator {
 		let ret: AssignExpr.Operator;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::ASSIGN;
+					ret = AssignExpr.Operator::ASSIGN;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::MULTIPLY;
+					ret = AssignExpr.Operator::MULTIPLY;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::DIVIDE;
+					ret = AssignExpr.Operator::DIVIDE;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::REMAINDER;
+					ret = AssignExpr.Operator::REMAINDER;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::PLUS;
+					ret = AssignExpr.Operator::PLUS;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::MINUS;
+					ret = AssignExpr.Operator::MINUS;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::LEFT_SHIFT;
+					ret = AssignExpr.Operator::LEFT_SHIFT;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::SIGNED_RIGHT_SHIFT;
+					ret = AssignExpr.Operator::SIGNED_RIGHT_SHIFT;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::UNSIGNED_RIGHT_SHIFT;
+					ret = AssignExpr.Operator::UNSIGNED_RIGHT_SHIFT;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::BINARY_AND;
+					ret = AssignExpr.Operator::BINARY_AND;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::XOR;
+					ret = AssignExpr.Operator::XOR;
 					break;
 				}
 			}
 			 =>  {
 				{
 					self.jj_consume_token()?;
-					ret = /* Java*/ AssignExpr/* */ .Operator::BINARY_OR;
+					ret = AssignExpr.Operator::BINARY_OR;
 					break;
 				}
 			}
@@ -4824,7 +4824,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn conditional_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn conditional_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let left: Expression;
 		let right: Expression;
@@ -4854,7 +4854,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn conditional_or_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn conditional_or_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		// First consider a higher-precedence operator, before considering the token as the left-hand part of this expression.
@@ -4873,7 +4873,7 @@ impl GeneratedJavaParser {
 			}
 			self.jj_consume_token()?;
 			right = self.conditional_and_expression()?;
-			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, /* Java*/ BinaryExpr/* */ .Operator::OR);
+			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, BinaryExpr.Operator::OR);
 		}
 		{
 			if "" != null {
@@ -4884,7 +4884,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn conditional_and_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn conditional_and_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		// First consider a higher-precedence operator, before considering the token as the left-hand part of this expression.
@@ -4903,7 +4903,7 @@ impl GeneratedJavaParser {
 			}
 			self.jj_consume_token()?;
 			right = self.inclusive_or_expression()?;
-			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, /* Java*/ BinaryExpr/* */ .Operator::AND);
+			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, BinaryExpr.Operator::AND);
 		}
 		{
 			if "" != null {
@@ -4914,7 +4914,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn inclusive_or_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn inclusive_or_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		// First consider a higher-precedence operator, before considering the token as the left-hand part of this expression.
@@ -4933,7 +4933,7 @@ impl GeneratedJavaParser {
 			}
 			self.jj_consume_token()?;
 			right = self.exclusive_or_expression()?;
-			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, /* Java*/ BinaryExpr/* */ .Operator::BINARY_OR);
+			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, BinaryExpr.Operator::BINARY_OR);
 		}
 		{
 			if "" != null {
@@ -4944,7 +4944,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn exclusive_or_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn exclusive_or_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		// First consider a higher-precedence operator, before considering the token as the left-hand part of this expression.
@@ -4963,7 +4963,7 @@ impl GeneratedJavaParser {
 			}
 			self.jj_consume_token()?;
 			right = self.and_expression()?;
-			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, /* Java*/ BinaryExpr/* */ .Operator::XOR);
+			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, BinaryExpr.Operator::XOR);
 		}
 		{
 			if "" != null {
@@ -4974,7 +4974,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn and_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn and_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		// First consider a higher-precedence operator, before considering the token as the left-hand part of this expression.
@@ -4993,7 +4993,7 @@ impl GeneratedJavaParser {
 			}
 			self.jj_consume_token()?;
 			right = self.equality_expression()?;
-			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, /* Java*/ BinaryExpr/* */ .Operator::BINARY_AND);
+			ret = BinaryExpr::new(&self.range(ret, &self.token()), ret, right, BinaryExpr.Operator::BINARY_AND);
 		}
 		{
 			if "" != null {
@@ -5004,7 +5004,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn equality_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn equality_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		let op: BinaryExpr.Operator;
@@ -5029,14 +5029,14 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::EQUALS;
+						op = BinaryExpr.Operator::EQUALS;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::NOT_EQUALS;
+						op = BinaryExpr.Operator::NOT_EQUALS;
 						break;
 					}
 				}
@@ -5058,7 +5058,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn pattern_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::pattern_expr::PatternExpr {
+	pub fn pattern_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::pattern_expr::PatternExpr {
 		let ret: PatternExpr;
 		if self.jj_2_34(2147483647) {
 			ret = self.type_pattern_expression()?;
@@ -5166,7 +5166,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn component_pattern_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::component_pattern_expr::ComponentPatternExpr {
+	pub fn component_pattern_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::component_pattern_expr::ComponentPatternExpr {
 		let ret: ComponentPatternExpr;
 		if self.jj_2_35(2147483647) {
 			ret = self.match_all_pattern_expression()?;
@@ -5274,7 +5274,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_pattern_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::type_pattern_expr::TypePatternExpr {
+	pub fn type_pattern_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::type_pattern_expr::TypePatternExpr {
 		let modifier: ModifierHolder;
 		let type: Type;
 		let name: SimpleName;
@@ -5290,7 +5290,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn record_pattern_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::record_pattern_expr::RecordPatternExpr {
+	pub fn record_pattern_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::record_pattern_expr::RecordPatternExpr {
 		let modifier: ModifierHolder;
 		let type: ReferenceType;
 		let pattern_list: NodeList<ComponentPatternExpr>;
@@ -5306,7 +5306,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn match_all_pattern_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::match_all_pattern_expr::MatchAllPatternExpr {
+	pub fn match_all_pattern_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::match_all_pattern_expr::MatchAllPatternExpr {
 		let modifier: ModifierHolder;
 		modifier = self.modifiers()?;
 		self.jj_consume_token()?;
@@ -5319,7 +5319,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn pattern_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn pattern_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let pattern: ComponentPatternExpr;
 		let ret: NodeList<ComponentPatternExpr> = NodeList<>::new();
 		self.jj_consume_token()?;
@@ -5351,7 +5351,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn instance_of_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn instance_of_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let type: ReferenceType;
 		let annotations: NodeList<AnnotationExpr>;
@@ -5453,7 +5453,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn relational_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn relational_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		let op: BinaryExpr.Operator;
@@ -5480,28 +5480,28 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::LESS;
+						op = BinaryExpr.Operator::LESS;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::GREATER;
+						op = BinaryExpr.Operator::GREATER;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::LESS_EQUALS;
+						op = BinaryExpr.Operator::LESS_EQUALS;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::GREATER_EQUALS;
+						op = BinaryExpr.Operator::GREATER_EQUALS;
 						break;
 					}
 				}
@@ -5523,7 +5523,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn shift_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn shift_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		let op: BinaryExpr.Operator;
@@ -5537,7 +5537,7 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::LEFT_SHIFT;
+						op = BinaryExpr.Operator::LEFT_SHIFT;
 						break;
 					}
 				}
@@ -5545,10 +5545,10 @@ impl GeneratedJavaParser {
 					self.jj_la1[100] = self.jj_gen;
 					if self.jj_2_38(1) {
 						self.rsignedshift()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::SIGNED_RIGHT_SHIFT;
+						op = BinaryExpr.Operator::SIGNED_RIGHT_SHIFT;
 					} else if self.jj_2_39(1) {
 						self.runsignedshift()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::UNSIGNED_RIGHT_SHIFT;
+						op = BinaryExpr.Operator::UNSIGNED_RIGHT_SHIFT;
 					} else {
 						self.jj_consume_token(-1)?;
 						return Err(ParseException::new());
@@ -5567,7 +5567,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn additive_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn additive_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		let op: BinaryExpr.Operator;
@@ -5590,14 +5590,14 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::PLUS;
+						op = BinaryExpr.Operator::PLUS;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::MINUS;
+						op = BinaryExpr.Operator::MINUS;
 						break;
 					}
 				}
@@ -5619,7 +5619,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn multiplicative_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn multiplicative_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let right: Expression;
 		let op: BinaryExpr.Operator;
@@ -5644,21 +5644,21 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::MULTIPLY;
+						op = BinaryExpr.Operator::MULTIPLY;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::DIVIDE;
+						op = BinaryExpr.Operator::DIVIDE;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ BinaryExpr/* */ .Operator::REMAINDER;
+						op = BinaryExpr.Operator::REMAINDER;
 						break;
 					}
 				}
@@ -5680,7 +5680,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn unary_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn unary_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let op: UnaryExpr.Operator;
 		let begin: JavaToken = ;
@@ -5705,7 +5705,7 @@ impl GeneratedJavaParser {
 						 =>  {
 							{
 								self.jj_consume_token()?;
-								op = /* Java*/ UnaryExpr/* */ .Operator::PLUS;
+								op = UnaryExpr.Operator::PLUS;
 								begin = self.token();
 								break;
 							}
@@ -5713,7 +5713,7 @@ impl GeneratedJavaParser {
 						 =>  {
 							{
 								self.jj_consume_token()?;
-								op = /* Java*/ UnaryExpr/* */ .Operator::MINUS;
+								op = UnaryExpr.Operator::MINUS;
 								begin = self.token();
 								break;
 							}
@@ -5840,13 +5840,13 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn pre_increment_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn pre_increment_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let begin: JavaToken = ;
 		self.jj_consume_token()?;
 		begin = self.token();
 		ret = self.unary_expression()?;
-		ret = UnaryExpr::new(&self.range(begin, &self.token()), ret, /* Java*/ UnaryExpr/* */ .Operator::PREFIX_INCREMENT);
+		ret = UnaryExpr::new(&self.range(begin, &self.token()), ret, UnaryExpr.Operator::PREFIX_INCREMENT);
 		{
 			if "" != null {
 				return ret;
@@ -5856,13 +5856,13 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn pre_decrement_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn pre_decrement_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
 		begin = self.token();
 		ret = self.unary_expression()?;
-		ret = UnaryExpr::new(&self.range(begin, &self.token()), ret, /* Java*/ UnaryExpr/* */ .Operator::PREFIX_DECREMENT);
+		ret = UnaryExpr::new(&self.range(begin, &self.token()), ret, UnaryExpr.Operator::PREFIX_DECREMENT);
 		{
 			if "" != null {
 				return ret;
@@ -5872,7 +5872,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn unary_expression_not_plus_minus(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn unary_expression_not_plus_minus(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let op: UnaryExpr.Operator;
 		let begin: JavaToken = ;
@@ -5885,7 +5885,7 @@ impl GeneratedJavaParser {
 						 =>  {
 							{
 								self.jj_consume_token()?;
-								op = /* Java*/ UnaryExpr/* */ .Operator::BITWISE_COMPLEMENT;
+								op = UnaryExpr.Operator::BITWISE_COMPLEMENT;
 								begin = self.token();
 								break;
 							}
@@ -5893,7 +5893,7 @@ impl GeneratedJavaParser {
 						 =>  {
 							{
 								self.jj_consume_token()?;
-								op = /* Java*/ UnaryExpr/* */ .Operator::LOGICAL_COMPLEMENT;
+								op = UnaryExpr.Operator::LOGICAL_COMPLEMENT;
 								begin = self.token();
 								break;
 							}
@@ -6029,7 +6029,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn postfix_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn postfix_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let op: UnaryExpr.Operator;
 		ret = self.primary_expression()?;
@@ -6038,14 +6038,14 @@ impl GeneratedJavaParser {
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ UnaryExpr/* */ .Operator::POSTFIX_INCREMENT;
+						op = UnaryExpr.Operator::POSTFIX_INCREMENT;
 						break;
 					}
 				}
 				 =>  {
 					{
 						self.jj_consume_token()?;
-						op = /* Java*/ UnaryExpr/* */ .Operator::POSTFIX_DECREMENT;
+						op = UnaryExpr.Operator::POSTFIX_DECREMENT;
 						break;
 					}
 				}
@@ -6068,7 +6068,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn cast_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn cast_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let reference_type: ReferenceType;
 		let primitive_type: PrimitiveType;
@@ -6187,7 +6187,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primary_expression(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn primary_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		ret = self.primary_prefix()?;
 		'label_44: while true {
@@ -6206,7 +6206,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primary_expression_without_super_suffix(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn primary_expression_without_super_suffix(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		ret = self.primary_prefix()?;
 		'label_45: while true {
@@ -6225,7 +6225,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primary_prefix(&mut self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn primary_prefix(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression = null;
 		let name: SimpleName;
 		let type_args: RangedList<Type> = RangedList<Type>::new(null);
@@ -6707,7 +6707,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primary_suffix(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn primary_suffix(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		if self.jj_2_49(2) {
 			ret = self.primary_suffix_without_super(scope)?;
@@ -6737,7 +6737,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn primary_suffix_without_super(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn primary_suffix_without_super(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let type_args: RangedList<Type> = RangedList<Type>::new(null);
 		let args: NodeList<Expression> = self.empty_node_list();
@@ -6828,7 +6828,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn literal(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn literal(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
@@ -6902,7 +6902,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn boolean_literal(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn boolean_literal(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
 			 =>  {
@@ -6934,7 +6934,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn null_literal(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn null_literal(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		self.jj_consume_token()?;
 		{
 			if "" != null {
@@ -6945,7 +6945,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn arguments(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn arguments(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Expression> = self.empty_node_list();
 		self.jj_consume_token()?;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
@@ -7068,7 +7068,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn argument_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn argument_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Expression> = self.empty_node_list();
 		let expr: Expression;
 		expr = self.expression()?;
@@ -7098,7 +7098,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn allocation_expression(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn allocation_expression(&mut self, scope: &com::github::javaparser::ast::expr::expression::Expression) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		let type: Type;
 		let type_args: RangedList<Type> = RangedList<Type>::new(null);
@@ -7237,7 +7237,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn array_creation(&mut self, begin: &com::github::javaparser::java_token::JavaToken, type: &com::github::javaparser::ast::type::type::Type) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::array_creation_expr::ArrayCreationExpr {
+	pub fn array_creation(&mut self, begin: &com::github::javaparser::java_token::JavaToken, type: &com::github::javaparser::ast::type::type::Type) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::array_creation_expr::ArrayCreationExpr {
 		let expr: Expression = null;
 		let array_initializer_expr: ArrayInitializerExpr = null;
 		let inits: NodeList<Expression> = self.empty_node_list();
@@ -7391,7 +7391,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
+	pub fn statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
 		let ret: Statement;
 		let r0 = 'try0: {
 			if self.jj_2_53(2) {
@@ -7659,7 +7659,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn assert_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::assert_stmt::AssertStmt {
+	pub fn assert_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::assert_stmt::AssertStmt {
 		let check: Expression;
 		let msg: Expression = null;
 		let begin: JavaToken;
@@ -7689,7 +7689,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn labeled_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::labeled_stmt::LabeledStmt {
+	pub fn labeled_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::labeled_stmt::LabeledStmt {
 		let label: SimpleName;
 		let stmt: Statement;
 		let begin: JavaToken;
@@ -7706,7 +7706,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn block(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::block_stmt::BlockStmt {
+	pub fn block(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::block_stmt::BlockStmt {
 		let stmts: NodeList<Statement> = self.empty_node_list();
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -7746,7 +7746,7 @@ impl GeneratedJavaParser {
 		break 'try0 Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn block_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
+	pub fn block_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
 		let ret: Statement;
 		let expr: Expression;
 		let type_decl: ClassOrInterfaceDeclaration;
@@ -7958,7 +7958,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn variable_declaration_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::variable_declaration_expr::VariableDeclarationExpr {
+	pub fn variable_declaration_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::variable_declaration_expr::VariableDeclarationExpr {
 		let modifier: ModifierHolder;
 		let partial_type: Type;
 		let variables: NodeList<VariableDeclarator> = NodeList<VariableDeclarator>::new();
@@ -7993,7 +7993,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn empty_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::empty_stmt::EmptyStmt {
+	pub fn empty_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::empty_stmt::EmptyStmt {
 		self.jj_consume_token()?;
 		{
 			if "" != null {
@@ -8004,7 +8004,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn lambda_body(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
+	pub fn lambda_body(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
 		let expr: Expression;
 		let n: Statement = null;
 		match  if self.jj_ntk == -1 { self.jj_ntk_f() } else { self.jj_ntk } {
@@ -8134,7 +8134,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn statement_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::expression_stmt::ExpressionStmt {
+	pub fn statement_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::expression_stmt::ExpressionStmt {
 		let expr: Expression;
 		let op: AssignExpr.Operator;
 		let value: Expression;
@@ -8270,14 +8270,14 @@ impl GeneratedJavaParser {
 										 =>  {
 											{
 												self.jj_consume_token()?;
-												expr = UnaryExpr::new(&self.range(expr, &self.token()), expr, /* Java*/ UnaryExpr/* */ .Operator::POSTFIX_INCREMENT);
+												expr = UnaryExpr::new(&self.range(expr, &self.token()), expr, UnaryExpr.Operator::POSTFIX_INCREMENT);
 												break;
 											}
 										}
 										 =>  {
 											{
 												self.jj_consume_token()?;
-												expr = UnaryExpr::new(&self.range(expr, &self.token()), expr, /* Java*/ UnaryExpr/* */ .Operator::POSTFIX_DECREMENT);
+												expr = UnaryExpr::new(&self.range(expr, &self.token()), expr, UnaryExpr.Operator::POSTFIX_DECREMENT);
 												break;
 											}
 										}
@@ -8345,7 +8345,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn switch_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::switch_stmt::SwitchStmt {
+	pub fn switch_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::switch_stmt::SwitchStmt {
 		let selector: Expression;
 		let entry: SwitchEntry;
 		let entries: NodeList<SwitchEntry> = self.empty_node_list();
@@ -8383,7 +8383,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn switch_expression(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::switch_expr::SwitchExpr {
+	pub fn switch_expression(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::switch_expr::SwitchExpr {
 		let selector: Expression;
 		let entry: SwitchEntry;
 		let entries: NodeList<SwitchEntry> = self.empty_node_list();
@@ -8421,7 +8421,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn switch_entry(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::switch_entry::SwitchEntry {
+	pub fn switch_entry(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::switch_entry::SwitchEntry {
 		let label: Expression = null;
 		let labels: NodeList<Expression> = self.empty_node_list();
 		let stmts: NodeList<Statement> = self.empty_node_list();
@@ -8610,7 +8610,7 @@ impl GeneratedJavaParser {
 				{
 					self.jj_consume_token()?;
 					stmts = self.statements()?;
-					ret = SwitchEntry::new(&self.range(begin, &self.token()), labels, /* Java*/ STATEMENT_GROUP/* */ , stmts, is_default, guard);
+					ret = SwitchEntry::new(&self.range(begin, &self.token()), labels, STATEMENT_GROUP, stmts, is_default, guard);
 					break;
 				}
 			}
@@ -8721,7 +8721,7 @@ impl GeneratedJavaParser {
 								stmt = self.switch_entry_expression()?;
 								let r: TokenRange = self.range(begin, &self.token());
 								stmts.add(stmt);
-								ret = SwitchEntry::new(r, labels, /* Java*/ EXPRESSION/* */ , stmts, is_default, guard);
+								ret = SwitchEntry::new(r, labels, EXPRESSION, stmts, is_default, guard);
 								break;
 							}
 						}
@@ -8730,7 +8730,7 @@ impl GeneratedJavaParser {
 								stmt = self.block()?;
 								let r: TokenRange = self.range(begin, &self.token());
 								stmts.add(stmt);
-								ret = SwitchEntry::new(r, labels, /* Java*/ BLOCK/* */ , stmts, is_default, guard);
+								ret = SwitchEntry::new(r, labels, BLOCK, stmts, is_default, guard);
 								break;
 							}
 						}
@@ -8739,7 +8739,7 @@ impl GeneratedJavaParser {
 								stmt = self.throw_statement()?;
 								let r: TokenRange = self.range(begin, &self.token());
 								stmts.add(stmt);
-								ret = SwitchEntry::new(r, labels, /* Java*/ THROWS_STATEMENT/* */ , stmts, is_default, guard);
+								ret = SwitchEntry::new(r, labels, THROWS_STATEMENT, stmts, is_default, guard);
 								break;
 							}
 						}
@@ -8767,7 +8767,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn switch_entry_expression(&self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::expression_stmt::ExpressionStmt {
+	pub fn switch_entry_expression(&self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::expression_stmt::ExpressionStmt {
 		let expr: Expression;
 		expr = self.expression()?;
 		self.jj_consume_token()?;
@@ -8784,7 +8784,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn if_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::if_stmt::IfStmt {
+	pub fn if_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::if_stmt::IfStmt {
 		let condition: Expression;
 		let then_stmt: Statement;
 		let else_stmt: Statement = null;
@@ -8817,7 +8817,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn while_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::while_stmt::WhileStmt {
+	pub fn while_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::while_stmt::WhileStmt {
 		let condition: Expression;
 		let body: Statement;
 		let begin: JavaToken;
@@ -8836,7 +8836,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn do_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::do_stmt::DoStmt {
+	pub fn do_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::do_stmt::DoStmt {
 		let condition: Expression;
 		let body: Statement;
 		let begin: JavaToken;
@@ -8857,7 +8857,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn for_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
+	pub fn for_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
 		let var_expr: VariableDeclarationExpr = null;
 		let expr: Expression = null;
 		let init: NodeList<Expression> = self.empty_node_list();
@@ -9384,7 +9384,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn for_init(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn for_init(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Expression>;
 		let expr: Expression;
 		if self.jj_2_66(2147483647) {
@@ -9513,7 +9513,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn expression_list(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn expression_list(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Expression> = NodeList<Expression>::new();
 		let expr: Expression;
 		expr = self.expression()?;
@@ -9543,7 +9543,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn for_update(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn for_update(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<Expression>;
 		ret = self.expression_list()?;
 		{
@@ -9555,7 +9555,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn break_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::break_stmt::BreakStmt {
+	pub fn break_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::break_stmt::BreakStmt {
 		let label: SimpleName = null;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -9620,7 +9620,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn yield_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::yield_stmt::YieldStmt {
+	pub fn yield_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::yield_stmt::YieldStmt {
 		let value: Expression;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -9636,7 +9636,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn continue_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::continue_stmt::ContinueStmt {
+	pub fn continue_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::continue_stmt::ContinueStmt {
 		let label: SimpleName = null;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -9701,7 +9701,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn return_statement(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::return_stmt::ReturnStmt {
+	pub fn return_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::return_stmt::ReturnStmt {
 		let expr: Expression = null;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -9826,7 +9826,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn throw_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::throw_stmt::ThrowStmt {
+	pub fn throw_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::throw_stmt::ThrowStmt {
 		let expr: Expression;
 		let begin: JavaToken;
 		self.jj_consume_token()?;
@@ -9842,7 +9842,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn synchronized_statement(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::synchronized_stmt::SynchronizedStmt {
+	pub fn synchronized_statement(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::synchronized_stmt::SynchronizedStmt {
 		let expr: Expression;
 		let body: BlockStmt;
 		let begin: JavaToken;
@@ -9861,7 +9861,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn try_statement(&mut self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::try_stmt::TryStmt {
+	pub fn try_statement(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::try_stmt::TryStmt {
 		let resources: NodeList<Expression> = self.empty_node_list();
 		let try_block: BlockStmt;
 		let finally_block: BlockStmt = null;
@@ -9962,7 +9962,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn resource_specification(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn resource_specification(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let variables: NodeList<Expression>;
 		self.jj_consume_token()?;
 		variables = self.resources()?;
@@ -9981,7 +9981,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn resources(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn resources(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let expressions: NodeList<Expression> = NodeList<Expression>::new();
 		let expr: Expression;
 		expr = self.resource()?;
@@ -10004,7 +10004,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn resource(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn resource(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let expr: Expression;
 		if self.jj_2_69(2147483647) {
 			/* this is a bit more lenient than we need to be, e.g. allowing access modifiers like private*/ 
@@ -10138,7 +10138,7 @@ impl GeneratedJavaParser {
 		self.jj_consume_token()?;
 	}
 
-	pub fn annotations(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn annotations(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let annotations: NodeList<AnnotationExpr> = NodeList<AnnotationExpr>::new();
 		let annotation: AnnotationExpr;
 		'label_56: while true {
@@ -10158,7 +10158,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::annotation_expr::AnnotationExpr {
+	pub fn annotation(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::annotation_expr::AnnotationExpr {
 		let ret: AnnotationExpr;
 		let name: Name;
 		let pairs: NodeList<MemberValuePair> = self.empty_node_list();
@@ -10238,7 +10238,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn member_value_pairs(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn member_value_pairs(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<MemberValuePair> = NodeList<MemberValuePair>::new();
 		let pair: MemberValuePair;
 		pair = self.member_value_pair()?;
@@ -10268,7 +10268,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn member_value_pair(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::member_value_pair::MemberValuePair {
+	pub fn member_value_pair(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::member_value_pair::MemberValuePair {
 		let name: SimpleName;
 		let value: Expression;
 		let begin: JavaToken;
@@ -10285,7 +10285,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn member_value(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn member_value(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		if self.jj_2_73(2147483647) {
 			ret = self.annotation()?;
@@ -10417,7 +10417,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn member_value_array_initializer(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn member_value_array_initializer(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: NodeList<Expression> = self.empty_node_list();
 		let member: Expression;
 		let begin: JavaToken;
@@ -10567,7 +10567,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_type_declaration(&self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::annotation_declaration::AnnotationDeclaration {
+	pub fn annotation_type_declaration(&self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::annotation_declaration::AnnotationDeclaration {
 		let name: SimpleName;
 		let members: NodeList<BodyDeclaration<?>> = self.empty_node_list();
 		let begin: JavaToken = modifier.begin;
@@ -10585,7 +10585,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_type_body(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::node_list::NodeList {
+	pub fn annotation_type_body(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::node_list::NodeList {
 		let ret: NodeList<BodyDeclaration<?>> = self.empty_node_list();
 		let member: BodyDeclaration;
 		self.jj_consume_token()?;
@@ -10802,7 +10802,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_body_declaration(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn annotation_body_declaration(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let modifier: ModifierHolder;
 		let ret: BodyDeclaration;
 		modifier = self.modifiers()?;
@@ -10911,7 +10911,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_type_member_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::annotation_member_declaration::AnnotationMemberDeclaration {
+	pub fn annotation_type_member_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::annotation_member_declaration::AnnotationMemberDeclaration {
 		let type: Type;
 		let name: SimpleName;
 		let default_val: Expression = null;
@@ -10944,7 +10944,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn default_value(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn default_value(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		self.jj_consume_token()?;
 		ret = self.member_value()?;
@@ -10957,7 +10957,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn module_directive(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::modules::module_directive::ModuleDirective {
+	pub fn module_directive(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::modules::module_directive::ModuleDirective {
 		let modifiers: ModifierHolder;
 		let name: Name;
 		let tmp_name: Name;
@@ -11121,7 +11121,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn module_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::modules::module_declaration::ModuleDeclaration {
+	pub fn module_declaration(&mut self, modifier: &com::github::javaparser::modifier_holder::ModifierHolder) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::modules::module_declaration::ModuleDeclaration {
 		let directives: NodeList<ModuleDirective> = NodeList<ModuleDirective>::new();
 		let open: bool = false;
 		let directive: ModuleDirective;
@@ -11178,7 +11178,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn block_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::block_stmt::BlockStmt {
+	pub fn block_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::block_stmt::BlockStmt {
 		let ret: BlockStmt;
 		ret = self.block()?;
 		self.jj_consume_token(0)?;
@@ -11191,7 +11191,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn block_statement_parse_start(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
+	pub fn block_statement_parse_start(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::statement::Statement {
 		let ret: Statement;
 		if self.jj_2_79(3) {
 			ret = self.block_statement()?;
@@ -11306,7 +11306,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn import_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::import_declaration::ImportDeclaration {
+	pub fn import_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::import_declaration::ImportDeclaration {
 		let ret: ImportDeclaration;
 		ret = self.import_declaration()?;
 		self.jj_consume_token(0)?;
@@ -11319,7 +11319,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn expression_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::expression::Expression {
+	pub fn expression_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::expression::Expression {
 		let ret: Expression;
 		ret = self.expression()?;
 		self.jj_consume_token(0)?;
@@ -11332,7 +11332,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::annotation_expr::AnnotationExpr {
+	pub fn annotation_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::annotation_expr::AnnotationExpr {
 		let ret: AnnotationExpr;
 		ret = self.annotation()?;
 		self.jj_consume_token(0)?;
@@ -11345,7 +11345,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn annotation_body_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn annotation_body_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let ret: BodyDeclaration<?>;
 		ret = self.annotation_body_declaration()?;
 		self.jj_consume_token(0)?;
@@ -11358,7 +11358,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_body_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
+	pub fn class_or_interface_body_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::body_declaration::BodyDeclaration {
 		let ret: BodyDeclaration<?>;
 		ret = self.class_or_interface_body_declaration()?;
 		self.jj_consume_token(0)?;
@@ -11371,7 +11371,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn class_or_interface_type_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
+	pub fn class_or_interface_type_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::class_or_interface_type::ClassOrInterfaceType {
 		let ret: ClassOrInterfaceType;
 		ret = self.annotated_class_or_interface_type()?;
 		self.jj_consume_token(0)?;
@@ -11384,7 +11384,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn result_type_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type::Type {
+	pub fn result_type_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type::Type {
 		let annotations: NodeList<AnnotationExpr>;
 		let ret: Type;
 		annotations = self.annotations()?;
@@ -11399,7 +11399,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn variable_declaration_expression_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::variable_declaration_expr::VariableDeclarationExpr {
+	pub fn variable_declaration_expression_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::variable_declaration_expr::VariableDeclarationExpr {
 		let ret: VariableDeclarationExpr;
 		ret = self.variable_declaration_expression()?;
 		self.jj_consume_token(0)?;
@@ -11412,7 +11412,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn explicit_constructor_invocation_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::stmt::explicit_constructor_invocation_stmt::ExplicitConstructorInvocationStmt {
+	pub fn explicit_constructor_invocation_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::stmt::explicit_constructor_invocation_stmt::ExplicitConstructorInvocationStmt {
 		let ret: ExplicitConstructorInvocationStmt;
 		ret = self.explicit_constructor_invocation()?;
 		self.jj_consume_token(0)?;
@@ -11425,7 +11425,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn name_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::name::Name {
+	pub fn name_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::name::Name {
 		let ret: Name;
 		ret = self.name()?;
 		self.jj_consume_token(0)?;
@@ -11438,7 +11438,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn simple_name_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::expr::simple_name::SimpleName {
+	pub fn simple_name_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::expr::simple_name::SimpleName {
 		let ret: SimpleName;
 		ret = self.simple_name()?;
 		self.jj_consume_token(0)?;
@@ -11451,7 +11451,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn parameter_parse_start(&self) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::parameter::Parameter {
+	pub fn parameter_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.AssertionError | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::parameter::Parameter {
 		let ret: Parameter;
 		ret = self.parameter()?;
 		self.jj_consume_token(0)?;
@@ -11464,7 +11464,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn package_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::package_declaration::PackageDeclaration {
+	pub fn package_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::package_declaration::PackageDeclaration {
 		let ret: PackageDeclaration;
 		ret = self.package_declaration()?;
 		self.jj_consume_token(0)?;
@@ -11477,7 +11477,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_declaration_parse_start(&mut self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::type_declaration::TypeDeclaration {
+	pub fn type_declaration_parse_start(&mut self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::type_declaration::TypeDeclaration {
 		let ret: TypeDeclaration<?>;
 		let modifier: ModifierHolder;
 		modifier = self.modifiers()?;
@@ -11518,7 +11518,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn module_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::modules::module_declaration::ModuleDeclaration {
+	pub fn module_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::modules::module_declaration::ModuleDeclaration {
 		let ret: ModuleDeclaration;
 		let modifiers: ModifierHolder;
 		modifiers = self.modifiers()?;
@@ -11533,7 +11533,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn module_directive_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::modules::module_directive::ModuleDirective {
+	pub fn module_directive_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::modules::module_directive::ModuleDirective {
 		let ret: ModuleDirective;
 		ret = self.module_directive()?;
 		self.jj_consume_token(0)?;
@@ -11546,7 +11546,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn type_parameter_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::type::type_parameter::TypeParameter {
+	pub fn type_parameter_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::type::type_parameter::TypeParameter {
 		let ret: TypeParameter;
 		let annotations: NodeList<AnnotationExpr>;
 		annotations = self.annotations()?;
@@ -11561,7 +11561,7 @@ impl GeneratedJavaParser {
 		return Err(IllegalStateException::new("Missing return statement in function"));
 	}
 
-	pub fn method_declaration_parse_start(&self) /* thrown(java.lang.IllegalStateException | com.github.javaparser.ParseException) */ -> com::github::javaparser::ast::body::method_declaration::MethodDeclaration {
+	pub fn method_declaration_parse_start(&self) /* thrown(com.github.javaparser.ParseException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::body::method_declaration::MethodDeclaration {
 		let ret: MethodDeclaration;
 		let modifier: ModifierHolder;
 		modifier = self.modifiers()?;
@@ -20074,11 +20074,11 @@ impl GeneratedJavaParser {
 	}
 
 	pub fn new(sdsl: &/* Java */ java::lang::String /**/) -> com::github::javaparser::generated_java_parser::GeneratedJavaParser {
-		this(StringProvider::new(s_d_s_l));
+		this(StringProvider::new(sdsl));
 	}
 
 	pub fn re_init(&self, sdsl: &/* Java */ java::lang::String /**/) {
-		self.re_init(StringProvider::new(s_d_s_l));
+		self.re_init(StringProvider::new(sdsl));
 	}
 
 	pub fn re_init(&mut self, stream: &com::github::javaparser::provider::Provider) {
@@ -20170,7 +20170,7 @@ impl GeneratedJavaParser {
 	
 	}
 
-	fn jj_consume_token(&mut self, kind: i32) /* thrown(com.github.javaparser.TokenMgrException | com.github.javaparser.ParseException) */ -> com::github::javaparser::token::Token {
+	fn jj_consume_token(&mut self, kind: i32) /* thrown(com.github.javaparser.ParseException | com.github.javaparser.TokenMgrException) */ -> com::github::javaparser::token::Token {
 		/* final */ let old_token: Token = self.token;
 		if self.token.next != null {
 			self.token = self.token.next;
@@ -20209,7 +20209,7 @@ impl GeneratedJavaParser {
 		return Err(self.generate_parse_exception());
 	}
 
-	fn jj_scan_token(&mut self, kind: i32) /* thrown(com.github.javaparser.TokenMgrException | com.github.javaparser.GeneratedJavaParser.LookaheadSuccess) */ -> bool {
+	fn jj_scan_token(&mut self, kind: i32) /* thrown(com.github.javaparser.GeneratedJavaParser.LookaheadSuccess | com.github.javaparser.TokenMgrException) */ -> bool {
 		if self.jj_scanpos == self.jj_lastpos {
 			self.jj_la -= 1;
 			if self.jj_scanpos.next == null {
@@ -20403,7 +20403,7 @@ impl GeneratedJavaParser {
 			 }
 		 }
 	
-		return ParseException::new(self.token, exptokseq, ,  if self.token_source == null { null } else { /* Java*/ GeneratedJavaParserTokenManager/* */ .lexStateNames[self.token_source.curLexState] });
+		return ParseException::new(self.token, exptokseq, ,  if self.token_source == null { null } else { GeneratedJavaParserTokenManager.lexStateNames[self.token_source.curLexState] });
 	}
 
 	pub fn trace_enabled(&self) -> bool {

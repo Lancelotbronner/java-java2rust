@@ -87,7 +87,7 @@ impl NodeText {
 		return self.try_to_find_element(&TextElementMatchers::by_node(child), from);
 	}
 
-	pub fn remove(&self, matcher: &com::github::javaparser::printer::lexicalpreservation::text_element_matcher::TextElementMatcher, potentially_following_whitespace: bool) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalArgumentException) */ {
+	pub fn remove(&self, matcher: &com::github::javaparser::printer::lexicalpreservation::text_element_matcher::TextElementMatcher, potentially_following_whitespace: bool) /* thrown(java.lang.IllegalArgumentException | java.lang.UnsupportedOperationException) */ {
 		let i: i32 = 0;
 		for e in self.elements {
 			if matcher.match(e) {

@@ -20,7 +20,7 @@ impl<T> LazyInitializer {
 		super(initializer, closer);
 	}
 
-	pub fn get(&mut self) /* thrown(java.lang.Throwable | E | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
+	pub fn get(&mut self) /* thrown(E | java.lang.Throwable | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
 		// use a temporary variable to reduce the number of reads of the
 		// volatile field
 		let result: T = self.object;

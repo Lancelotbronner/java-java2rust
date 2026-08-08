@@ -245,7 +245,7 @@ impl LexicalPreservingPrinter {
 		return node_text;
 	}
 
-	fn get_or_create_node_text(&self, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> com::github::javaparser::printer::lexicalpreservation::node_text::NodeText {
+	fn get_or_create_node_text(&self, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::node_text::NodeText {
 		if !node.contains_data(self.NODE_TEXT_DATA) {
 			let node_text: NodeText = NodeText::new();
 			node.set_data(self.NODE_TEXT_DATA, node_text);
@@ -292,7 +292,7 @@ impl LexicalPreservingPrinter {
 		return (optional_argument.getTypeName().startsWith(self.JAVAPARSER_AST_NODELIST));
 	}
 
-	fn find_node_list_name(&self, node_list: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::observer::observable_property::ObservableProperty {
+	fn find_node_list_name(&self, node_list: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::ast::observer::observable_property::ObservableProperty {
 		let parent: Node = node_list.get_parent_node_for_children();
 		for m in parent.getClass().getMethods() {
 			if m.getParameterCount() == 0 && m.getReturnType().getCanonicalName().equals(self.JAVAPARSER_AST_NODELIST) {
@@ -349,7 +349,7 @@ impl LexicalPreservingPrinter {
 struct Observer;
 
 impl Observer {
-	pub fn concrete_property_change(&self, observed_node: &com::github::javaparser::ast::node::Node, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, old_value: &/* Java */ java::lang::Object /**/, new_value: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NullPointerException | java.lang.UnsupportedOperationException | java.lang.AssertionError | java.lang.IllegalStateException) */ {
+	pub fn concrete_property_change(&self, observed_node: &com::github::javaparser::ast::node::Node, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, old_value: &/* Java */ java::lang::Object /**/, new_value: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | java.lang.NullPointerException | java.lang.UnsupportedOperationException) */ {
 		if old_value == new_value {
 			// Not really a change, ignore
 			return;
@@ -557,7 +557,7 @@ impl Observer {
 		return tokens;
 	}
 
-	fn make_comment_tokens(&self, new_comment: &com::github::javaparser::ast::comments::comment::Comment) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::util::List /**/ {
+	fn make_comment_tokens(&self, new_comment: &com::github::javaparser::ast::comments::comment::Comment) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> /* Java */ java::util::List /**/ {
 		let tokens: List<TokenTextElement> = ArrayList<>::new();
 		if new_comment.is_javadoc_comment() {
 			let t: TokenTextElement = TokenTextElement::new(, new_comment.get_header() + new_comment.get_content() + new_comment.get_footer());
@@ -720,7 +720,7 @@ impl Observer {
 	
 	}
 
-	pub fn concrete_list_change(&self, changed_list: &com::github::javaparser::ast::node_list::NodeList, type: &com::github::javaparser::ast::observer::ast_observer::ListChangeType, index: i32, node_added_or_removed: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.IllegalArgumentException) */ {
+	pub fn concrete_list_change(&self, changed_list: &com::github::javaparser::ast::node_list::NodeList, type: &com::github::javaparser::ast::observer::ast_observer::ListChangeType, index: i32, node_added_or_removed: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ {
 		let node_text: NodeText = com::github::javaparser::printer::lexicalpreservation::lexical_preserving_printer::LexicalPreservingPrinter::get_or_create_node_text(&changed_list.get_parent_node_for_children())?;
 		/* final */ let difference_elements: List<DifferenceElement>;
 		if type == AstObserver::com::github::javaparser::ast::observer::ast_observer::ListChangeType::REMOVAL {

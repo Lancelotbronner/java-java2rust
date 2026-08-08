@@ -37,7 +37,7 @@ impl TypeUtils {
 		return  if object instanceof Type { org::apache::commons::lang3::reflect::type_utils::TypeUtils::to_string(object as Type)? } else { object.toString() };
 	}
 
-	fn append_recursive_types(&self, builder: &/* Java */ java::lang::StringBuilder /**/, recursive_type_indexes: &&[i32], argument_types: &&[/* Java */ java::lang::reflect::Type /**/]) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ {
+	fn append_recursive_types(&self, builder: &/* Java */ java::lang::StringBuilder /**/, recursive_type_indexes: &&[i32], argument_types: &&[/* Java */ java::lang::reflect::Type /**/]) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ {
 		 {
 			let i: i32 = 0;
 			while i < recursive_type_indexes.length {
@@ -55,7 +55,7 @@ impl TypeUtils {
 		}
 	}
 
-	fn class_to_string<T>(&self, cls: &/* Java */ java::lang::Class /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	fn class_to_string<T>(&self, cls: &/* Java */ java::lang::Class /**/) /* thrown(java.io.IOException | java.lang.IllegalArgumentException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		if cls.isArray() {
 			return org::apache::commons::lang3::reflect::type_utils::TypeUtils::to_string(&cls.getComponentType())? + "[]";
 		}
@@ -288,7 +288,7 @@ impl TypeUtils {
 		return raw_type as Class<?>;
 	}
 
-	pub fn get_raw_type(&self, type: &/* Java */ java::lang::reflect::Type /**/, assigning_type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::Class /**/ {
+	pub fn get_raw_type(&self, type: &/* Java */ java::lang::reflect::Type /**/, assigning_type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::Class /**/ {
 		if type instanceof Class<?> {
 			// it is raw, no problem
 			return type as Class<?>;
@@ -631,7 +631,7 @@ impl TypeUtils {
 		return Err(IllegalStateException::new("found an unhandled type: " + type));
 	}
 
-	fn is_assignable(&self, type: &/* Java */ java::lang::reflect::Type /**/, to_wildcard_type: &/* Java */ java::lang::reflect::WildcardType /**/, type_var_assigns: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> bool {
+	fn is_assignable(&self, type: &/* Java */ java::lang::reflect::Type /**/, to_wildcard_type: &/* Java */ java::lang::reflect::WildcardType /**/, type_var_assigns: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> bool {
 		if type == null {
 			return true;
 		}
@@ -778,7 +778,7 @@ impl TypeUtils {
 		return org::apache::commons::lang3::reflect::type_utils::TypeUtils::parameterize_with_owner(null, raw_class, type_arguments);
 	}
 
-	fn parameterized_type_to_string(&self, parameterized_type: &/* Java */ java::lang::reflect::ParameterizedType /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ -> /* Java */ java::lang::String /**/ {
+	fn parameterized_type_to_string(&self, parameterized_type: &/* Java */ java::lang::reflect::ParameterizedType /**/) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		/* final */ let builder: StringBuilder = StringBuilder::new();
 		/* final */ let use_owner: Type = parameterized_type.getOwnerType();
 		/* final */ let raw: Class<?> = parameterized_type.getRawType() as Class<?>;
@@ -807,7 +807,7 @@ impl TypeUtils {
 		return org::apache::commons::lang3::reflect::type_utils::TypeUtils::parameterize_with_owner(owner, raw_class, &org::apache::commons::lang3::reflect::type_utils::TypeUtils::extract_type_arguments_from(type_variable_map, &raw_class.getTypeParameters())?);
 	}
 
-	pub fn parameterize_with_owner(&self, owner: &/* Java */ java::lang::reflect::Type /**/, raw_class: &/* Java */ java::lang::Class /**/, type_arguments: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::reflect::ParameterizedType /**/ {
+	pub fn parameterize_with_owner(&self, owner: &/* Java */ java::lang::reflect::Type /**/, raw_class: &/* Java */ java::lang::Class /**/, type_arguments: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::reflect::ParameterizedType /**/ {
 		Objects::requireNonNull(raw_class, "rawClass");
 		/* final */ let use_owner: Type;
 		if raw_class.getEnclosingClass() == null {
@@ -858,7 +858,7 @@ impl TypeUtils {
 		return buf.append(':').append(&org::apache::commons::lang3::reflect::type_utils::TypeUtils::type_variable_to_string(type_variable)).toString();
 	}
 
-	pub fn to_string(&self, type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn to_string(&self, type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.io.IOException | java.lang.IllegalArgumentException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		Objects::requireNonNull(type, "type");
 		if type instanceof Class<?> {
 			return org::apache::commons::lang3::reflect::type_utils::TypeUtils::class_to_string(type as Class<?>)?;
@@ -878,7 +878,7 @@ impl TypeUtils {
 		return Err(IllegalArgumentException::new(&ObjectUtils::identity_to_string(type)));
 	}
 
-	pub fn types_satisfy_variables(&self, type_variable_map: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> bool {
+	pub fn types_satisfy_variables(&self, type_variable_map: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> bool {
 		Objects::requireNonNull(type_variable_map, "typeVariableMap");
 		// type variable.
 		for /* final */ entry in type_variable_map.entrySet() {
@@ -893,7 +893,7 @@ impl TypeUtils {
 		return true;
 	}
 
-	fn type_variable_to_string(&self, type_variable: &/* Java */ java::lang::reflect::TypeVariable /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ -> /* Java */ java::lang::String /**/ {
+	fn type_variable_to_string(&self, type_variable: &/* Java */ java::lang::reflect::TypeVariable /**/) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		/* final */ let builder: StringBuilder = StringBuilder::new(&type_variable.getName());
 		/* final */ let bounds: Vec<Type> = type_variable.getBounds();
 		if bounds.length > 0 && !(bounds.length == 1 && Object.class.equals(bounds[0])) {
@@ -947,7 +947,7 @@ impl TypeUtils {
 		return result;
 	}
 
-	pub fn unroll_variables(&self, mut type_arguments: &/* Java */ java::util::Map /**/, type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IndexOutOfBoundsException | java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::reflect::Type /**/ {
+	pub fn unroll_variables(&self, mut type_arguments: &/* Java */ java::util::Map /**/, type: &/* Java */ java::lang::reflect::Type /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException | java.lang.IndexOutOfBoundsException) */ -> /* Java */ java::lang::reflect::Type /**/ {
 		if type_arguments == null {
 			type_arguments = Collections::emptyMap();
 		}
@@ -992,7 +992,7 @@ impl TypeUtils {
 		return WildcardTypeBuilder::new();
 	}
 
-	fn wildcard_type_to_string(&self, wildcard_type: &/* Java */ java::lang::reflect::WildcardType /**/) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ -> /* Java */ java::lang::String /**/ {
+	fn wildcard_type_to_string(&self, wildcard_type: &/* Java */ java::lang::reflect::WildcardType /**/) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		/* final */ let builder: StringBuilder = StringBuilder::new().append('?');
 		/* final */ let lower_bounds: Vec<Type> = wildcard_type.getLowerBounds();
 		/* final */ let upper_bounds: Vec<Type> = wildcard_type.getUpperBounds();
@@ -1040,7 +1040,7 @@ impl GenericArrayTypeImpl {
 		return result;
 	}
 
-	pub fn to_string(&self) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn to_string(&self) /* thrown(java.io.IOException | java.lang.IllegalArgumentException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		return TypeUtils::to_string(self)?;
 	}
 }
@@ -1088,7 +1088,7 @@ impl ParameterizedTypeImpl {
 		return result;
 	}
 
-	pub fn to_string(&self) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn to_string(&self) /* thrown(java.io.IOException | java.lang.IllegalArgumentException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		return TypeUtils::to_string(self)?;
 	}
 }
@@ -1154,7 +1154,7 @@ impl WildcardTypeImpl {
 		return result;
 	}
 
-	pub fn to_string(&self) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn to_string(&self) /* thrown(java.io.IOException | java.lang.IllegalArgumentException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::String /**/ {
 		return TypeUtils::to_string(self)?;
 	}
 }

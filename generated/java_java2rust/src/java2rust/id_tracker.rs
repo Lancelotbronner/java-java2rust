@@ -178,7 +178,7 @@ impl IdTracker {
 	}
 
 	fn is_changed_in_children_of_block(&self, name: &/* Java */ java::lang::String /**/, bp: &java2rust::block::Block) -> bool {
-		return b_p.children.stream().anyMatch(|child|!self.is_declared_in_single_block(name, child) && (self.is_changed_in_single_block(name, child) || self.is_changed_in_children_of_block(name, child)));
+		return bp.children.stream().anyMatch(|child|!self.is_declared_in_single_block(name, child) && (self.is_changed_in_single_block(name, child) || self.is_changed_in_children_of_block(name, child)));
 	}
 
 	pub fn is_changed(&self, name: &/* Java */ java::lang::String /**/, n: &com::github::javaparser::ast::node::Node) -> bool {

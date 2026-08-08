@@ -18,7 +18,7 @@ pub struct DurationUtils;
 impl DurationUtils {
 	static LONG_TO_INT_RANGE: org::apache::commons::lang3::long_range::LongRange = LongRange::of(NumberUtils::LONG_INT_MIN_VALUE, NumberUtils::LONG_INT_MAX_VALUE);
 
-	pub fn accept<T: /* Java */ java::lang::Throwable /**/>(&self, consumer: &org::apache::commons::lang3::function::failable_bi_consumer::FailableBiConsumer, duration: &/* Java */ java::time::Duration /**/) /* thrown(T | E) */ {
+	pub fn accept<T: /* Java */ java::lang::Throwable /**/>(&self, consumer: &org::apache::commons::lang3::function::failable_bi_consumer::FailableBiConsumer, duration: &/* Java */ java::time::Duration /**/) /* thrown(E | T) */ {
 		if consumer != null && duration != null {
 			consumer.accept(&duration.toMillis(), &org::apache::commons::lang3::time::duration_utils::DurationUtils::get_nanos_of_milli(duration))?;
 		}

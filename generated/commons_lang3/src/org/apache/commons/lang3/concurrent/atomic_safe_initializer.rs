@@ -23,7 +23,7 @@ impl<T> AtomicSafeInitializer {
 		super(initializer, closer);
 	}
 
-	pub fn get(&self) /* thrown(java.lang.Throwable | E | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
+	pub fn get(&self) /* thrown(E | java.lang.Throwable | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
 		let result: T;
 		while (result = self.reference.get()) == self.get_no_init() {
 			if self.factory.compareAndSet(null, self) {

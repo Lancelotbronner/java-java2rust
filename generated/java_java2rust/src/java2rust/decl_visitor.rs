@@ -7,7 +7,6 @@ use javaparser_core::com::github::javaparser::ast::visitor::VoidVisitorAdapter;
 use javaparser_core::com::github::javaparser::resolution::UnsolvedSymbolException;
 use javaparser_core::com::github::javaparser::resolution::declarations::ResolvedValueDeclaration;
 use javaparser_core::com::github::javaparser::resolution::types::ResolvedType;
-use crate::java2rust::rust;
 use java::util::Objects;
 use java::util::Optional;
 use java::util::Stack;
@@ -22,7 +21,7 @@ pub struct DeclVisitor {
 }
 
 impl DeclVisitor {
-	pub fn new(transpiler: &java2rust::java_transpiler::JavaTranspiler, module: &java2rust::rust::rust_package::RustPackage) -> java2rust::decl_visitor::DeclVisitor {
+	pub fn new(transpiler: &java2rust::java_transpiler::JavaTranspiler, module: &java2rust::rust_package::RustPackage) -> java2rust::decl_visitor::DeclVisitor {
 		self.transpiler = transpiler;
 		self.modules.push(module);
 	}

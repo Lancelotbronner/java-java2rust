@@ -59,7 +59,7 @@ impl<T> DiffBuilder {
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: &&[i8], rhs: &&[i8]) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
-		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils::to_object(rhs), Vec<Byte>.class) };
+		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils.toObject(rhs), Vec<Byte>.class) };
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: u16, rhs: u16) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
@@ -67,7 +67,7 @@ impl<T> DiffBuilder {
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: &&[u16], rhs: &&[u16]) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
-		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils::to_object(rhs), Vec<Character>.class) };
+		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils::to_object(lhs), |()|ArrayUtils.toObject(rhs), Vec<Character>.class) };
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, diff_result: &org::apache::commons::lang3::builder::diff_result::DiffResult) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
@@ -108,7 +108,7 @@ impl<T> DiffBuilder {
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: &&[i64], rhs: &&[i64]) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
-		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils::to_object(rhs), Vec<Long>.class) };
+		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils::to_object(lhs), |()|ArrayUtils.toObject(rhs), Vec<Long>.class) };
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: &/* Java */ java::lang::Object /**/, rhs: &/* Java */ java::lang::Object /**/) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
@@ -122,10 +122,10 @@ impl<T> DiffBuilder {
 				return self.append(field_name, lhs as Vec<bool>, rhs as Vec<bool>);
 			}
 			if test instanceof Vec<i8> {
-				return self.append(field_name, lhs as Vec<i8>, rhs as Vec<i8>);
+				return .append(field_name, lhs as Vec<i8>, rhs as Vec<i8>);
 			}
 			if test instanceof Vec<char> {
-				return .append(field_name, lhs as Vec<char>, rhs as Vec<char>);
+				return self.append(field_name, lhs as Vec<char>, rhs as Vec<char>);
 			}
 			if test instanceof Vec<f64> {
 				return self.append(field_name, lhs as Vec<f64>, rhs as Vec<f64>);
@@ -134,7 +134,7 @@ impl<T> DiffBuilder {
 				return self.append(field_name, lhs as Vec<f32>, rhs as Vec<f32>);
 			}
 			if test instanceof Vec<i32> {
-				return .append(field_name, lhs as Vec<i32>, rhs as Vec<i32>);
+				return self.append(field_name, lhs as Vec<i32>, rhs as Vec<i32>);
 			}
 			if test instanceof Vec<i64> {
 				return self.append(field_name, lhs as Vec<i64>, rhs as Vec<i64>);
@@ -157,7 +157,7 @@ impl<T> DiffBuilder {
 	}
 
 	pub fn append(&self, field_name: &/* Java */ java::lang::String /**/, lhs: &&[i16], rhs: &&[i16]) -> org::apache::commons::lang3::builder::diff_builder::DiffBuilder {
-		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils.toObject(rhs), Vec<Short>.class) };
+		return  if self.equals || Arrays::equals(lhs, rhs) { self } else { self.add(field_name, |()|ArrayUtils.toObject(lhs), |()|ArrayUtils::to_object(rhs), Vec<Short>.class) };
 	}
 
 	pub fn build(&self) -> org::apache::commons::lang3::builder::diff_result::DiffResult {

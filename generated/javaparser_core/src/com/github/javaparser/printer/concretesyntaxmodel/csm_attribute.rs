@@ -23,7 +23,7 @@ impl CsmAttribute {
 		printer.print(&PrintingHelper::print_to_string(value));
 	}
 
-	pub fn get_token_type(&self, node: &com::github::javaparser::ast::node::Node, text: &/* Java */ java::lang::String /**/, token_text: &/* Java */ java::lang::String /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.RuntimeException) */ -> i32 {
+	pub fn get_token_type(&self, node: &com::github::javaparser::ast::node::Node, text: &/* Java */ java::lang::String /**/, token_text: &/* Java */ java::lang::String /**/) /* thrown(java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> i32 {
 		match self.property {
 			IDENTIFIER =>  {
 				return GeneratedJavaParserConstants.IDENTIFIER;

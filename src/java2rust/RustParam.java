@@ -5,7 +5,7 @@ import com.github.javaparser.ast.body.Parameter;
 public class RustParam {
 	public final Parameter java;
 	public boolean isMutable;
-	private final String name;
+	public final String name;
 	private String type;
 	private String cache;
 

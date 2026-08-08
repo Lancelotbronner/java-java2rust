@@ -1048,7 +1048,7 @@ impl StringUtils {
 	}
 
 	pub fn index_of_any_but(&self, cs: &/* Java */ java::lang::CharSequence /**/, search_chars: u16) -> i32 {
-		if org::apache::commons::lang3::string_utils::StringUtils::is_empty(cs) || ArrayUtils.isEmpty(search_chars) {
+		if org::apache::commons::lang3::string_utils::StringUtils::is_empty(cs) || ArrayUtils::is_empty(search_chars) {
 			return self.INDEX_NOT_FOUND;
 		}
 		return org::apache::commons::lang3::string_utils::StringUtils::index_of_any_but(cs, &CharBuffer::wrap(search_chars));
@@ -1551,7 +1551,7 @@ impl StringUtils {
 		if array == null {
 			return null;
 		}
-		return org::apache::commons::lang3::string_utils::StringUtils::join(array, delimiter, 0, array.length);
+		return .join(array, delimiter, 0, array.length);
 	}
 
 	pub fn join(&self, array: &&[u16], delimiter: u16, start_index: i32, end_index: i32) -> /* Java */ java::lang::String /**/ {
@@ -1717,7 +1717,7 @@ impl StringUtils {
 		if array == null {
 			return null;
 		}
-		return .join(array, separator, 0, array.length);
+		return org::apache::commons::lang3::string_utils::StringUtils::join(array, separator, 0, array.length);
 	}
 
 	pub fn join(&self, array: &&[i64], delimiter: u16, start_index: i32, end_index: i32) -> /* Java */ java::lang::String /**/ {
@@ -2344,11 +2344,11 @@ impl StringUtils {
 		return str;
 	}
 
-	pub fn replace_each(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/]) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn replace_each(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/]) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::String /**/ {
 		return org::apache::commons::lang3::string_utils::StringUtils::replace_each(text, search_list, replacement_list, false, 0)?;
 	}
 
-	fn replace_each(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/], repeat: bool, time_to_live: i32) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	fn replace_each(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/], repeat: bool, time_to_live: i32) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::String /**/ {
 		// let me know if there are performance requests, we can create a harness to measure
 		if org::apache::commons::lang3::string_utils::StringUtils::is_empty(text) || ArrayUtils::is_empty(search_list) || ArrayUtils::is_empty(replacement_list) {
 			return text;
@@ -2474,7 +2474,7 @@ impl StringUtils {
 		return org::apache::commons::lang3::string_utils::StringUtils::replace_each(result, search_list, replacement_list, repeat, time_to_live - 1)?;
 	}
 
-	pub fn replace_each_repeatedly(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/]) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	pub fn replace_each_repeatedly(&self, text: &/* Java */ java::lang::String /**/, search_list: &&[/* Java */ java::lang::String /**/], replacement_list: &&[/* Java */ java::lang::String /**/]) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> /* Java */ java::lang::String /**/ {
 		/* final */ let time_to_live: i32 = Math::max(&ArrayUtils::get_length(search_list), self.DEFAULT_TTL);
 		return org::apache::commons::lang3::string_utils::StringUtils::replace_each(text, search_list, replacement_list, true, time_to_live)?;
 	}

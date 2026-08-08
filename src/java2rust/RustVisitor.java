@@ -36,6 +36,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	public @Nullable RustItem item;
 	public @Nullable IRustFunction method;
 	private boolean isVarDeclStmt = true;
+	private boolean isMutating = false;
 
 	public RustVisitor(
 		JavaTranspiler transpiler
@@ -200,7 +201,9 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 	@Override
 	public void visit(final AssignExpr n, final Object arg) {
 		printJavaComment(n.getComment().orElse(null), arg);
+		isMutating = true;
 		n.getTarget().accept(this, arg);
+		isMutating = false;
 		printer.print(" %s ".formatted(descriptionOf(n.getOperator())));
 		n.getValue().accept(this, arg);
 	}
@@ -995,6 +998,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			RustMethod method = this.transpiler.method(resolved);
 			if (method != null && !method.thrown().isEmpty())
 				thrown = method.thrown();
+			if (method != null)
+				isMutating = method.params().isMutSelf();
 
 			if (n.getScope().isEmpty())
 				scope = resolved.isStatic() ? transpiler.describe(resolved.declaringType()) : "self";
@@ -1007,6 +1012,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 		if (n.getScope().isPresent())
 			n.getScope().get().accept(this, arg);
+		isMutating = false;
 
 		if (n.getTypeArguments().isPresent())
 			printTypeArgs(n.getTypeArguments().get(), arg);
@@ -1128,7 +1134,26 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			} else if (resolved instanceof JavaParserEnumConstantDeclaration || resolved instanceof ReflectionEnumConstantDeclaration) {
 				//TODO: Print the type access first?
 				printer.print(n.getNameAsString());
-			} else if (resolved instanceof JavaParserParameterDeclaration || resolved instanceof JavaParserVariableDeclaration || resolved instanceof JavaParserFieldDeclaration) {
+			} else if (resolved instanceof JavaParserParameterDeclaration java) {
+				RustParam param = this.method.params().java(java.getWrappedNode());
+				if (param != null) {
+					if (this.isMutating)
+						param.isMutable = true;
+					printer.print(param.name);
+				} else {
+					Node parent = java.getWrappedNode().getParentNode().orElse(null);
+					if (parent instanceof LambdaExpr){}else {
+						//TODO: This may happen in sub-method declarations such as anonymous classes, use a method stack instead.
+						//TODO: This may happen in catch clauses
+						System.err.printf(
+							"In NameExpr: could not match parameter '%s' to method.\n\t method: %s\n",
+							java.getWrappedNode(),
+							this.method);
+					}
+					printer.print(name);
+				}
+			} else if (resolved instanceof JavaParserVariableDeclaration || resolved instanceof JavaParserFieldDeclaration) {
+				//TODO: Get their values and add later
 				printer.print(name);
 			} else {
 				System.err.printf("In NameExpr: unknown resolved value: %s\n", resolved.getType());
@@ -1145,14 +1170,8 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 			error = true;
 		}
 
-		if (error) {
-			printer.startComment();
-			printer.print("Java");
-			printer.endComment();
+		if (error)
 			printer.print(name);
-			printer.startComment();
-			printer.endComment();
-		}
 
 		/*
 		Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
@@ -1677,6 +1696,7 @@ public final class RustVisitor extends VoidVisitorAdapter<Object> {
 
 	@Override
 	public void visit(LambdaExpr n, Object arg) {
+		//TODO: Push lambda (as RustLambda?) to stack, use it in param resolution
 		printJavaComment(n.getComment().orElse(null), arg);
 
 		List<Parameter> parameters = n.getParameters();

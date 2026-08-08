@@ -406,7 +406,7 @@ impl Node {
 		}
 	}
 
-	pub fn register(&self, observer: &com::github::javaparser::ast::observer::ast_observer::AstObserver, mode: &com::github::javaparser::ast::node::ObserverRegistrationMode) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalArgumentException) */ {
+	pub fn register(&self, observer: &com::github::javaparser::ast::observer::ast_observer::AstObserver, mode: &com::github::javaparser::ast::node::ObserverRegistrationMode) /* thrown(java.lang.IllegalArgumentException | java.lang.UnsupportedOperationException) */ {
 		if mode == null {
 			return Err(IllegalArgumentException::new("Mode should be not null"));
 		}

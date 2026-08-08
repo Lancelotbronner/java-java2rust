@@ -21,7 +21,7 @@ impl<T> AtomicInitializer {
 		super(initializer, closer);
 	}
 
-	pub fn get(&self) /* thrown(java.lang.Throwable | E | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
+	pub fn get(&self) /* thrown(E | java.lang.Throwable | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
 		let result: T = self.reference.get();
 		if result == self.get_no_init() {
 			result = self.initialize()?;

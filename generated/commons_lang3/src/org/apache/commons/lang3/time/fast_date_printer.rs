@@ -532,7 +532,7 @@ impl FastDatePrinter {
 		return buf.toString();
 	}
 
-	fn read_object(&self, in: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.lang.ClassNotFoundException | java.io.IOException) */ {
+	fn read_object(&self, in: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.io.IOException | java.lang.ClassNotFoundException) */ {
 		in.defaultReadObject();
 		self.init();
 	}

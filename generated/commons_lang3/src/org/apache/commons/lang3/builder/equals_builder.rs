@@ -431,7 +431,7 @@ impl EqualsBuilder {
 		} else if lhs instanceof Vec<char> {
 			self.append(lhs as Vec<char>, rhs as Vec<char>);
 		} else if lhs instanceof Vec<i8> {
-			.append(lhs as Vec<i8>, rhs as Vec<i8>);
+			self.append(lhs as Vec<i8>, rhs as Vec<i8>);
 		} else if lhs instanceof Vec<f64> {
 			self.append(lhs as Vec<f64>, rhs as Vec<f64>);
 		} else if lhs instanceof Vec<f32> {

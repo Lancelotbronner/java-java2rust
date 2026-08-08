@@ -378,7 +378,7 @@ impl Difference {
 		return removed_elements_map;
 	}
 
-	fn apply_removed_diff_element(&mut self, removed_group: &com::github::javaparser::printer::lexicalpreservation::removed_group::RemovedGroup, removed: &com::github::javaparser::printer::lexicalpreservation::removed::Removed, original_element: &com::github::javaparser::printer::lexicalpreservation::text_element::TextElement, original_element_is_child: bool, original_element_is_token: bool) /* thrown(java.lang.UnsupportedOperationException | java.lang.AssertionError | java.lang.IllegalStateException) */ {
+	fn apply_removed_diff_element(&mut self, removed_group: &com::github::javaparser::printer::lexicalpreservation::removed_group::RemovedGroup, removed: &com::github::javaparser::printer::lexicalpreservation::removed::Removed, original_element: &com::github::javaparser::printer::lexicalpreservation::text_element::TextElement, original_element_is_child: bool, original_element_is_token: bool) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ {
 		if removed.is_child() && original_element_is_child {
 			let original_element_child: ChildTextElement = original_element as ChildTextElement;
 			if original_element_child.is_comment() {
@@ -529,7 +529,7 @@ impl Difference {
 		}
 	}
 
-	fn apply_kept_diff_element(&mut self, kept: &com::github::javaparser::printer::lexicalpreservation::kept::Kept, original_element: &com::github::javaparser::printer::lexicalpreservation::text_element::TextElement, original_element_is_child: bool, original_element_is_token: bool) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ {
+	fn apply_kept_diff_element(&mut self, kept: &com::github::javaparser::printer::lexicalpreservation::kept::Kept, original_element: &com::github::javaparser::printer::lexicalpreservation::text_element::TextElement, original_element_is_child: bool, original_element_is_token: bool) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ {
 		if original_element.is_comment() {
 			self.original_index += 1;
 		} else if kept.is_child() && (kept.get_element() as CsmChild).get_child() instanceof Comment {

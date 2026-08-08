@@ -1104,7 +1104,7 @@ impl CloneVisitor {
 		}
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::stmt::yield_stmt::YieldStmt, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::stmt::yield_stmt::YieldStmt, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let expression: Expression = self.clone_node(&n.get_expression(), arg);
 		let comment: Comment = self.clone_node(&n.get_comment(), arg);
 		let r: YieldStmt = YieldStmt::new(&n.get_token_range().orElse(null), expression);
@@ -1114,7 +1114,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::text_block_literal_expr::TextBlockLiteralExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::expr::text_block_literal_expr::TextBlockLiteralExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let comment: Comment = self.clone_node(&n.get_comment(), arg);
 		let r: TextBlockLiteralExpr = TextBlockLiteralExpr::new(&n.get_token_range().orElse(null), &n.get_value());
 		r.set_comment(comment)?;
@@ -1123,7 +1123,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::type_pattern_expr::TypePatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::expr::type_pattern_expr::TypePatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let modifiers: NodeList<Modifier> = self.clone_list(&n.get_modifiers(), arg);
 		let name: SimpleName = self.clone_node(&n.get_name(), arg);
 		let type: Type = self.clone_node(&n.get_type(), arg);
@@ -1135,7 +1135,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::body::record_declaration::RecordDeclaration, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::body::record_declaration::RecordDeclaration, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let implemented_types: NodeList<ClassOrInterfaceType> = self.clone_list(&n.get_implemented_types(), arg);
 		let parameters: NodeList<Parameter> = self.clone_list(&n.get_parameters(), arg);
 		let receiver_parameter: ReceiverParameter = self.clone_node(&n.get_receiver_parameter(), arg);
@@ -1152,7 +1152,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::body::compact_constructor_declaration::CompactConstructorDeclaration, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::body::compact_constructor_declaration::CompactConstructorDeclaration, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let body: BlockStmt = self.clone_node(&n.get_body(), arg);
 		let modifiers: NodeList<Modifier> = self.clone_list(&n.get_modifiers(), arg);
 		let name: SimpleName = self.clone_node(&n.get_name(), arg);
@@ -1167,7 +1167,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::record_pattern_expr::RecordPatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::expr::record_pattern_expr::RecordPatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let modifiers: NodeList<Modifier> = self.clone_list(&n.get_modifiers(), arg);
 		let pattern_list: NodeList<ComponentPatternExpr> = self.clone_list(&n.get_pattern_list(), arg);
 		let type: Type = self.clone_node(&n.get_type()?, arg);
@@ -1179,7 +1179,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::match_all_pattern_expr::MatchAllPatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::expr::match_all_pattern_expr::MatchAllPatternExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let modifiers: NodeList<Modifier> = self.clone_list(&n.get_modifiers(), arg);
 		let comment: Comment = self.clone_node(&n.get_comment(), arg);
 		let r: MatchAllPatternExpr = MatchAllPatternExpr::new(&n.get_token_range().orElse(null), modifiers);
@@ -1189,7 +1189,7 @@ impl CloneVisitor {
 		return r;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::comments::markdown_comment::MarkdownComment, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::comments::markdown_comment::MarkdownComment, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let comment: Comment = self.clone_node(&n.get_comment(), arg);
 		let r: MarkdownComment = MarkdownComment::new(&n.get_token_range().orElse(null), &n.get_content());
 		r.set_comment(comment)?;

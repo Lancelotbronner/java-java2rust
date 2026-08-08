@@ -35,7 +35,7 @@ public class RustParams {
 		return params.toString();
 	}
 
-	public boolean isMut() {
+	public boolean isMutSelf() {
 		if (self == null) return false;
 		return self.isMut();
 	}
@@ -49,6 +49,14 @@ public class RustParams {
 		return params
 			.stream()
 			.filter(p -> Objects.equals(p.java.getNameAsString(), name))
+			.findFirst()
+			.orElse(null);
+	}
+
+	public RustParam java(Parameter parameter) {
+		return params
+			.stream()
+			.filter(p -> p.java == parameter)
 			.findFirst()
 			.orElse(null);
 	}

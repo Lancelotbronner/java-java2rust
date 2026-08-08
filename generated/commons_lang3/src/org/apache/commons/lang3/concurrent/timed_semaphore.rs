@@ -53,7 +53,7 @@ impl TimedSemaphore {
 		this(&org::apache::commons::lang3::concurrent::timed_semaphore::TimedSemaphore::builder().set_service(service).set_period(time_period).set_time_unit(time_unit).set_limit(limit));
 	}
 
-	pub fn acquire(&self) /* thrown(java.lang.InterruptedException | java.lang.IllegalStateException) */ {
+	pub fn acquire(&self) /* thrown(java.lang.IllegalStateException | java.lang.InterruptedException) */ {
 		self.prepare_acquire()?;
 		let can_pass: bool;
 		loop { {

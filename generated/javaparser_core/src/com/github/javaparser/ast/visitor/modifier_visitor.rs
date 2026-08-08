@@ -1009,7 +1009,7 @@ impl<A> ModifierVisitor {
 		return n;
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::type::unknown_type::UnknownType, arg: &A) /* thrown(java.lang.AssertionError | java.lang.IllegalStateException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
+	pub fn visit(&self, n: &com::github::javaparser::ast::type::unknown_type::UnknownType, arg: &A) /* thrown(java.lang.AssertionError | java.lang.IllegalArgumentException | java.lang.IllegalStateException) */ -> com::github::javaparser::ast::visitor::visitable::Visitable {
 		let annotations: NodeList<AnnotationExpr> = self.modify_list(&n.get_annotations(), arg);
 		let comment: Comment = n.get_comment().map(|s|s.accept(self, arg) as Comment).orElse(null);
 		n.set_annotations(annotations)?;

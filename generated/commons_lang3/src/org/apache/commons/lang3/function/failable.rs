@@ -56,11 +56,11 @@ impl Failable {
 		return  if value != null { Objects::requireNonNull(mapper, "mapper").apply(value) } else { null };
 	}
 
-	pub fn apply_non_null<T, U, R, E1: /* Java */ java::lang::Throwable /**/, E2: /* Java */ java::lang::Throwable /**/>(&self, value1: &T, mapper1: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper2: &org::apache::commons::lang3::function::failable_function::FailableFunction) /* thrown(E2 | E | E1) */ -> R {
+	pub fn apply_non_null<T, U, R, E1: /* Java */ java::lang::Throwable /**/, E2: /* Java */ java::lang::Throwable /**/>(&self, value1: &T, mapper1: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper2: &org::apache::commons::lang3::function::failable_function::FailableFunction) /* thrown(E | E1 | E2) */ -> R {
 		return org::apache::commons::lang3::function::failable::Failable::apply_non_null(&org::apache::commons::lang3::function::failable::Failable::apply_non_null(value1, mapper1)?, mapper2)?;
 	}
 
-	pub fn apply_non_null<T, U, V, R, E1: /* Java */ java::lang::Throwable /**/, E2: /* Java */ java::lang::Throwable /**/, E3: /* Java */ java::lang::Throwable /**/>(&self, value1: &T, mapper1: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper2: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper3: &org::apache::commons::lang3::function::failable_function::FailableFunction) /* thrown(E3 | E2 | E | E1) */ -> R {
+	pub fn apply_non_null<T, U, V, R, E1: /* Java */ java::lang::Throwable /**/, E2: /* Java */ java::lang::Throwable /**/, E3: /* Java */ java::lang::Throwable /**/>(&self, value1: &T, mapper1: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper2: &org::apache::commons::lang3::function::failable_function::FailableFunction, mapper3: &org::apache::commons::lang3::function::failable_function::FailableFunction) /* thrown(E | E1 | E2 | E3) */ -> R {
 		return org::apache::commons::lang3::function::failable::Failable::apply_non_null(&org::apache::commons::lang3::function::failable::Failable::apply_non_null(&org::apache::commons::lang3::function::failable::Failable::apply_non_null(value1, mapper1)?, mapper2)?, mapper3)?;
 	}
 
@@ -104,7 +104,7 @@ impl Failable {
 		return org::apache::commons::lang3::function::failable::Failable::get(callable::call)?;
 	}
 
-	pub fn get<T, E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_supplier::FailableSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> T {
+	pub fn get<T, E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_supplier::FailableSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> T {
 		let r0 = 'try0: {
 			return supplier.get();
 			break 'try0 Ok(());
@@ -118,7 +118,7 @@ impl Failable {
 		}
 	}
 
-	pub fn get_as_boolean<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_boolean_supplier::FailableBooleanSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	pub fn get_as_boolean<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_boolean_supplier::FailableBooleanSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		let r0 = 'try0: {
 			return supplier.get_as_boolean();
 			break 'try0 Ok(());
@@ -132,7 +132,7 @@ impl Failable {
 		}
 	}
 
-	pub fn get_as_double<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_double_supplier::FailableDoubleSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> f64 {
+	pub fn get_as_double<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_double_supplier::FailableDoubleSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> f64 {
 		let r0 = 'try0: {
 			return supplier.get_as_double();
 			break 'try0 Ok(());
@@ -146,7 +146,7 @@ impl Failable {
 		}
 	}
 
-	pub fn get_as_int<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_int_supplier::FailableIntSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> i32 {
+	pub fn get_as_int<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_int_supplier::FailableIntSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> i32 {
 		let r0 = 'try0: {
 			return supplier.get_as_int();
 			break 'try0 Ok(());
@@ -160,7 +160,7 @@ impl Failable {
 		}
 	}
 
-	pub fn get_as_long<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_long_supplier::FailableLongSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> i64 {
+	pub fn get_as_long<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_long_supplier::FailableLongSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> i64 {
 		let r0 = 'try0: {
 			return supplier.get_as_long();
 			break 'try0 Ok(());
@@ -174,7 +174,7 @@ impl Failable {
 		}
 	}
 
-	pub fn get_as_short<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_short_supplier::FailableShortSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> i16 {
+	pub fn get_as_short<E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_short_supplier::FailableShortSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> i16 {
 		let r0 = 'try0: {
 			return supplier.get_as_short();
 			break 'try0 Ok(());
@@ -188,7 +188,7 @@ impl Failable {
 		}
 	}
 
-	pub fn rethrow(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable | java.io.UncheckedIOException) */ -> /* Java */ java::lang::RuntimeException /**/ {
+	pub fn rethrow(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(T | java.io.UncheckedIOException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ -> /* Java */ java::lang::RuntimeException /**/ {
 		Objects::requireNonNull(throwable, "throwable");
 		ExceptionUtils::throw_unchecked(throwable)?;
 		if throwable instanceof IOException {
@@ -197,7 +197,7 @@ impl Failable {
 		return Err(UndeclaredThrowableException::new(throwable));
 	}
 
-	pub fn run<E: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable | java.lang.RuntimeException | java.io.UncheckedIOException) */ {
+	pub fn run<E: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(T | java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ {
 		if runnable != null {
 			let r0 = 'try0: {
 				runnable.run();
@@ -213,7 +213,7 @@ impl Failable {
 		}
 	}
 
-	fn run<E: /* Java */ java::lang::Throwable /**/>(&self, test: &/* Java */ java::lang::Object /**/, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable | java.lang.RuntimeException | java.io.UncheckedIOException) */ {
+	fn run<E: /* Java */ java::lang::Throwable /**/>(&self, test: &/* Java */ java::lang::Object /**/, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(T | java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ {
 		if runnable != null && test != null {
 			let r0 = 'try0: {
 				runnable.run();
@@ -237,15 +237,15 @@ impl Failable {
 		return FailableStream<>::new(stream);
 	}
 
-	pub fn test<T, U, E: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::function::failable_bi_predicate::FailableBiPredicate, object1: &T, object2: &U) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	pub fn test<T, U, E: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::function::failable_bi_predicate::FailableBiPredicate, object1: &T, object2: &U) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		return org::apache::commons::lang3::function::failable::Failable::get_as_boolean(|()|predicate.test(object1, object2))?;
 	}
 
-	pub fn test<T, E: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::function::failable_predicate::FailablePredicate, object: &T) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	pub fn test<T, E: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::function::failable_predicate::FailablePredicate, object: &T) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		return org::apache::commons::lang3::function::failable::Failable::get_as_boolean(|()|predicate.test(object))?;
 	}
 
-	pub fn try_with_resources(&self, action: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable, error_handler: &org::apache::commons::lang3::function::failable_consumer::FailableConsumer, resources: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable | java.lang.RuntimeException | java.io.UncheckedIOException) */ {
+	pub fn try_with_resources(&self, action: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable, error_handler: &org::apache::commons::lang3::function::failable_consumer::FailableConsumer, resources: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(T | java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ {
 		/* final */ let actual_error_handler: FailableConsumer<Throwable, ? extends Throwable>;
 		if error_handler == null {
 			actual_error_handler = Failable::rethrow;
@@ -300,7 +300,7 @@ impl Failable {
 		}
 	}
 
-	pub fn try_with_resources(&self, action: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable, resources: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable | java.lang.RuntimeException | java.io.UncheckedIOException) */ {
+	pub fn try_with_resources(&self, action: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable, resources: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(T | java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ {
 		org::apache::commons::lang3::function::failable::Failable::try_with_resources(action, null, resources)?;
 	}
 

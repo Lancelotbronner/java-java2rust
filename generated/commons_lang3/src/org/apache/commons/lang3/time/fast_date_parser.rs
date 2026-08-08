@@ -376,7 +376,7 @@ impl FastDateParser {
 		return self.parse(source, pos);
 	}
 
-	fn read_object(&self, in: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.lang.ClassNotFoundException | java.io.IOException) */ {
+	fn read_object(&self, in: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.io.IOException | java.lang.ClassNotFoundException) */ {
 		in.defaultReadObject();
 		/* final */ let defining_calendar: Calendar = Calendar::getInstance(self.time_zone, self.locale);
 		self.init(defining_calendar);

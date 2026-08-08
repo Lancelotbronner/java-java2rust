@@ -78,17 +78,17 @@ impl LexicalDifferenceCalculator {
 		difference.apply()?;
 	}
 
-	fn calculated_syntax_model_for_node(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_for_node(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let elements: List<CsmElement> = LinkedList<>::new();
 		self.calculated_syntax_model_for_node(csm, node, elements, NoChange::new())?;
 		return CalculatedSyntaxModel::new(elements);
 	}
 
-	fn calculated_syntax_model_for_node(&self, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_for_node(&self, node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		return self.calculated_syntax_model_for_node(&ConcreteSyntaxModel::for_class(&node.getClass())?, node)?;
 	}
 
-	fn calculated_syntax_model_for_node(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node, elements: &/* Java */ java::util::List /**/, change: &com::github::javaparser::printer::lexicalpreservation::changes::change::Change) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ {
+	fn calculated_syntax_model_for_node(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node, elements: &/* Java */ java::util::List /**/, change: &com::github::javaparser::printer::lexicalpreservation::changes::change::Change) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ {
 		if csm instanceof CsmSequence {
 			let csm_sequence: CsmSequence = csm as CsmSequence;
 			csm_sequence.get_elements().forEach(|e|self.calculated_syntax_model_for_node(e, node, elements, change)?);
@@ -287,27 +287,27 @@ impl LexicalDifferenceCalculator {
 		return self.calculated_syntax_model_after_property_change(&ConcreteSyntaxModel::for_class(&node.getClass())?, node, property, old_value, new_value);
 	}
 
-	fn calculated_syntax_model_after_property_change(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, old_value: &/* Java */ java::lang::Object /**/, new_value: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_property_change(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, node: &com::github::javaparser::ast::node::Node, property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, old_value: &/* Java */ java::lang::Object /**/, new_value: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let elements: List<CsmElement> = LinkedList<>::new();
 		self.calculated_syntax_model_for_node(csm, node, elements, PropertyChange::new(property, old_value, new_value))?;
 		return CalculatedSyntaxModel::new(elements);
 	}
 
-	fn calculated_syntax_model_after_list_removal(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_list_removal(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let elements: List<CsmElement> = LinkedList<>::new();
 		let container: Node = node_list.get_parent_node_for_children();
 		self.calculated_syntax_model_for_node(csm, container, elements, ListRemovalChange::new(observable_property, index))?;
 		return CalculatedSyntaxModel::new(elements);
 	}
 
-	fn calculated_syntax_model_after_list_addition(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32, node_added: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_list_addition(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32, node_added: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let elements: List<CsmElement> = LinkedList<>::new();
 		let container: Node = node_list.get_parent_node_for_children();
 		self.calculated_syntax_model_for_node(csm, container, elements, ListAdditionChange::new(observable_property, index, node_added))?;
 		return CalculatedSyntaxModel::new(elements);
 	}
 
-	fn calculated_syntax_model_after_list_addition(&self, container: &com::github::javaparser::ast::node::Node, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, index: i32, node_added: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_list_addition(&self, container: &com::github::javaparser::ast::node::Node, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, index: i32, node_added: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let csm: CsmElement = ConcreteSyntaxModel::for_class(&container.getClass())?;
 		let raw_value: Object = observable_property.get_raw_value(container)?;
 		if !(raw_value instanceof NodeList) {
@@ -317,7 +317,7 @@ impl LexicalDifferenceCalculator {
 		return self.calculated_syntax_model_after_list_addition(csm, observable_property, node_list, index, node_added)?;
 	}
 
-	fn calculated_syntax_model_after_list_removal(&self, container: &com::github::javaparser::ast::node::Node, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, index: i32) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_list_removal(&self, container: &com::github::javaparser::ast::node::Node, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, index: i32) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let csm: CsmElement = ConcreteSyntaxModel::for_class(&container.getClass())?;
 		let raw_value: Object = observable_property.get_raw_value(container)?;
 		if !(raw_value instanceof NodeList) {
@@ -327,7 +327,7 @@ impl LexicalDifferenceCalculator {
 		return self.calculated_syntax_model_after_list_removal(csm, observable_property, node_list, index)?;
 	}
 
-	fn calculated_syntax_model_after_list_replacement(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32, new_value: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
+	fn calculated_syntax_model_after_list_replacement(&self, csm: &com::github::javaparser::printer::concretesyntaxmodel::csm_element::CsmElement, observable_property: &com::github::javaparser::ast::observer::observable_property::ObservableProperty, node_list: &com::github::javaparser::ast::node_list::NodeList, index: i32, new_value: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.IllegalStateException | java.lang.RuntimeException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::printer::lexicalpreservation::lexical_difference_calculator::CalculatedSyntaxModel {
 		let elements: List<CsmElement> = LinkedList<>::new();
 		let container: Node = node_list.get_parent_node_for_children();
 		self.calculated_syntax_model_for_node(csm, container, elements, ListReplacementChange::new(observable_property, index, new_value))?;

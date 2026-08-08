@@ -102,7 +102,7 @@ impl IdTrackerVisitor {
 
 	pub fn visit(&self, n: &com::github::javaparser::ast::stmt::expression_stmt::ExpressionStmt, arg: &java2rust::id_tracker::IdTracker) /* thrown(java.lang.AssertionError) */ {
 		if n.get_expression() instanceof VariableDeclarationExpr {
-			/* Java*/ ve/* */ .get_common_type()?;
+			ve.get_common_type()?;
 		}
 		super.visit(n, arg);
 	}
@@ -121,7 +121,7 @@ impl IdTrackerVisitor {
 
 	pub fn visit(&self, n: &com::github::javaparser::ast::expr::method_call_expr::MethodCallExpr, arg: &java2rust::id_tracker::IdTracker) {
 		if n.get_scope().isPresent() && n.get_scope().get() instanceof NameExpr {
-			let clazz: Class = self.identifya_class(arg, &/* Java*/ ne/* */ .get_name().as_string());
+			let clazz: Class = self.identifya_class(arg, &ne.get_name().as_string());
 			if clazz != null {
 				let method_name: String = n.get_name().as_string();
 				let ms: Vec<Method> = clazz.getMethods();
@@ -309,7 +309,7 @@ impl IdTrackerVisitor {
 		if t instanceof ClassOrInterfaceType {
 			return (t as ClassOrInterfaceType).get_name().as_string();
 		} else if t instanceof ReferenceType {
-			return self.get_name_of_type(&/* Java*/ rtype/* */ .get_element_type());
+			return self.get_name_of_type(&rtype.get_element_type());
 		}
 		return null;
 	}
@@ -317,11 +317,11 @@ impl IdTrackerVisitor {
 	fn type_of(&self, n: &com::github::javaparser::ast::body::variable_declarator::VariableDeclarator, arg: &java2rust::id_tracker::IdTracker) /* thrown(java.lang.AssertionError) */ -> java2rust::type_description::TypeDescription {
 		let t: Type = null;
 		if n.get_parent_node().get().get_parent_node().get() instanceof FieldDeclaration {
-			t = /* Java*/ field_declaration/* */ .get_common_type()?;
+			t = field_declaration.get_common_type()?;
 		} else if n.get_parent_node().get() instanceof Parameter {
-			t = /* Java*/ p/* */ .get_type();
+			t = p.get_type();
 		} else if n.get_parent_node().get().get_parent_node().get() instanceof VariableDeclarationExpr {
-			t = /* Java*/ variable_declaration_expr/* */ .get_common_type()?;
+			t = variable_declaration_expr.get_common_type()?;
 		}
 		if t != null {
 			return self.get_type_description(arg, t);
@@ -334,10 +334,10 @@ impl IdTrackerVisitor {
 		let clazz: Class = self.identifya_class(arg, name);
 		if t instanceof ReferenceType {
 			if clazz == null {
-				clazz = self.get_potential_primitive_type(&/* Java*/ rtype/* */ .get_element_type());
+				clazz = self.get_potential_primitive_type(&rtype.get_element_type());
 			}
 			if clazz != null {
-				return TypeDescription::new(&/* Java*/ rtype/* */ .get_array_level(), clazz);
+				return TypeDescription::new(&rtype.get_array_level(), clazz);
 			}
 	
 		}
@@ -354,7 +354,7 @@ impl IdTrackerVisitor {
 
 	fn get_potential_primitive_type(&self, t: &com::github::javaparser::ast::type::type::Type) -> /* Java */ java::lang::Class /**/ {
 		if t instanceof PrimitiveType {
-			match /* Java*/ pt/* */ .get_type().name() {
+			match pt.get_type().name() {
 				"Byte" =>  {
 					return Byte::TYPE;
 				}

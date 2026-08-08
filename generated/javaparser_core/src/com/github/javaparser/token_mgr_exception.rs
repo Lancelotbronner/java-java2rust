@@ -73,7 +73,7 @@ impl TokenMgrException {
 
 	fn lexical_err(&self, eof_seen: bool, lex_state: i32, error_line: i32, error_column: i32, error_after: &/* Java */ java::lang::String /**/, cur_char: i32) -> /* Java */ java::lang::String /**/ {
 		let cur_char1: char = cur_char as char;
-		return ("Lexical error at line " + error_line + ", column " + error_column + ".  Encountered: " + ( if EOFSeen { "<EOF> " } else { ("\"" + com::github::javaparser::token_mgr_exception::TokenMgrException::add_escapes(&String::valueOf(cur_char1)) + "\"") + " (" + cur_char + "), " }) + "after : \"" + com::github::javaparser::token_mgr_exception::TokenMgrException::add_escapes(error_after) + "\"");
+		return ("Lexical error at line " + error_line + ", column " + error_column + ".  Encountered: " + ( if eof_seen { "<EOF> " } else { ("\"" + com::github::javaparser::token_mgr_exception::TokenMgrException::add_escapes(&String::valueOf(cur_char1)) + "\"") + " (" + cur_char + "), " }) + "after : \"" + com::github::javaparser::token_mgr_exception::TokenMgrException::add_escapes(error_after) + "\"");
 	}
 
 	pub fn get_message(&self) -> /* Java */ java::lang::String /**/ {
@@ -89,7 +89,7 @@ impl TokenMgrException {
 	}
 
 	pub fn new(eof_seen: bool, lex_state: i32, error_line: i32, error_column: i32, error_after: &/* Java */ java::lang::String /**/, cur_char: i32, reason: i32) -> com::github::javaparser::token_mgr_exception::TokenMgrException {
-		this(&com::github::javaparser::token_mgr_exception::TokenMgrException::lexical_err(EOFSeen, lex_state, error_line, error_column, error_after, cur_char), reason);
+		this(&com::github::javaparser::token_mgr_exception::TokenMgrException::lexical_err(eof_seen, lex_state, error_line, error_column, error_after, cur_char), reason);
 	}
 }
 

@@ -29,7 +29,7 @@ impl InferenceContext {
 		return self.inference_variable_type_map.get(&tp.get_name());
 	}
 
-	pub fn add_pair(&self, mut target: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, mut actual: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.UnsupportedOperationException | com.github.javaparser.resolution.logic.ConflictingGenericTypesException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn add_pair(&self, mut target: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, mut actual: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(com.github.javaparser.resolution.logic.ConflictingGenericTypesException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		target = self.place_inference_variables(target)?;
 		actual = self.place_inference_variables(actual)?;
 		self.register_correspondance(target, actual)?;
@@ -40,7 +40,7 @@ impl InferenceContext {
 		return self.place_inference_variables(actual)?;
 	}
 
-	fn register_correspondance(&self, formal_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, actual_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.UnsupportedOperationException | com.github.javaparser.resolution.logic.ConflictingGenericTypesException | java.lang.IllegalStateException) */ {
+	fn register_correspondance(&self, formal_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, actual_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(com.github.javaparser.resolution.logic.ConflictingGenericTypesException | java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ {
 		if formal_type.is_reference_type() && actual_type.is_reference_type() {
 			let formal_type_as_reference: ResolvedReferenceType = formal_type.as_reference_type()?;
 			let actual_type_as_reference: ResolvedReferenceType = actual_type.as_reference_type()?;
@@ -151,7 +151,7 @@ impl InferenceContext {
 		}
 	}
 
-	fn place_inference_variables(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	fn place_inference_variables(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		if type.is_wildcard() {
 			if type.as_wildcard()?.is_extends() {
 				return ResolvedWildcard::extends_bound(&self.place_inference_variables(&type.as_wildcard()?.get_bounded_type()?)?);
@@ -182,7 +182,7 @@ impl InferenceContext {
 		return Err(UnsupportedOperationException::new(&type.describe()));
 	}
 
-	pub fn resolve(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn resolve(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		if type instanceof InferenceVariableType {
 			let inference_variable_type: InferenceVariableType = type as InferenceVariableType;
 			return inference_variable_type.equivalent_type()?;

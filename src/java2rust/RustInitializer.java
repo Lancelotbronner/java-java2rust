@@ -4,6 +4,7 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class RustInitializer implements IRustFunction {
 	public RustItem item() { return item; }
 
 	@Override
-	public RustParams params() {
+	public @NonNull RustParams params() {
 		return RustParams.EMPTY;
 	}
 

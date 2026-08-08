@@ -51,11 +51,11 @@ impl Conversion {
 	static FFFF: &[bool] = vec![false, false, false, false, ]
 	;
 
-	pub fn binary_be_msb0_to_hex_digit(&self, src: &&[bool]) /* thrown(java.lang.IndexOutOfBoundsException | java.lang.IllegalArgumentException) */ -> u16 {
+	pub fn binary_be_msb0_to_hex_digit(&self, src: &&[bool]) /* thrown(java.lang.IllegalArgumentException | java.lang.IndexOutOfBoundsException) */ -> u16 {
 		return org::apache::commons::lang3::conversion::Conversion::binary_be_msb0_to_hex_digit(src, 0)?;
 	}
 
-	pub fn binary_be_msb0_to_hex_digit(&self, src: &&[bool], src_pos: i32) /* thrown(java.lang.IndexOutOfBoundsException | java.lang.IllegalArgumentException) */ -> u16 {
+	pub fn binary_be_msb0_to_hex_digit(&self, src: &&[bool], src_pos: i32) /* thrown(java.lang.IllegalArgumentException | java.lang.IndexOutOfBoundsException) */ -> u16 {
 		// JDK 9: Objects.checkIndex(int index, int length)
 		if Integer::compareUnsigned(src_pos, src.length) >= 0 {
 			// Throw the correct exception

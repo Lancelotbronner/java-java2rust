@@ -4,6 +4,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class RustConstructor implements IRustFunction {
 	public RustItem item() { return item; }
 
 	@Override
-	public RustParams params() {
+	public @NonNull RustParams params() {
 		return params;
 	}
 

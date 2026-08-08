@@ -45,11 +45,11 @@ impl Providers {
 		return com::github::javaparser::providers::Providers::provider(&com::github::javaparser::utils::utils::Utils::assert_not_null(file)?, self.UTF8)?;
 	}
 
-	pub fn provider(&self, path: &/* Java */ java::nio::file::Path /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.lang.AssertionError | java.io.IOException | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
+	pub fn provider(&self, path: &/* Java */ java::nio::file::Path /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.io.IOException | java.lang.AssertionError | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
 		return com::github::javaparser::providers::Providers::provider(&Files::newInputStream(&com::github::javaparser::utils::utils::Utils::assert_not_null(path)?), &com::github::javaparser::utils::utils::Utils::assert_not_null(encoding)?)?;
 	}
 
-	pub fn provider(&self, path: &/* Java */ java::nio::file::Path /**/) /* thrown(java.lang.AssertionError | java.io.IOException | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
+	pub fn provider(&self, path: &/* Java */ java::nio::file::Path /**/) /* thrown(java.io.IOException | java.lang.AssertionError | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
 		return com::github::javaparser::providers::Providers::provider(&com::github::javaparser::utils::utils::Utils::assert_not_null(path)?, self.UTF8)?;
 	}
 
@@ -57,7 +57,7 @@ impl Providers {
 		return StringProvider::new(&com::github::javaparser::utils::utils::Utils::assert_not_null(source)?);
 	}
 
-	pub fn resource_provider(&self, class_loader: &/* Java */ java::lang::ClassLoader /**/, path_to_resource: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.lang.AssertionError | java.io.IOException | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
+	pub fn resource_provider(&self, class_loader: &/* Java */ java::lang::ClassLoader /**/, path_to_resource: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.io.IOException | java.lang.AssertionError | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
 		let resource_as_stream: InputStream = class_loader.getResourceAsStream(path_to_resource);
 		if resource_as_stream == null {
 			return Err(IOException::new("Cannot find " + path_to_resource));
@@ -65,12 +65,12 @@ impl Providers {
 		return com::github::javaparser::providers::Providers::provider(resource_as_stream, encoding)?;
 	}
 
-	pub fn resource_provider(&self, path_to_resource: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.lang.AssertionError | java.io.IOException | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
+	pub fn resource_provider(&self, path_to_resource: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.io.IOException | java.lang.AssertionError | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
 		let class_loader: ClassLoader = Provider.class.getClassLoader();
 		return com::github::javaparser::providers::Providers::resource_provider(class_loader, path_to_resource, encoding)?;
 	}
 
-	pub fn resource_provider(&self, path_to_resource: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError | java.io.IOException | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
+	pub fn resource_provider(&self, path_to_resource: &/* Java */ java::lang::String /**/) /* thrown(java.io.IOException | java.lang.AssertionError | java.lang.RuntimeException) */ -> com::github::javaparser::provider::Provider {
 		return com::github::javaparser::providers::Providers::resource_provider(path_to_resource, self.UTF8)?;
 	}
 }

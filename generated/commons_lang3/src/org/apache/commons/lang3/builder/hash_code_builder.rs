@@ -271,13 +271,13 @@ impl HashCodeBuilder {
 		if object instanceof Vec<i64> {
 			.append(object as Vec<i64>);
 		} else if object instanceof Vec<i32> {
-			.append(object as Vec<i32>);
+			self.append(object as Vec<i32>);
 		} else if object instanceof Vec<i16> {
-			self.append(object as Vec<i16>);
+			.append(object as Vec<i16>);
 		} else if object instanceof Vec<char> {
-			.append(object as Vec<char>);
+			self.append(object as Vec<char>);
 		} else if object instanceof Vec<i8> {
-			self.append(object as Vec<i8>);
+			.append(object as Vec<i8>);
 		} else if object instanceof Vec<f64> {
 			self.append(object as Vec<f64>);
 		} else if object instanceof Vec<f32> {

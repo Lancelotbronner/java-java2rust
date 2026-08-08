@@ -335,16 +335,16 @@ impl MethodUtils {
 		return result;
 	}
 
-	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		return .invokeExactMethod(object, method_name, ArrayUtils::EMPTY_OBJECT_ARRAY, null);
 	}
 
-	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_exact_method(object, method_name, actuals, &ClassUtils::to_class(actuals));
 	}
 
-	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_exact_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let cls: Class<?> = Objects::requireNonNull(object, "object").getClass();
 		/* final */ let param_types: Vec<Class<?>> = ArrayUtils::null_to_empty(parameter_types);
 		/* final */ let method: Method = org::apache::commons::lang3::reflect::method_utils::MethodUtils::get_accessible_method(cls, method_name, param_types);
@@ -352,28 +352,28 @@ impl MethodUtils {
 		return method.invoke(object, &ArrayUtils::null_to_empty(args));
 	}
 
-	pub fn invoke_exact_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_exact_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_exact_static_method(cls, method_name, actuals, &ClassUtils::to_class(actuals));
 	}
 
-	pub fn invoke_exact_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_exact_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let param_types: Vec<Class<?>> = ArrayUtils::null_to_empty(parameter_types);
 		/* final */ let method: Method = org::apache::commons::lang3::reflect::method_utils::MethodUtils::get_accessible_method(cls, method_name, &ArrayUtils::null_to_empty(param_types));
 		org::apache::commons::lang3::reflect::method_utils::MethodUtils::require_non_null(method, cls, method_name, param_types)?;
 		return method.invoke(null, &ArrayUtils::null_to_empty(args));
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		return .invokeMethod(object, force_access, method_name, ArrayUtils::EMPTY_OBJECT_ARRAY, null);
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_method(object, force_access, method_name, actuals, &ClassUtils::to_class(actuals));
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, force_access: bool, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let cls: Class<? extends Object> = Objects::requireNonNull(object, "object").getClass();
 		/* final */ let param_types: Vec<Class<?>> = ArrayUtils::null_to_empty(parameter_types);
 		/* final */ let method: Method = org::apache::commons::lang3::reflect::method_utils::MethodUtils::get_invoke_method(force_access, method_name, param_types, cls);
@@ -381,25 +381,25 @@ impl MethodUtils {
 		return method.invoke(object, &org::apache::commons::lang3::reflect::method_utils::MethodUtils::to_var_args(method, &ArrayUtils::null_to_empty(args)));
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		return .invokeMethod(object, method_name, ArrayUtils::EMPTY_OBJECT_ARRAY, null);
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_method(object, method_name, actuals, &ClassUtils::to_class(actuals));
 	}
 
-	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_method(&self, object: &/* Java */ java::lang::Object /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_method(object, false, method_name, args, parameter_types)?;
 	}
 
-	pub fn invoke_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::method_utils::MethodUtils::invoke_static_method(cls, method_name, actuals, &ClassUtils::to_class(actuals));
 	}
 
-	pub fn invoke_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
+	pub fn invoke_static_method(&self, cls: &/* Java */ java::lang::Class /**/, method_name: &/* Java */ java::lang::String /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> /* Java */ java::lang::Object /**/ {
 		/* final */ let param_types: Vec<Class<?>> = ArrayUtils::null_to_empty(parameter_types);
 		/* final */ let method: Method = org::apache::commons::lang3::reflect::method_utils::MethodUtils::get_matching_accessible_method(cls, method_name, param_types);
 		org::apache::commons::lang3::reflect::method_utils::MethodUtils::require_non_null(method, cls, method_name, param_types)?;
@@ -413,11 +413,11 @@ impl MethodUtils {
 		return method;
 	}
 
-	fn to_var_args(&self, executable: &/* Java */ java::lang::reflect::Executable /**/, args: &&[/* Java */ java::lang::Object /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.IllegalArgumentException | java.lang.reflect.InvocationTargetException) */ -> &[/* Java */ java::lang::Object /**/] {
+	fn to_var_args(&self, executable: &/* Java */ java::lang::reflect::Executable /**/, args: &&[/* Java */ java::lang::Object /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.IllegalArgumentException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> &[/* Java */ java::lang::Object /**/] {
 		return  if executable.isVarArgs() { org::apache::commons::lang3::reflect::method_utils::MethodUtils::to_var_args(args, &executable.getParameterTypes())? } else { args };
 	}
 
-	fn to_var_args(&self, args: &&[/* Java */ java::lang::Object /**/], method_parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.IllegalAccessException | java.lang.IllegalArgumentException | java.lang.reflect.InvocationTargetException) */ -> &[/* Java */ java::lang::Object /**/] {
+	fn to_var_args(&self, args: &&[/* Java */ java::lang::Object /**/], method_parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.IllegalArgumentException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> &[/* Java */ java::lang::Object /**/] {
 		/* final */ let mpt_length: i32 = method_parameter_types.length;
 		if args.length == mpt_length {
 			/* final */ let last_arg: Object = args[args.length - 1];

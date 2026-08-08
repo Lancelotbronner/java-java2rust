@@ -102,7 +102,7 @@ impl SourceZipTypeSolver {
 
 	fn accept(&self, node: &com::github::javaparser::ast::node::Node) {
 		if node instanceof TypeDeclaration<?> {
-			self.types.put(&/* Java*/ td/* */ .get_fully_qualified_name().orElse(&/* Java*/ td/* */ .get_name_as_string()), /* Java*/ td/* */ );
+			self.types.put(&td.get_fully_qualified_name().orElse(&td.get_name_as_string()), td);
 		}
 	
 		node.get_child_nodes().forEach(self::accept);

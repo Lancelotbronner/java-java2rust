@@ -93,7 +93,7 @@ impl ClassLoaderAwareObjectInputStream {
 		self.classLoader = class_loader;
 	}
 
-	fn resolve_class(&self, desc: &/* Java */ java::io::ObjectStreamClass /**/) /* thrown(java.lang.ClassNotFoundException | java.io.IOException) */ -> /* Java */ java::lang::Class /**/ {
+	fn resolve_class(&self, desc: &/* Java */ java::io::ObjectStreamClass /**/) /* thrown(java.io.IOException | java.lang.ClassNotFoundException) */ -> /* Java */ java::lang::Class /**/ {
 		/* final */ let name: String = desc.getName();
 		let r0 = 'try0: {
 			return Class::forName(name, false, self.class_loader);

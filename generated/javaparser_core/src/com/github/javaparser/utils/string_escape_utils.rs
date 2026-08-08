@@ -38,7 +38,7 @@ struct CharSequenceTranslator;
 impl CharSequenceTranslator {
 	fn translate(&self, input: &/* Java */ java::lang::CharSequence /**/, index: i32, out: &/* Java */ java::io::Writer /**/) /* thrown(java.io.IOException) */ -> i32 ;
 
-	fn translate(&self, input: &/* Java */ java::lang::CharSequence /**/) /* thrown(java.lang.RuntimeException | java.lang.IllegalArgumentException) */ -> /* Java */ java::lang::String /**/ {
+	fn translate(&self, input: &/* Java */ java::lang::CharSequence /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.RuntimeException) */ -> /* Java */ java::lang::String /**/ {
 		if input == null {
 			return null;
 		}

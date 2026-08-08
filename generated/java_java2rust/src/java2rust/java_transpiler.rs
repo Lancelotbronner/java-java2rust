@@ -13,7 +13,6 @@ use javaparser_core::com::github::javaparser::symbolsolver::resolution::typesolv
 use javaparser_core::com::github::javaparser::symbolsolver::resolution::typesolvers::JarTypeSolver;
 use javaparser_core::com::github::javaparser::symbolsolver::resolution::typesolvers::ReflectionTypeSolver;
 use javaparser_core::com::github::javaparser::utils::SourceZip;
-use crate::java2rust::rust;
 use crate::javaparser::SourceZipTypeSolver;
 use commons_lang3::org::apache::commons::io::FilenameUtils;
 use commons_lang3::org::jspecify::annotations::NonNull;
@@ -47,7 +46,7 @@ impl JavaTranspiler {
 		self.solvers.add(self.external_type_solver);
 	}
 
-	pub fn locate(&self, mut name: &com::github::javaparser::ast::expr::name::Name) -> java2rust::rust::rust_package::RustPackage {
+	pub fn locate(&self, mut name: &com::github::javaparser::ast::expr::name::Name) -> java2rust::rust_package::RustPackage {
 		while true {
 			for crate in self.crates {
 				let path: String = name.as_string();
@@ -100,11 +99,11 @@ impl JavaTranspiler {
 		}
 		System::out.printf("\tParsed %s source files%n", &solver.paths.size());
 		System::out.printf("\tRegistered %s types%n", &solver.types.size());
-		let jar: RustJar = RustJar::sources(id, name, zip)?;
+		let jar: RustJar = RustJar::sources(id, name, zip);
 		self.add_jar(jar);
 	}
 
-	pub fn add_jar(&self, jar: &java2rust::rust::rust_jar::RustJar) {
+	pub fn add_jar(&self, jar: &java2rust::rust_jar::RustJar) {
 		//TODO: ensure preliminary visits are made?
 		self.crates.add(jar);
 	}
@@ -124,28 +123,28 @@ impl JavaTranspiler {
 		System::out.printf("\tParsed %s source files%n", &jar.units.size());
 	}
 
-	pub fn add_source_code(&self, filename: &/* Java */ java::lang::String /**/, code: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError) */ {
+	pub fn add_source_code(&self, filename: &/* Java */ java::lang::String /**/, code: &/* Java */ java::lang::String /**/) {
 		if self.crates.isEmpty() {
 			self.crates.add(RustJar::new("test", "test", &Path::of("test")));
 		}
 		let jar: RustJar = self.crates.getFirst();
-		jar.add_source_code(&Path::of(filename), jar.lib, code)?;
+		jar.add_source_code(&Path::of(filename), jar.lib, code);
 	}
 
-	pub fn add_script(&self, filename: &/* Java */ java::lang::String /**/, code: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError) */ {
+	pub fn add_script(&self, filename: &/* Java */ java::lang::String /**/, code: &/* Java */ java::lang::String /**/) {
 		if self.crates.isEmpty() {
 			self.crates.add(RustJar::new("test", "test", &Path::of("test")));
 		}
 	
 		let jar: RustJar = self.crates.getFirst();
-		jar.add_source_code(&Path::of(filename), jar.lib, code)?;
+		jar.add_source_code(&Path::of(filename), jar.lib, code);
 	}
 
-	pub fn register(&self, method: &java2rust::rust::rust_method::RustMethod) {
+	pub fn register(&self, method: &java2rust::rust_method::RustMethod) {
 		self.methods.put(&method.resolved.get_qualified_signature(), method);
 	}
 
-	pub fn method(&self, qualified_signature: &/* Java */ java::lang::String /**/) -> java2rust::rust::rust_method::RustMethod {
+	pub fn method(&self, qualified_signature: &/* Java */ java::lang::String /**/) -> java2rust::rust_method::RustMethod {
 		let m: RustMethod = self.methods.get(qualified_signature);
 		if m == null && self.errors.add(qualified_signature) {
 			System::err.printf(&"Unknown method (not registered) '%s'\n".formatted(qualified_signature));
@@ -154,11 +153,11 @@ impl JavaTranspiler {
 		return m;
 	}
 
-	pub fn method(&self, resolved: &com::github::javaparser::resolution::declarations::resolved_method_declaration::ResolvedMethodDeclaration) -> java2rust::rust::rust_method::RustMethod {
+	pub fn method(&self, resolved: &com::github::javaparser::resolution::declarations::resolved_method_declaration::ResolvedMethodDeclaration) -> java2rust::rust_method::RustMethod {
 		return self.methods.get(&resolved.get_qualified_signature());
 	}
 
-	pub fn method(&self, decl: &com::github::javaparser::ast::body::method_declaration::MethodDeclaration) -> java2rust::rust::rust_method::RustMethod {
+	pub fn method(&self, decl: &com::github::javaparser::ast::body::method_declaration::MethodDeclaration) -> java2rust::rust_method::RustMethod {
 		let resolved: ResolvedMethodDeclaration = decl.resolve();
 		let signature: String = resolved.get_qualified_signature();
 		let method: RustMethod = self.methods.get(signature);
@@ -190,11 +189,11 @@ impl JavaTranspiler {
 
 	pub fn generate(&self, output: &/* Java */ java::nio::file::Path /**/) /* thrown(java.io.IOException) */ {
 		for jar in self.crates {
-			jar.generate(output)?;
+			jar.generate(output);
 		}
 	}
 
-	pub fn register(&self, item: &java2rust::rust::rust_item::RustItem) {
+	pub fn register(&self, item: &java2rust::rust_item::RustItem) {
 		self.names.put(&item.id(), &item.path());
 	}
 
@@ -272,7 +271,7 @@ impl JavaTranspiler {
 
 	fn describe_via_id(&self, id: &/* Java */ java::lang::String /**/, insert: &/* Java */ java::util::function::Supplier /**/) -> /* Java */ java::lang::String /**/ {
 		if self.names.get(id) instanceof String {
-			return /* Java*/ name/* */ ;
+			return name;
 		}
 	
 		if self.errors.add(id) {
@@ -302,7 +301,7 @@ impl JavaTranspiler {
 		return visitor.to_string();
 	}
 
-	pub fn describe(&self, stmt: &com::github::javaparser::ast::stmt::statement::Statement, method: &java2rust::rust::i_rust_function::IRustFunction) -> /* Java */ java::lang::String /**/ {
+	pub fn describe(&self, stmt: &com::github::javaparser::ast::stmt::statement::Statement, method: &java2rust::i_rust_function::IRustFunction) -> /* Java */ java::lang::String /**/ {
 		if stmt == null {
 			return "";
 		}
@@ -317,9 +316,9 @@ impl JavaTranspiler {
 		return visitor.to_string();
 	}
 
-	fn add_sub_item(&self, input: &/* Java */ java::io::File /**/, root: &/* Java */ java::io::File /**/, jar: &java2rust::rust::rust_jar::RustJar, parent_module: &java2rust::rust::rust_package::RustPackage) -> bool {
+	fn add_sub_item(&self, input: &/* Java */ java::io::File /**/, root: &/* Java */ java::io::File /**/, jar: &java2rust::rust_jar::RustJar, parent_module: &java2rust::rust_package::RustPackage) -> bool {
 		let module_name: String = FilenameUtils.removeExtension(&input.getName());
-		let module: RustPackage = parent_module.submodule(module_name, RustVisibility::java2rust::rust::rust_visibility::RustVisibility::PUB);
+		let module: RustPackage = parent_module.submodule(module_name, RustVisibility::java2rust::rust_visibility::RustVisibility::PUB);
 		let added: bool = self.add_item(input, root, jar, module);
 		if !added {
 			module.delete();
@@ -328,14 +327,12 @@ impl JavaTranspiler {
 		return added;
 	}
 
-	fn add_item(&self, input: &/* Java */ java::io::File /**/, root: &/* Java */ java::io::File /**/, jar: &java2rust::rust::rust_jar::RustJar, module: &java2rust::rust::rust_package::RustPackage) /* thrown(java.io.IOException) */ -> bool {
+	fn add_item(&self, input: &/* Java */ java::io::File /**/, root: &/* Java */ java::io::File /**/, jar: &java2rust::rust_jar::RustJar, module: &java2rust::rust_package::RustPackage) -> bool {
 		let children: Vec<File> = input.listFiles();
 		if children == null {
 			if input.getPath().endsWith(".java") {
 				let r0 = 'try0: {
-					if let Err(e) = jar.add(&input.toPath(), module) {
-						return Err(e);
-					};
+					jar.add(&input.toPath(), module);
 					break 'try0 Ok(());
 				};
 				match r0 {

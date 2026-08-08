@@ -15,9 +15,6 @@ use javaparser_core::com::github::javaparser::symbolsolver::javaparsermodel::dec
 use javaparser_core::com::github::javaparser::symbolsolver::javaparsermodel::declarations::JavaParserParameterDeclaration;
 use javaparser_core::com::github::javaparser::symbolsolver::javaparsermodel::declarations::JavaParserVariableDeclaration;
 use javaparser_core::com::github::javaparser::symbolsolver::reflectionmodel::ReflectionEnumConstantDeclaration;
-use crate::java2rust::rust::IRustFunction;
-use crate::java2rust::rust::RustItem;
-use crate::java2rust::rust::RustMethod;
 use commons_lang3::org::apache::commons::lang3::StringUtils;
 use commons_lang3::org::apache::commons::lang3::Strings;
 use commons_lang3::org::jspecify::annotations::Nullable;
@@ -32,9 +29,10 @@ pub struct RustVisitor {
 	transpiler: java2rust::java_transpiler::JavaTranspiler,
 	printer: java2rust::rust_printer::RustPrinter = RustPrinter::new("\t"),
 	try_block: /* Java */ java::util::Stack /**/ = Stack<>::new(),
-	item: java2rust::rust::rust_item::RustItem,
-	method: java2rust::rust::i_rust_function::IRustFunction,
+	item: java2rust::rust_item::RustItem,
+	method: java2rust::i_rust_function::IRustFunction,
 	is_var_decl_stmt: bool = true,
+	is_mutating: bool = false,
 }
 
 impl RustVisitor {
@@ -175,9 +173,11 @@ impl RustVisitor {
 		self.printer.print(");");
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::assign_expr::AssignExpr, arg: &/* Java */ java::lang::Object /**/) {
+	pub fn visit(&mut self, n: &com::github::javaparser::ast::expr::assign_expr::AssignExpr, arg: &/* Java */ java::lang::Object /**/) {
 		self.print_java_comment(&n.get_comment().orElse(null), arg);
+		self.is_mutating = true;
 		n.get_target().accept(self, arg);
+		self.is_mutating = false;
 		self.printer.print(&" %s ".formatted(&java2rust::rust_visitor::RustVisitor::description_of(&n.get_operator())));
 		n.get_value().accept(self, arg);
 	}
@@ -301,7 +301,7 @@ impl RustVisitor {
 		;
 		let select_field_declaration_boolean_function: Function<BodyDeclaration<?>, Boolean> = |mem|{
 			if mem instanceof FieldDeclaration {
-				return /* Java*/ fd/* */ .is_static() == static_searched[0];
+				return fd.is_static() == static_searched[0];
 			} else {
 				return false;
 			}
@@ -944,7 +944,7 @@ impl RustVisitor {
 		n.get_value().accept(self, arg);
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::method_call_expr::MethodCallExpr, arg: &/* Java */ java::lang::Object /**/) {
+	pub fn visit(&mut self, n: &com::github::javaparser::ast::expr::method_call_expr::MethodCallExpr, arg: &/* Java */ java::lang::Object /**/) {
 		self.print_java_comment(&n.get_comment().orElse(null), arg);
 		let access: String = ".";
 		let name: String = n.get_name_as_string();
@@ -960,6 +960,10 @@ impl RustVisitor {
 			let method: RustMethod = self.transpiler.method(resolved);
 			if method != null && !method.thrown().isEmpty() {
 				thrown = method.thrown();
+			}
+	
+			if method != null {
+				self.is_mutating = method.params().is_mut_self();
 			}
 	
 			if n.get_scope().isEmpty() {
@@ -983,6 +987,7 @@ impl RustVisitor {
 			n.get_scope().get().accept(self, arg);
 		}
 	
+		self.is_mutating = false;
 		if n.get_type_arguments().isPresent() {
 			self.print_type_args(&n.get_type_arguments().get(), arg);
 		}
@@ -1081,7 +1086,7 @@ impl RustVisitor {
 		self.printer.println("\n");
 	}
 
-	pub fn visit(&self, n: &com::github::javaparser::ast::expr::name_expr::NameExpr, arg: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.UnsupportedOperationException) */ {
+	pub fn visit(&self, n: &com::github::javaparser::ast::expr::name_expr::NameExpr, arg: &/* Java */ java::lang::Object /**/) {
 		self.print_java_comment(&n.get_comment().orElse(null), arg);
 		let name: String = self.to_snake_if_necessary(&n.get_name_as_string());
 		let error: bool = false;
@@ -1098,7 +1103,26 @@ impl RustVisitor {
 			} else if resolved instanceof JavaParserEnumConstantDeclaration || resolved instanceof ReflectionEnumConstantDeclaration {
 				//TODO: Print the type access first?
 				self.printer.print(&n.get_name_as_string());
-			} else if resolved instanceof JavaParserParameterDeclaration || resolved instanceof JavaParserVariableDeclaration || resolved instanceof JavaParserFieldDeclaration {
+			} else if resolved instanceof JavaParserParameterDeclaration {
+				let param: RustParam = self.method.params().java(&java.getWrappedNode());
+				if param != null {
+					if self.isMutating {
+						param.isMutable = true;
+					}
+	
+					self.printer.print(param.name);
+				} else {
+					let parent: Node = java.getWrappedNode().getParentNode().orElse(null);
+					if parent instanceof LambdaExpr {
+					} else {
+						//TODO: This may happen in sub-method declarations such as anonymous classes, use a method stack instead.
+						//TODO: This may happen in catch clauses
+						System::err.printf("In NameExpr: could not match parameter '%s' to method.\n\t method: %s\n", &java.getWrappedNode(), self.method);
+					}
+					self.printer.print(name);
+				}
+			} else if resolved instanceof JavaParserVariableDeclaration || resolved instanceof JavaParserFieldDeclaration {
+				//TODO: Get their values and add later
 				self.printer.print(name);
 			} else {
 				System::err.printf("In NameExpr: unknown resolved value: %s\n", &resolved.get_type());
@@ -1124,13 +1148,9 @@ impl RustVisitor {
 			Ok => (),
 		}
 		if error {
-			self.printer.start_comment();
-			self.printer.print("Java");
-			self.printer.end_comment();
 			self.printer.print(name);
-			self.printer.start_comment();
-			self.printer.end_comment();
 		}
+	
 		/* 
 			Optional<Pair<TypeDescription, Node>> b = idTracker.findDeclarationNodeFor(
 				n.getName()
@@ -1589,7 +1609,7 @@ impl RustVisitor {
 		let is_initialized_array: bool = n.get_initializer().isPresent() && (n.get_initializer().get() instanceof ArrayInitializerExpr || n.get_initializer().get() instanceof ArrayCreationExpr);
 		if arg instanceof Type && !is_initialized_array {
 			self.printer.print(": ");
-			let tmp: String = self.accept_and_cut(/* Java*/ t/* */ , null);
+			let tmp: String = self.accept_and_cut(t, null);
 			if is_constant && tmp.equals("String") {
 				self.printer.print("&'static str");
 			} else {
@@ -1632,6 +1652,7 @@ impl RustVisitor {
 	}
 
 	pub fn visit(&self, n: &com::github::javaparser::ast::expr::lambda_expr::LambdaExpr, arg: &/* Java */ java::lang::Object /**/) {
+		//TODO: Push lambda (as RustLambda?) to stack, use it in param resolution
 		self.print_java_comment(&n.get_comment().orElse(null), arg);
 		let parameters: List<Parameter> = n.get_parameters();
 		let print_par: bool = n.is_enclosing_parameters();
@@ -1659,7 +1680,7 @@ impl RustVisitor {
 		let body: Statement = n.get_body();
 		if body instanceof ExpressionStmt {
 			// Print the expression directly
-			/* Java*/ stmt/* */ .get_expression().accept(self, arg);
+			stmt.get_expression().accept(self, arg);
 		} else {
 			body.accept(self, arg);
 		}

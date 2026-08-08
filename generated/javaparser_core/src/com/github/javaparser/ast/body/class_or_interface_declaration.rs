@@ -85,7 +85,7 @@ impl ClassOrInterfaceDeclaration {
 		}
 	}
 
-	pub fn custom_initialization(&self) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalArgumentException) */ {
+	pub fn custom_initialization(&self) /* thrown(java.lang.IllegalArgumentException | java.lang.UnsupportedOperationException) */ {
 		// The LPP crashes if the name or modifiers of a class don't have a range, but since the compact class name
 		// is synthetic, this will always be the case for the implicit name and final modifier. There is already
 		// a mechanism to handle this case in the LPP in the form of the `PHANTOM_KEY` data property. If this is

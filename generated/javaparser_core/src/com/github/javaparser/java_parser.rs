@@ -136,15 +136,15 @@ impl JavaParser {
 		return result;
 	}
 
-	pub fn parse_resource(&self, path: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::parse_result::ParseResult {
+	pub fn parse_resource(&self, path: &/* Java */ java::lang::String /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::parse_result::ParseResult {
 		return self.parse(, &com::github::javaparser::providers::Providers::resource_provider(path, &self.configuration.get_character_encoding()))?;
 	}
 
-	pub fn parse_resource(&self, path: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::parse_result::ParseResult {
+	pub fn parse_resource(&self, path: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::parse_result::ParseResult {
 		return self.parse(, &com::github::javaparser::providers::Providers::resource_provider(path, encoding))?;
 	}
 
-	pub fn parse_resource(&self, class_loader: &/* Java */ java::lang::ClassLoader /**/, path: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::parse_result::ParseResult {
+	pub fn parse_resource(&self, class_loader: &/* Java */ java::lang::ClassLoader /**/, path: &/* Java */ java::lang::String /**/, encoding: &/* Java */ java::nio::charset::Charset /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::parse_result::ParseResult {
 		return self.parse(, &com::github::javaparser::providers::Providers::resource_provider(class_loader, path, encoding)?)?;
 	}
 

@@ -31,7 +31,7 @@ impl<V> UncheckedFutureImpl {
 		}
 	}
 
-	pub fn get(&self, timeout: i64, unit: &/* Java */ java::util::concurrent::TimeUnit /**/) /* thrown(java.lang.InterruptedException | java.util.concurrent.ExecutionException | org.apache.commons.lang3.concurrent.UncheckedExecutionException | java.util.concurrent.TimeoutException | org.apache.commons.lang3.concurrent.UncheckedTimeoutException | org.apache.commons.lang3.exception.UncheckedInterruptedException) */ -> V {
+	pub fn get(&self, timeout: i64, unit: &/* Java */ java::util::concurrent::TimeUnit /**/) /* thrown(java.lang.InterruptedException | java.util.concurrent.ExecutionException | java.util.concurrent.TimeoutException | org.apache.commons.lang3.concurrent.UncheckedExecutionException | org.apache.commons.lang3.concurrent.UncheckedTimeoutException | org.apache.commons.lang3.exception.UncheckedInterruptedException) */ -> V {
 		let r0 = 'try0: {
 			return match super.get(timeout, unit) {
 				Err(e) => break 'try0 Err(e),

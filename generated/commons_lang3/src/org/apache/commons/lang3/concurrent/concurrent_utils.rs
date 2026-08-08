@@ -28,7 +28,7 @@ impl ConcurrentUtils {
 		return value;
 	}
 
-	pub fn create_if_absent_unchecked<K, V>(&self, map: &/* Java */ java::util::concurrent::ConcurrentMap /**/, key: &K, init: &org::apache::commons::lang3::concurrent::concurrent_initializer::ConcurrentInitializer) /* thrown(org.apache.commons.lang3.concurrent.ConcurrentRuntimeException | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> V {
+	pub fn create_if_absent_unchecked<K, V>(&self, map: &/* Java */ java::util::concurrent::ConcurrentMap /**/, key: &K, init: &org::apache::commons::lang3::concurrent::concurrent_initializer::ConcurrentInitializer) /* thrown(org.apache.commons.lang3.concurrent.ConcurrentException | org.apache.commons.lang3.concurrent.ConcurrentRuntimeException) */ -> V {
 		let r0 = 'try0: {
 			return match org::apache::commons::lang3::concurrent::concurrent_utils::ConcurrentUtils::create_if_absent(map, key, init) {
 				Err(e) => break 'try0 Err(e),
@@ -79,7 +79,7 @@ impl ConcurrentUtils {
 		return  if initializer != null { initializer.get() } else { null };
 	}
 
-	pub fn initialize_unchecked<T>(&self, initializer: &org::apache::commons::lang3::concurrent::concurrent_initializer::ConcurrentInitializer) /* thrown(org.apache.commons.lang3.concurrent.ConcurrentRuntimeException | org.apache.commons.lang3.concurrent.ConcurrentException) */ -> T {
+	pub fn initialize_unchecked<T>(&self, initializer: &org::apache::commons::lang3::concurrent::concurrent_initializer::ConcurrentInitializer) /* thrown(org.apache.commons.lang3.concurrent.ConcurrentException | org.apache.commons.lang3.concurrent.ConcurrentRuntimeException) */ -> T {
 		let r0 = 'try0: {
 			return match org::apache::commons::lang3::concurrent::concurrent_utils::ConcurrentUtils::initialize(initializer) {
 				Err(e) => break 'try0 Err(e),

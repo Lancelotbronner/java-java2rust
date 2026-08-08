@@ -4,6 +4,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class RustMethod implements IRustFunction {
 			String errorType = thrown
 				.stream()
 				.map(ResolvedType::describe)
+				.sorted()
 				.collect(Collectors.joining(" | "));
 			returnType = " /* thrown(%s) */%s".formatted(errorType, returnType);
 		}
@@ -67,7 +69,7 @@ public class RustMethod implements IRustFunction {
 	public RustItem item() { return item; }
 
 	@Override
-	public RustParams params() {
+	public @NonNull RustParams params() {
 		return params;
 	}
 

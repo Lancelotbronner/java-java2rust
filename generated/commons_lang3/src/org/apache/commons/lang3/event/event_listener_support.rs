@@ -81,7 +81,7 @@ impl<L> EventListenerSupport {
 		self.create_proxy(listener_interface, class_loader);
 	}
 
-	fn read_object(&mut self, object_input_stream: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.lang.ClassNotFoundException | java.io.IOException) */ {
+	fn read_object(&mut self, object_input_stream: &/* Java */ java::io::ObjectInputStream /**/) /* thrown(java.io.IOException | java.lang.ClassNotFoundException) */ {
 		/* final */ let src_listeners: Vec<L> = object_input_stream.readObject() as Vec<L>;
 		self.listeners = CopyOnWriteArrayList<>::new(src_listeners);
 		/* final */ let listener_interface: Class<L> = ArrayUtils::get_component_type(src_listeners);

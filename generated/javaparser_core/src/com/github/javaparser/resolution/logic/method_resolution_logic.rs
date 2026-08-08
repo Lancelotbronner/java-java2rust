@@ -270,7 +270,7 @@ impl MethodResolutionLogic {
 		return false;
 	}
 
-	fn is_assignable_match_type_parameters_matchingq_name(&self, expected: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType, actual: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType, matched_parameters: &/* Java */ java::util::Map /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> bool {
+	fn is_assignable_match_type_parameters_matchingq_name(&self, expected: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType, actual: &com::github::javaparser::resolution::types::resolved_reference_type::ResolvedReferenceType, matched_parameters: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> bool {
 		if !expected.get_qualified_name().equals(&actual.get_qualified_name()) {
 			return false;
 		}
@@ -354,7 +354,7 @@ impl MethodResolutionLogic {
 		return true;
 	}
 
-	pub fn replace_type_param(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, tp: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(java.lang.UnsupportedOperationException | com.github.javaparser.resolution.UnsolvedSymbolException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn replace_type_param(&self, type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, tp: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(com.github.javaparser.resolution.UnsolvedSymbolException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		if type.is_type_variable() || type.is_wildcard() {
 			if type.describe().equals(&tp.get_name()) {
 				let bounds: List<ResolvedTypeParameterDeclaration.Bound> = tp.get_bounds();
@@ -382,7 +382,7 @@ impl MethodResolutionLogic {
 		return Err(UnsupportedOperationException::new("Replacing " + type + ", param " + tp + " with " + type.getClass().getCanonicalName()));
 	}
 
-	pub fn is_applicable(&self, mut method_usage: &com::github::javaparser::resolution::method_usage::MethodUsage, needle_name: &/* Java */ java::lang::String /**/, needle_parameter_types: &/* Java */ java::util::List /**/, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(java.lang.UnsupportedOperationException | com.github.javaparser.resolution.UnsolvedSymbolException) */ -> bool {
+	pub fn is_applicable(&self, mut method_usage: &com::github::javaparser::resolution::method_usage::MethodUsage, needle_name: &/* Java */ java::lang::String /**/, needle_parameter_types: &/* Java */ java::util::List /**/, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(com.github.javaparser.resolution.UnsolvedSymbolException | java.lang.UnsupportedOperationException) */ -> bool {
 		if !method_usage.get_name().equals(needle_name) {
 			return false;
 		}
@@ -540,7 +540,7 @@ impl MethodResolutionLogic {
 		return true;
 	}
 
-	fn is_boxing_compatible_with_type_solver(&self, expected_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, actual_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> bool {
+	fn is_boxing_compatible_with_type_solver(&self, expected_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, actual_type: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> bool {
 		// Handle null types
 		if expected_type == null || actual_type == null {
 			return false;
@@ -927,10 +927,10 @@ impl MethodResolutionLogic {
 	}
 
 	fn is_more_specific(&self, methoda: &com::github::javaparser::resolution::declarations::resolved_method_like_declaration::ResolvedMethodLikeDeclaration, methodb: &com::github::javaparser::resolution::declarations::resolved_method_like_declaration::ResolvedMethodLikeDeclaration, argument_types: &/* Java */ java::util::List /**/) -> bool {
-		/* final */ let a_variadic: bool = method_a.has_variadic_parameter();
-		/* final */ let b_variadic: bool = method_b.has_variadic_parameter();
-		/* final */ let a_number_of_params: i32 = method_a.get_number_of_params();
-		/* final */ let b_number_of_params: i32 = method_b.get_number_of_params();
+		/* final */ let a_variadic: bool = methoda.has_variadic_parameter();
+		/* final */ let b_variadic: bool = methodb.has_variadic_parameter();
+		/* final */ let a_number_of_params: i32 = methoda.get_number_of_params();
+		/* final */ let b_number_of_params: i32 = methodb.get_number_of_params();
 		/* final */ let number_of_args: i32 = argument_types.size();
 		/* final */ let last_arg_type: ResolvedType =  if number_of_args > 0 { argument_types.get(number_of_args - 1) } else { null };
 		/* final */ let is_last_arg_array: bool = last_arg_type != null && last_arg_type.is_array();
@@ -952,8 +952,8 @@ impl MethodResolutionLogic {
 			let i: i32 = 0;
 			while i < number_of_args + omitted_args {
 				{
-					let param_type_a: ResolvedType = com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::get_methods_explicit_and_variadic_parameter_type(method_a, i);
-					let param_type_b: ResolvedType = com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::get_methods_explicit_and_variadic_parameter_type(method_b, i);
+					let param_type_a: ResolvedType = com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::get_methods_explicit_and_variadic_parameter_type(methoda, i);
+					let param_type_b: ResolvedType = com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::get_methods_explicit_and_variadic_parameter_type(methodb, i);
 					let arg_type: ResolvedType = null;
 					if i < argument_types.size() {
 						arg_type = argument_types.get(i);
@@ -999,9 +999,9 @@ impl MethodResolutionLogic {
 						}
 					}
 					// a check in case this changes in the future.
-					if method_a.get_number_of_params() > i && method_b.get_number_of_params() > i {
-						let param_a_variadic: bool = method_a.get_param(i).is_variadic();
-						let param_b_variadic: bool = method_b.get_param(i).is_variadic();
+					if methoda.get_number_of_params() > i && methodb.get_number_of_params() > i {
+						let param_a_variadic: bool = methoda.get_param(i).is_variadic();
+						let param_b_variadic: bool = methodb.get_param(i).is_variadic();
 						// foo(String s, Object... o) is preferred over foo(Object... o)
 						if !param_a_variadic && param_b_variadic {
 							return true;
@@ -1028,7 +1028,7 @@ impl MethodResolutionLogic {
 	}
 
 	fn is_more_specific(&self, methoda: &com::github::javaparser::resolution::method_usage::MethodUsage, methodb: &com::github::javaparser::resolution::method_usage::MethodUsage, argument_types: &/* Java */ java::util::List /**/) -> bool {
-		return com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::is_more_specific(&method_a.get_declaration(), &method_b.get_declaration(), argument_types);
+		return com::github::javaparser::resolution::logic::method_resolution_logic::MethodResolutionLogic::is_more_specific(&methoda.get_declaration(), &methodb.get_declaration(), argument_types);
 	}
 
 	pub fn find_most_applicable_usage(&self, methods: &/* Java */ java::util::List /**/, name: &/* Java */ java::lang::String /**/, arguments_types: &/* Java */ java::util::List /**/, type_solver: &com::github::javaparser::resolution::type_solver::TypeSolver) /* thrown(com.github.javaparser.resolution.MethodAmbiguityException) */ -> /* Java */ java::util::Optional /**/ {
@@ -1100,7 +1100,7 @@ impl MethodResolutionLogic {
 		return Err(UnsupportedOperationException::new(&type_declaration.getClass().getCanonicalName()));
 	}
 
-	pub fn infer_types(&self, source: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, target: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, mappings: &/* Java */ java::util::Map /**/) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ {
+	pub fn infer_types(&self, source: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, target: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, mappings: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ {
 		if source.equals(target) {
 			return;
 		}

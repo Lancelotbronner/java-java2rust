@@ -170,7 +170,7 @@ impl InitializationTask {
 		self.exec_finally = exec;
 	}
 
-	pub fn call(&self) /* thrown(java.lang.Throwable | E | java.lang.Exception) */ -> T {
+	pub fn call(&self) /* thrown(E | java.lang.Exception | java.lang.Throwable) */ -> T {
 		let r0 = 'try0: {
 			return match self.initialize() {
 				Err(e) => break 'try0 Err(e),

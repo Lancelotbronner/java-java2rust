@@ -255,7 +255,7 @@ impl ClassOrInterfaceType {
 		return Optional::of(self);
 	}
 
-	pub fn convert_to_usage(&self, context: &com::github::javaparser::resolution::context::Context) /* thrown(java.lang.UnsupportedOperationException | com.github.javaparser.resolution.UnsolvedSymbolException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn convert_to_usage(&self, context: &com::github::javaparser::resolution::context::Context) /* thrown(com.github.javaparser.resolution.UnsolvedSymbolException | java.lang.UnsupportedOperationException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		let name: String = self.get_name_with_scope();
 		let ref: SymbolReference<ResolvedTypeDeclaration> = context.solve_type(name);
 		if !ref.is_solved() {

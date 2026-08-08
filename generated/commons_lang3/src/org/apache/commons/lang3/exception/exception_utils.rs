@@ -384,7 +384,7 @@ impl ExceptionUtils {
 		return throwable;
 	}
 
-	pub fn wrap_and_throw<R>(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.lang.reflect.UndeclaredThrowableException | T | java.lang.Throwable) */ -> R {
+	pub fn wrap_and_throw<R>(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(T | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ -> R {
 		return Err(UndeclaredThrowableException::new(&org::apache::commons::lang3::exception::exception_utils::ExceptionUtils::throw_unchecked(throwable)?));
 	}
 

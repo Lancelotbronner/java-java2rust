@@ -77,7 +77,7 @@ impl Functions {
 		return org::apache::commons::lang3::functions::Functions::get(callable::call)?;
 	}
 
-	pub fn get<O, T: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::functions::FailableSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> O {
+	pub fn get<O, T: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::functions::FailableSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> O {
 		let r0 = 'try0: {
 			return supplier.get();
 			break 'try0 Ok(());
@@ -91,7 +91,7 @@ impl Functions {
 		}
 	}
 
-	fn get_as_boolean<T: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_boolean_supplier::FailableBooleanSupplier) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	fn get_as_boolean<T: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_boolean_supplier::FailableBooleanSupplier) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		let r0 = 'try0: {
 			return supplier.get_as_boolean();
 			break 'try0 Ok(());
@@ -105,7 +105,7 @@ impl Functions {
 		}
 	}
 
-	pub fn rethrow(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.Throwable | java.io.UncheckedIOException) */ -> /* Java */ java::lang::RuntimeException /**/ {
+	pub fn rethrow(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.io.UncheckedIOException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ -> /* Java */ java::lang::RuntimeException /**/ {
 		Objects::requireNonNull(throwable, "throwable");
 		ExceptionUtils::throw_unchecked(throwable)?;
 		if throwable instanceof IOException {
@@ -114,7 +114,7 @@ impl Functions {
 		return Err(UndeclaredThrowableException::new(throwable));
 	}
 
-	pub fn run<T: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::functions::FailableRunnable) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.Throwable | java.lang.RuntimeException | java.io.UncheckedIOException) */ {
+	pub fn run<T: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::functions::FailableRunnable) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.Throwable | java.lang.reflect.UndeclaredThrowableException) */ {
 		let r0 = 'try0: {
 			runnable.run();
 			break 'try0 Ok(());
@@ -136,11 +136,11 @@ impl Functions {
 		return FailableStream<>::new(stream);
 	}
 
-	pub fn test<O1, O2, T: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::functions::FailableBiPredicate, object1: &O1, object2: &O2) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	pub fn test<O1, O2, T: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::functions::FailableBiPredicate, object1: &O1, object2: &O2) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		return org::apache::commons::lang3::functions::Functions::get_as_boolean(|()|predicate.test(object1, object2))?;
 	}
 
-	pub fn test<O, T: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::functions::FailablePredicate, object: &O) /* thrown(java.lang.reflect.UndeclaredThrowableException | java.lang.RuntimeException | java.io.UncheckedIOException) */ -> bool {
+	pub fn test<O, T: /* Java */ java::lang::Throwable /**/>(&self, predicate: &org::apache::commons::lang3::functions::FailablePredicate, object: &O) /* thrown(java.io.UncheckedIOException | java.lang.RuntimeException | java.lang.reflect.UndeclaredThrowableException) */ -> bool {
 		return org::apache::commons::lang3::functions::Functions::get_as_boolean(|()|predicate.test(object))?;
 	}
 

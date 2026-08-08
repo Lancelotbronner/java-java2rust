@@ -4,8 +4,6 @@ use javaparser_core::com::github::javaparser::ast::body::TypeDeclaration;
 use javaparser_core::com::github::javaparser::resolution::TypeSolver;
 use javaparser_core::com::github::javaparser::resolution::declarations::ResolvedReferenceTypeDeclaration;
 use javaparser_core::com::github::javaparser::resolution::model::SymbolReference;
-use crate::java2rust::rust::RustJar;
-use crate::java2rust::rust::RustUnit;
 use java::util::HashMap;
 
 pub struct TranspilerTypeSolver {
@@ -59,7 +57,7 @@ impl TranspilerTypeSolver {
 
 	fn visit(&self, node: &com::github::javaparser::ast::node::Node) {
 		if node instanceof TypeDeclaration<?> {
-			let resolved: ResolvedReferenceTypeDeclaration = /* Java*/ td/* */ .resolve();
+			let resolved: ResolvedReferenceTypeDeclaration = td.resolve();
 			self.types.put(&resolved.get_id(), &SymbolReference::solved(resolved));
 		}
 		node.get_child_nodes().forEach(self::visit);

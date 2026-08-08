@@ -178,7 +178,7 @@ impl ArrayUtils {
 		return new_array;
 	}
 
-	pub fn add<T>(&self, array: &&[T], index: i32, element: &T) /* thrown(java.lang.IndexOutOfBoundsException | java.lang.IllegalArgumentException) */ -> &[T] {
+	pub fn add<T>(&self, array: &&[T], index: i32, element: &T) /* thrown(java.lang.IllegalArgumentException | java.lang.IndexOutOfBoundsException) */ -> &[T] {
 		/* final */ let clazz: Class<T>;
 		if array != null {
 			clazz = org::apache::commons::lang3::array_utils::ArrayUtils::get_component_type(array);
@@ -219,7 +219,7 @@ impl ArrayUtils {
 
 	pub fn add_all(&self, array1: &&[i8], array2: i8) -> &[i8] {
 		if array1 == null {
-			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array2);
+			return .clone(array2);
 		}
 		if array2 == null {
 			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array1);
@@ -235,7 +235,7 @@ impl ArrayUtils {
 			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array2);
 		}
 		if array2 == null {
-			return .clone(array1);
+			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array1);
 		}
 		/* final */ let joined_array: [Option<char>; array1.length + array2.length] = [None; array1.length + array2.length];
 		System::arraycopy(array1, 0, joined_array, 0, array1.length);
@@ -274,7 +274,7 @@ impl ArrayUtils {
 			return .clone(array2);
 		}
 		if array2 == null {
-			return .clone(array1);
+			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array1);
 		}
 		/* final */ let joined_array: [i32; array1.length + array2.length] = [0; array1.length + array2.length];
 		System::arraycopy(array1, 0, joined_array, 0, array1.length);
@@ -297,7 +297,7 @@ impl ArrayUtils {
 
 	pub fn add_all(&self, array1: &&[i16], array2: i16) -> &[i16] {
 		if array1 == null {
-			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array2);
+			return .clone(array2);
 		}
 		if array2 == null {
 			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array1);
@@ -357,15 +357,15 @@ impl ArrayUtils {
 		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { org::apache::commons::lang3::array_utils::ArrayUtils::insert(0, array, element)? };
 	}
 
-	pub fn add_first(&self, array: &&[f32], element: f32) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[f32] {
+	pub fn add_first(&self, array: &&[f32], element: f32) -> &[f32] {
 		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { .insert(0, array, element) };
 	}
 
 	pub fn add_first(&self, array: &&[i32], element: i32) -> &[i32] {
-		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { .insert(0, array, element) };
+		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { org::apache::commons::lang3::array_utils::ArrayUtils::insert(0, array, element)? };
 	}
 
-	pub fn add_first(&self, array: &&[i64], element: i64) -> &[i64] {
+	pub fn add_first(&self, array: &&[i64], element: i64) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[i64] {
 		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { .insert(0, array, element) };
 	}
 
@@ -373,7 +373,7 @@ impl ArrayUtils {
 		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element) } else { .insert(0, array, element) };
 	}
 
-	pub fn add_first<T>(&self, array: &&[T], element: &T) /* thrown(java.lang.IndexOutOfBoundsException | java.lang.IllegalArgumentException) */ -> &[T] {
+	pub fn add_first<T>(&self, array: &&[T], element: &T) /* thrown(java.lang.IllegalArgumentException | java.lang.IndexOutOfBoundsException) */ -> &[T] {
 		return  if array == null { org::apache::commons::lang3::array_utils::ArrayUtils::add(array, element)? } else { org::apache::commons::lang3::array_utils::ArrayUtils::insert(0, array, element)? };
 	}
 
@@ -832,7 +832,7 @@ impl ArrayUtils {
 	}
 
 	pub fn index_of(&self, array: &&[f32], value_to_find: f32, start_index: i32) -> i32 {
-		if .isEmpty(array) {
+		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) {
 			return self.INDEX_NOT_FOUND;
 		}
 		/* final */ let search_na_n: bool = Float::isNaN(value_to_find);
@@ -1048,7 +1048,7 @@ impl ArrayUtils {
 		if array == null {
 			return null;
 		}
-		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(values) {
+		if .isEmpty(values) {
 			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
 		}
 		if index < 0 || index > array.length {
@@ -1070,7 +1070,7 @@ impl ArrayUtils {
 			return null;
 		}
 		if .isEmpty(values) {
-			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
+			return .clone(array);
 		}
 		if index < 0 || index > array.length {
 			return Err(IndexOutOfBoundsException::new("Index: " + index + ", Length: " + array.length));
@@ -1090,8 +1090,8 @@ impl ArrayUtils {
 		if array == null {
 			return null;
 		}
-		if .isEmpty(values) {
-			return .clone(array);
+		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(values) {
+			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
 		}
 		if index < 0 || index > array.length {
 			return Err(IndexOutOfBoundsException::new("Index: " + index + ", Length: " + array.length));
@@ -1107,12 +1107,12 @@ impl ArrayUtils {
 		return result;
 	}
 
-	pub fn insert(&self, index: i32, array: &&[i16], values: i16) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[i16] {
+	pub fn insert(&self, index: i32, array: &&[i16], values: i16) -> &[i16] {
 		if array == null {
 			return null;
 		}
 		if .isEmpty(values) {
-			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
+			return .clone(array);
 		}
 		if index < 0 || index > array.length {
 			return Err(IndexOutOfBoundsException::new("Index: " + index + ", Length: " + array.length));
@@ -1211,7 +1211,7 @@ impl ArrayUtils {
 	}
 
 	pub fn is_not_empty(&self, array: &&[i8]) -> bool {
-		return !.isEmpty(array);
+		return !org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array);
 	}
 
 	pub fn is_not_empty(&self, array: &&[u16]) -> bool {
@@ -1223,7 +1223,7 @@ impl ArrayUtils {
 	}
 
 	pub fn is_not_empty(&self, array: &&[f32]) -> bool {
-		return !org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array);
+		return !.isEmpty(array);
 	}
 
 	pub fn is_not_empty(&self, array: &&[i32]) -> bool {
@@ -1231,11 +1231,11 @@ impl ArrayUtils {
 	}
 
 	pub fn is_not_empty(&self, array: &&[i64]) -> bool {
-		return !org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array);
+		return !.isEmpty(array);
 	}
 
 	pub fn is_not_empty(&self, array: &&[i16]) -> bool {
-		return !.isEmpty(array);
+		return !org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array);
 	}
 
 	pub fn is_not_empty<T>(&self, array: &&[T]) -> bool {
@@ -1839,7 +1839,7 @@ impl ArrayUtils {
 	}
 
 	pub fn null_to_empty(&self, array: &&[i32]) -> &[i32] {
-		return  if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) { self.EMPTY_INT_ARRAY } else { array };
+		return  if .isEmpty(array) { self.EMPTY_INT_ARRAY } else { array };
 	}
 
 	pub fn null_to_empty(&self, array: &&[/* Java */ java::lang::Integer /**/]) -> &[/* Java */ java::lang::Integer /**/] {
@@ -1847,7 +1847,7 @@ impl ArrayUtils {
 	}
 
 	pub fn null_to_empty(&self, array: &&[i64]) -> &[i64] {
-		return  if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) { self.EMPTY_LONG_ARRAY } else { array };
+		return  if .isEmpty(array) { self.EMPTY_LONG_ARRAY } else { array };
 	}
 
 	pub fn null_to_empty(&self, array: &&[/* Java */ java::lang::Long /**/]) -> &[/* Java */ java::lang::Long /**/] {
@@ -1968,7 +1968,7 @@ impl ArrayUtils {
 		/* final */ let length: i32 = org::apache::commons::lang3::array_utils::ArrayUtils::get_length(array);
 		// number of distinct indexes, i.e. number of entries that will be removed
 		let diff: i32 = 0;
-		/* final */ let cloned_indices: Vec<i32> = ArraySorter::sort(&.clone(indices));
+		/* final */ let cloned_indices: Vec<i32> = ArraySorter.sort(&org::apache::commons::lang3::array_utils::ArrayUtils::clone(indices));
 		// identify length of result array
 		if .isNotEmpty(cloned_indices) {
 			let i: i32 = cloned_indices.length;
@@ -2137,12 +2137,12 @@ impl ArrayUtils {
 
 	pub fn remove_element(&self, array: &&[i8], element: i8) -> &[i8] {
 		/* final */ let index: i32 = org::apache::commons::lang3::array_utils::ArrayUtils::index_of(array, element);
-		return  if index == self.INDEX_NOT_FOUND { .clone(array) } else { .remove(array, index) };
+		return  if index == self.INDEX_NOT_FOUND { org::apache::commons::lang3::array_utils::ArrayUtils::clone(array) } else { .remove(array, index) };
 	}
 
 	pub fn remove_element(&self, array: &&[u16], element: u16) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[u16] {
 		/* final */ let index: i32 = org::apache::commons::lang3::array_utils::ArrayUtils::index_of(array, element);
-		return  if index == self.INDEX_NOT_FOUND { org::apache::commons::lang3::array_utils::ArrayUtils::clone(array) } else { .remove(array, index) };
+		return  if index == self.INDEX_NOT_FOUND { .clone(array) } else { org::apache::commons::lang3::array_utils::ArrayUtils::remove(array, index)? };
 	}
 
 	pub fn remove_element(&self, array: &&[f64], element: f64) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[f64] {
@@ -2160,14 +2160,14 @@ impl ArrayUtils {
 		return  if index == self.INDEX_NOT_FOUND { .clone(array) } else { .remove(array, index) };
 	}
 
-	pub fn remove_element(&self, array: &&[i64], element: i64) -> &[i64] {
+	pub fn remove_element(&self, array: &&[i64], element: i64) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[i64] {
 		/* final */ let index: i32 = org::apache::commons::lang3::array_utils::ArrayUtils::index_of(array, element);
-		return  if index == self.INDEX_NOT_FOUND { org::apache::commons::lang3::array_utils::ArrayUtils::clone(array) } else { org::apache::commons::lang3::array_utils::ArrayUtils::remove(array, index)? };
+		return  if index == self.INDEX_NOT_FOUND { .clone(array) } else { org::apache::commons::lang3::array_utils::ArrayUtils::remove(array, index)? };
 	}
 
 	pub fn remove_element(&self, array: &&[i16], element: i16) -> &[i16] {
 		/* final */ let index: i32 = org::apache::commons::lang3::array_utils::ArrayUtils::index_of(array, element);
-		return  if index == self.INDEX_NOT_FOUND { org::apache::commons::lang3::array_utils::ArrayUtils::clone(array) } else { .remove(array, index) };
+		return  if index == self.INDEX_NOT_FOUND { .clone(array) } else { org::apache::commons::lang3::array_utils::ArrayUtils::remove(array, index)? };
 	}
 
 	pub fn remove_element<T>(&self, array: &&[T], element: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IndexOutOfBoundsException) */ -> &[T] {
@@ -2206,8 +2206,8 @@ impl ArrayUtils {
 	}
 
 	pub fn remove_elements(&self, array: &&[i8], values: i8) -> &[i8] {
-		if .isEmpty(array) || org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(values) {
-			return .clone(array);
+		if .isEmpty(array) || .isEmpty(values) {
+			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
 		}
 		/* final */ let occurrences: HashMap<Byte, MutableInt> = HashMap<>::new(values.length);
 		for /* final */ v in values {
@@ -2351,7 +2351,7 @@ impl ArrayUtils {
 	}
 
 	pub fn remove_elements(&self, array: &&[i64], values: i64) -> &[i64] {
-		if .isEmpty(array) || org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(values) {
+		if .isEmpty(array) || .isEmpty(values) {
 			return org::apache::commons::lang3::array_utils::ArrayUtils::clone(array);
 		}
 		/* final */ let occurrences: HashMap<Long, MutableInt> = HashMap<>::new(values.length);
@@ -2463,7 +2463,7 @@ impl ArrayUtils {
 
 	pub fn reverse(&self, array: &&[i8]) {
 		if array != null {
-			.reverse(array, 0, array.length);
+			org::apache::commons::lang3::array_utils::ArrayUtils::reverse(array, 0, array.length);
 		}
 	}
 
@@ -2551,7 +2551,7 @@ impl ArrayUtils {
 
 	pub fn reverse(&self, array: &&[i32]) {
 		if array != null {
-			.reverse(array, 0, array.length);
+			org::apache::commons::lang3::array_utils::ArrayUtils::reverse(array, 0, array.length);
 		}
 	}
 
@@ -2573,7 +2573,7 @@ impl ArrayUtils {
 
 	pub fn reverse(&self, array: &&[i64]) {
 		if array != null {
-			org::apache::commons::lang3::array_utils::ArrayUtils::reverse(array, 0, array.length);
+			.reverse(array, 0, array.length);
 		}
 	}
 
@@ -2768,7 +2768,7 @@ impl ArrayUtils {
 				start_index_inclusive += offset;
 				n = n_offset;
 			} else {
-				.swap(array, start_index_inclusive, start_index_inclusive + n_offset, offset);
+				org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, start_index_inclusive, start_index_inclusive + n_offset, offset);
 				break;
 			}
 		}
@@ -2836,7 +2836,7 @@ impl ArrayUtils {
 		while n > 1 && offset > 0 {
 			/* final */ let n_offset: i32 = n - offset;
 			if offset > n_offset {
-				.swap(array, start_index_inclusive, start_index_inclusive + n - n_offset, n_offset);
+				org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, start_index_inclusive, start_index_inclusive + n - n_offset, n_offset);
 				n = offset;
 				offset -= n_offset;
 			} else if offset < n_offset {
@@ -2852,7 +2852,7 @@ impl ArrayUtils {
 
 	pub fn shift(&self, array: &&[i32], offset: i32) {
 		if array != null {
-			org::apache::commons::lang3::array_utils::ArrayUtils::shift(array, 0, array.length, offset);
+			.shift(array, 0, array.length, offset);
 		}
 	}
 
@@ -2988,11 +2988,11 @@ impl ArrayUtils {
 		while n > 1 && offset > 0 {
 			/* final */ let n_offset: i32 = n - offset;
 			if offset > n_offset {
-				.swap(array, start_index_inclusive, start_index_inclusive + n - n_offset, n_offset);
+				org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, start_index_inclusive, start_index_inclusive + n - n_offset, n_offset);
 				n = offset;
 				offset -= n_offset;
 			} else if offset < n_offset {
-				.swap(array, start_index_inclusive, start_index_inclusive + n_offset, offset);
+				org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, start_index_inclusive, start_index_inclusive + n_offset, offset);
 				start_index_inclusive += offset;
 				n = n_offset;
 			} else {
@@ -3028,7 +3028,7 @@ impl ArrayUtils {
 			let i: i32 = array.length;
 			while i > 1 {
 				{
-					org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, i - 1, &random.nextInt(i), 1);
+					.swap(array, i - 1, &random.nextInt(i), 1);
 				}
 				i -= 1;
 			 }
@@ -3079,7 +3079,7 @@ impl ArrayUtils {
 			let i: i32 = array.length;
 			while i > 1 {
 				{
-					.swap(array, i - 1, &random.nextInt(i), 1);
+					org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, i - 1, &random.nextInt(i), 1);
 				}
 				i -= 1;
 			 }
@@ -3332,7 +3332,7 @@ impl ArrayUtils {
 	}
 
 	pub fn swap(&self, array: &&[i8], offset1: i32, offset2: i32) {
-		org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, offset1, offset2, 1);
+		.swap(array, offset1, offset2, 1);
 	}
 
 	pub fn swap(&self, array: &&[i8], offset1: i32, offset2: i32, len: i32) {
@@ -3359,7 +3359,7 @@ impl ArrayUtils {
 	}
 
 	pub fn swap(&self, array: &&[u16], offset1: i32, offset2: i32) {
-		.swap(array, offset1, offset2, 1);
+		org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, offset1, offset2, 1);
 	}
 
 	pub fn swap(&self, array: &&[u16], offset1: i32, offset2: i32, len: i32) {
@@ -3413,11 +3413,11 @@ impl ArrayUtils {
 	}
 
 	pub fn swap(&self, array: &&[f32], offset1: i32, offset2: i32) {
-		org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, offset1, offset2, 1);
+		.swap(array, offset1, offset2, 1);
 	}
 
 	pub fn swap(&self, mut array: &&[f32], mut offset1: i32, mut offset2: i32, mut len: i32) {
-		if .isEmpty(array) || offset1 >= array.length || offset2 >= array.length {
+		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) || offset1 >= array.length || offset2 >= array.length {
 			return;
 		}
 		offset1 = org::apache::commons::lang3::array_utils::ArrayUtils::max0(offset1);
@@ -3443,7 +3443,7 @@ impl ArrayUtils {
 		.swap(array, offset1, offset2, 1);
 	}
 
-	pub fn swap(&self, mut array: &&[i32], mut offset1: i32, mut offset2: i32, mut len: i32) {
+	pub fn swap(&self, array: &&[i32], offset1: i32, offset2: i32, len: i32) {
 		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) || offset1 >= array.length || offset2 >= array.length {
 			return;
 		}
@@ -3467,7 +3467,7 @@ impl ArrayUtils {
 	}
 
 	pub fn swap(&self, array: &&[i64], offset1: i32, offset2: i32) {
-		org::apache::commons::lang3::array_utils::ArrayUtils::swap(array, offset1, offset2, 1);
+		.swap(array, offset1, offset2, 1);
 	}
 
 	pub fn swap(&self, mut array: &&[i64], mut offset1: i32, mut offset2: i32, mut len: i32) {
@@ -3525,7 +3525,7 @@ impl ArrayUtils {
 	}
 
 	pub fn swap(&self, array: &&[i16], offset1: i32, offset2: i32, len: i32) {
-		if org::apache::commons::lang3::array_utils::ArrayUtils::is_empty(array) || offset1 >= array.length || offset2 >= array.length {
+		if .isEmpty(array) || offset1 >= array.length || offset2 >= array.length {
 			return;
 		}
 		offset1 = org::apache::commons::lang3::array_utils::ArrayUtils::max0(offset1);

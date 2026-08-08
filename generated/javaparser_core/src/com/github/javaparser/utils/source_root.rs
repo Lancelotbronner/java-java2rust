@@ -48,7 +48,7 @@ impl SourceRoot {
 		self.set_parser_configuration(parser_configuration);
 	}
 
-	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::parse_result::ParseResult {
+	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::parse_result::ParseResult {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(start_package)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(filename)?;
 		/* final */ let relative_path: Path = com::github::javaparser::utils::code_generation_utils::CodeGenerationUtils::file_in_package_relative_path(start_package, filename);
@@ -63,11 +63,11 @@ impl SourceRoot {
 		return result;
 	}
 
-	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::parse_result::ParseResult {
+	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::parse_result::ParseResult {
 		return self.try_to_parse(start_package, filename, self.parser_configuration)?;
 	}
 
-	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> /* Java */ java::util::List /**/ {
+	pub fn try_to_parse(&self, start_package: &/* Java */ java::lang::String /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> /* Java */ java::util::List /**/ {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(start_package)?;
 		self.log_package(start_package);
 		/* final */ let path: Path = com::github::javaparser::utils::code_generation_utils::CodeGenerationUtils::package_absolute_path(self.root, start_package);
@@ -88,7 +88,7 @@ impl SourceRoot {
 		return self.get_cache();
 	}
 
-	pub fn visit_file(&self, file: &/* Java */ java::nio::file::Path /**/, attrs: &/* Java */ java::nio::file::attribute::BasicFileAttributes /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
+	pub fn visit_file(&self, file: &/* Java */ java::nio::file::Path /**/, attrs: &/* Java */ java::nio::file::attribute::BasicFileAttributes /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
 		if !attrs.isDirectory() && file.toString().endsWith(".java") {
 			let relative: Path = self.root.relativize(&file.getParent());
 			self.try_to_parse(&relative.toString(), &file.getFileName().toString())?;
@@ -112,7 +112,7 @@ impl SourceRoot {
 		return true;
 	}
 
-	pub fn try_to_parse(&self) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> /* Java */ java::util::List /**/ {
+	pub fn try_to_parse(&self) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> /* Java */ java::util::List /**/ {
 		return self.try_to_parse("")?;
 	}
 
@@ -146,7 +146,7 @@ impl SourceRoot {
 		return self.try_to_parse_parallelized("")?;
 	}
 
-	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/) /* thrown(java.lang.AssertionError | com.github.javaparser.ParseProblemException) */ -> com::github::javaparser::ast::compilation_unit::CompilationUnit {
+	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/) /* thrown(com.github.javaparser.ParseProblemException | java.lang.AssertionError) */ -> com::github::javaparser::ast::compilation_unit::CompilationUnit {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(start_package)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(filename)?;
 		let r0 = 'try0: {
@@ -169,7 +169,7 @@ impl SourceRoot {
 		}
 	}
 
-	fn callback(&self, absolute_path: &/* Java */ java::nio::file::Path /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
+	fn callback(&self, absolute_path: &/* Java */ java::nio::file::Path /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
 		let local_path: Path = self.root.relativize(absolute_path);
 		Log::trace("Parsing %s", |()|local_path);
 		let result: ParseResult<CompilationUnit> = JavaParser::new(configuration).parse(absolute_path)?;
@@ -187,7 +187,7 @@ impl SourceRoot {
 		}
 	}
 
-	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(start_package)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(filename)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(configuration)?;
@@ -196,12 +196,12 @@ impl SourceRoot {
 		return self;
 	}
 
-	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, filename: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		self.parse(start_package, filename, self.parser_configuration, callback)?;
 		return self;
 	}
 
-	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, configuration: &com::github::javaparser::parser_configuration::ParserConfiguration, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(start_package)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(configuration)?;
 		com::github::javaparser::utils::utils::Utils::assert_not_null(callback)?;
@@ -225,7 +225,7 @@ impl SourceRoot {
 		return self;
 	}
 
-	pub fn visit_file(&self, absolute_path: &/* Java */ java::nio::file::Path /**/, attrs: &/* Java */ java::nio::file::attribute::BasicFileAttributes /**/) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
+	pub fn visit_file(&self, absolute_path: &/* Java */ java::nio::file::Path /**/, attrs: &/* Java */ java::nio::file::attribute::BasicFileAttributes /**/) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> /* Java */ java::nio::file::FileVisitResult /**/ {
 		if !attrs.isDirectory() && absolute_path.toString().endsWith(".java") {
 			return self.callback(absolute_path, configuration, callback)?;
 		}
@@ -236,7 +236,7 @@ impl SourceRoot {
 		return  if self.is_sensible_directory_to_enter(dir)? { CONTINUE } else { SKIP_SUBTREE };
 	}
 
-	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse(&self, start_package: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		self.parse(start_package, self.parser_configuration, callback)?;
 		return self;
 	}
@@ -277,11 +277,11 @@ impl SourceRoot {
 		return self;
 	}
 
-	pub fn parse_parallelized(&self, start_package: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse_parallelized(&self, start_package: &/* Java */ java::lang::String /**/, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		return self.parse_parallelized(start_package, self.parserConfiguration, callback)?;
 	}
 
-	pub fn parse_parallelized(&self, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.lang.AssertionError | java.io.IOException) */ -> com::github::javaparser::utils::source_root::SourceRoot {
+	pub fn parse_parallelized(&self, callback: &com::github::javaparser::utils::source_root::Callback) /* thrown(java.io.IOException | java.lang.AssertionError) */ -> com::github::javaparser::utils::source_root::SourceRoot {
 		return self.parse_parallelized("", self.parserConfiguration, callback)?;
 	}
 

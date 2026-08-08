@@ -115,7 +115,7 @@ impl ResolvedWildcard {
 		return Err(RuntimeException::new());
 	}
 
-	pub fn replace_type_variables(&self, tp_to_replace: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, replaced: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, inferred_types: &/* Java */ java::util::Map /**/) /* thrown(java.lang.RuntimeException | java.lang.IllegalArgumentException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
+	pub fn replace_type_variables(&self, tp_to_replace: &com::github::javaparser::resolution::declarations::resolved_type_parameter_declaration::ResolvedTypeParameterDeclaration, replaced: &com::github::javaparser::resolution::types::resolved_type::ResolvedType, inferred_types: &/* Java */ java::util::Map /**/) /* thrown(java.lang.IllegalArgumentException | java.lang.RuntimeException) */ -> com::github::javaparser::resolution::types::resolved_type::ResolvedType {
 		if replaced == null {
 			return Err(IllegalArgumentException::new());
 		}

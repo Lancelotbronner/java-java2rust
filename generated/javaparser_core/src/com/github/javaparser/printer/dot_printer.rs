@@ -26,7 +26,7 @@ impl DotPrinter {
 		return output.toString();
 	}
 
-	pub fn output(&self, node: &com::github::javaparser::ast::node::Node, parent_node_name: &/* Java */ java::lang::String /**/, name: &/* Java */ java::lang::String /**/, builder: &/* Java */ java::lang::StringBuilder /**/) /* thrown(java.lang.NoSuchFieldError | java.lang.AssertionError | java.lang.RuntimeException) */ {
+	pub fn output(&self, node: &com::github::javaparser::ast::node::Node, parent_node_name: &/* Java */ java::lang::String /**/, name: &/* Java */ java::lang::String /**/, builder: &/* Java */ java::lang::StringBuilder /**/) /* thrown(java.lang.AssertionError | java.lang.NoSuchFieldError | java.lang.RuntimeException) */ {
 		com::github::javaparser::utils::utils::Utils::assert_not_null(node)?;
 		let meta_model: NodeMetaModel = node.get_meta_model();
 		let all_property_meta_models: List<PropertyMetaModel> = meta_model.get_all_property_meta_models();

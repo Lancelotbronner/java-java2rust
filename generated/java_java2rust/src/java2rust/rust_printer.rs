@@ -1,6 +1,9 @@
+use javaparser_core::com::github::javaparser::ast::DataKey;
+use javaparser_core::com::github::javaparser::ast::Node;
 use java::util::ArrayList;
 use java::util::List;
 use java::util::Objects;
+use java::util::Optional;
 
 pub struct RustPrinter {
 	indentation: /* Java */ java::lang::String /**/,
@@ -12,6 +15,8 @@ pub struct RustPrinter {
 }
 
 impl RustPrinter {
+	static PRINTER_KEY: com::github::javaparser::ast::data_key::DataKey = Key::new();
+
 	pub fn new(indentation: &/* Java */ java::lang::String /**/) -> java2rust::rust_printer::RustPrinter {
 		self.indentation = indentation;
 	}
@@ -40,6 +45,19 @@ impl RustPrinter {
 	pub fn println(&mut self) {
 		self.buf.append(&System::lineSeparator());
 		self.indented = false;
+	}
+
+	pub fn print(&self, n: &com::github::javaparser::ast::node::Node) {
+		let code: Optional<IRustCode> = n.find_data(self.PRINTER_KEY)?;
+		if code.isPresent() {
+			code.get().print(self);
+			return;
+		}
+		self.comment("Java");
+		self.end_comment();
+		self.print(&n.to_string());
+		self.start_comment();
+		self.end_comment();
 	}
 
 	pub fn delete_last(&self, count: i32) {
@@ -99,3 +117,5 @@ impl RustPrinter {
 		return self.buf.toString();
 	}
 }
+
+struct Key;

@@ -138,7 +138,7 @@ impl StopWatch {
 		return self.get_stop_instant()?.toEpochMilli();
 	}
 
-	pub fn gett<T, E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_supplier::FailableSupplier) /* thrown(java.lang.Throwable | java.lang.IllegalStateException | E) */ -> T {
+	pub fn gett<T, E: /* Java */ java::lang::Throwable /**/>(&self, supplier: &org::apache::commons::lang3::function::failable_supplier::FailableSupplier) /* thrown(E | java.lang.IllegalStateException | java.lang.Throwable) */ -> T {
 		self.start_resume();
 		let r0 = 'try0: {
 			return match supplier.get() {
@@ -211,7 +211,7 @@ impl StopWatch {
 	
 	}
 
-	pub fn runt<E: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(java.lang.Throwable | java.lang.IllegalStateException | E) */ {
+	pub fn runt<E: /* Java */ java::lang::Throwable /**/>(&self, runnable: &org::apache::commons::lang3::function::failable_runnable::FailableRunnable) /* thrown(E | java.lang.IllegalStateException | java.lang.Throwable) */ {
 		self.start_resume();
 		let r0 = 'try0: {
 			if let Err(e) = runnable.run() {

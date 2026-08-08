@@ -78,11 +78,11 @@ impl Block {
 	}
 
 	fn contains(&self, np: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.AssertionError) */ -> bool {
-		if self.n.get_range().isEmpty() || n_p.get_range().isEmpty() {
+		if self.n.get_range().isEmpty() || np.get_range().isEmpty() {
 			return false;
 		}
 	
-		return self.n.get_range().get().contains(&n_p.get_range().get())?;
+		return self.n.get_range().get().contains(&np.get_range().get())?;
 	}
 
 	pub fn to_string(&self) -> /* Java */ java::lang::String /**/ {

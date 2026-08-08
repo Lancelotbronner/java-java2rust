@@ -135,7 +135,7 @@ impl Fraction {
 		return Fraction::new(numerator_value as i32, denominator);
 	}
 
-	pub fn get_fraction(&self, mut str: &/* Java */ java::lang::String /**/) /* thrown(java.lang.NumberFormatException | java.lang.ArithmeticException) */ -> org::apache::commons::lang3::math::fraction::Fraction {
+	pub fn get_fraction(&self, mut str: &/* Java */ java::lang::String /**/) /* thrown(java.lang.ArithmeticException | java.lang.NumberFormatException) */ -> org::apache::commons::lang3::math::fraction::Fraction {
 		Objects::requireNonNull(str, "str");
 		// parse double format
 		let pos: i32 = str.indexOf('.');

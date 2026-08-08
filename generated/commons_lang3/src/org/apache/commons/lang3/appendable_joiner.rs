@@ -74,7 +74,7 @@ impl<T> AppendableJoiner {
 		return appendable;
 	}
 
-	fn joinsb<T>(&self, string_builder: &/* Java */ java::lang::StringBuilder /**/, prefix: &/* Java */ java::lang::CharSequence /**/, suffix: &/* Java */ java::lang::CharSequence /**/, delimiter: &/* Java */ java::lang::CharSequence /**/, appender: &org::apache::commons::lang3::function::failable_bi_consumer::FailableBiConsumer, elements: &T) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ -> /* Java */ java::lang::StringBuilder /**/ {
+	fn joinsb<T>(&self, string_builder: &/* Java */ java::lang::StringBuilder /**/, prefix: &/* Java */ java::lang::CharSequence /**/, suffix: &/* Java */ java::lang::CharSequence /**/, delimiter: &/* Java */ java::lang::CharSequence /**/, appender: &org::apache::commons::lang3::function::failable_bi_consumer::FailableBiConsumer, elements: &T) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::StringBuilder /**/ {
 		let r0 = 'try0: {
 			return match org::apache::commons::lang3::appendable_joiner::AppendableJoiner::join_array(string_builder, prefix, suffix, delimiter, appender, elements) {
 				Err(e) => break 'try0 Err(e),
@@ -107,7 +107,7 @@ impl<T> AppendableJoiner {
 		return org::apache::commons::lang3::appendable_joiner::AppendableJoiner::joini(string_builder, self.prefix, self.suffix, self.delimiter, self.appender, elements)?;
 	}
 
-	pub fn join(&self, string_builder: &/* Java */ java::lang::StringBuilder /**/, elements: &T) /* thrown(org.apache.commons.lang3.exception.UncheckedException | java.io.IOException) */ -> /* Java */ java::lang::StringBuilder /**/ {
+	pub fn join(&self, string_builder: &/* Java */ java::lang::StringBuilder /**/, elements: &T) /* thrown(java.io.IOException | org.apache.commons.lang3.exception.UncheckedException) */ -> /* Java */ java::lang::StringBuilder /**/ {
 		return org::apache::commons::lang3::appendable_joiner::AppendableJoiner::joinsb(string_builder, self.prefix, self.suffix, self.delimiter, self.appender, elements)?;
 	}
 

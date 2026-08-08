@@ -72,7 +72,7 @@ impl EnumUtils {
 		for /* final */ value in condensed {
 			result[value.ordinal() / Long::SIZE] |= 1 << value.ordinal() % Long::SIZE;
 		}
-		ArrayUtils.reverse(result);
+		ArrayUtils::reverse(result);
 		return result;
 	}
 

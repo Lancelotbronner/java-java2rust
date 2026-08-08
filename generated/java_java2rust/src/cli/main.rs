@@ -1,7 +1,7 @@
 use javaparser_core::com::github::javaparser::ParserConfiguration;
 use javaparser_core::com::github::javaparser::StaticJavaParser;
 use crate::java2rust::JavaTranspiler;
-use crate::java2rust::rust::RustJar;
+use crate::java2rust::RustJar;
 use picocli::CommandLine;
 use picocli::CommandLine::Option;
 use picocli::CommandLine::Parameters;

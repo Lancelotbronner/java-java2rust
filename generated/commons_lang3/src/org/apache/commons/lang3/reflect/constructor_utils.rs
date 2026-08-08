@@ -65,12 +65,12 @@ impl ConstructorUtils {
 		return result;
 	}
 
-	pub fn invoke_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> T {
+	pub fn invoke_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.InstantiationException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> T {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::constructor_utils::ConstructorUtils::invoke_constructor(cls, actuals, &ClassUtils::to_class(actuals))?;
 	}
 
-	pub fn invoke_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> T {
+	pub fn invoke_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.InstantiationException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> T {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		/* final */ let ctor: Constructor<T> = org::apache::commons::lang3::reflect::constructor_utils::ConstructorUtils::get_matching_accessible_constructor(cls, &ArrayUtils::null_to_empty(parameter_types));
 		if ctor == null {
@@ -79,12 +79,12 @@ impl ConstructorUtils {
 		return ctor.newInstance(&MethodUtils::to_var_args(ctor, actuals));
 	}
 
-	pub fn invoke_exact_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> T {
+	pub fn invoke_exact_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &/* Java */ java::lang::Object /**/) /* thrown(java.lang.IllegalAccessException | java.lang.InstantiationException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> T {
 		/* final */ let actuals: Vec<Object> = ArrayUtils::null_to_empty(args);
 		return org::apache::commons::lang3::reflect::constructor_utils::ConstructorUtils::invoke_exact_constructor(cls, actuals, &ClassUtils::to_class(actuals))?;
 	}
 
-	pub fn invoke_exact_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException) */ -> T {
+	pub fn invoke_exact_constructor<T>(&self, cls: &/* Java */ java::lang::Class /**/, args: &&[/* Java */ java::lang::Object /**/], parameter_types: &&[/* Java */ java::lang::Class /**/]) /* thrown(java.lang.IllegalAccessException | java.lang.InstantiationException | java.lang.NoSuchMethodException | java.lang.reflect.InvocationTargetException) */ -> T {
 		/* final */ let ctor: Constructor<T> = org::apache::commons::lang3::reflect::constructor_utils::ConstructorUtils::get_accessible_constructor(cls, &ArrayUtils::null_to_empty(parameter_types));
 		if ctor == null {
 			return Err(NoSuchMethodException::new("No such accessible constructor on object: " + cls.getName()));

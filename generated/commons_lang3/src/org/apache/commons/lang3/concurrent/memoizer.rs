@@ -31,7 +31,7 @@ impl<I, O> Memoizer {
 		self.mappingFunction = |k|FutureTasks::run(|()|function.apply(k));
 	}
 
-	pub fn compute(&self, arg: &I) /* thrown(java.lang.InterruptedException | java.lang.IllegalStateException | java.lang.RuntimeException) */ -> O {
+	pub fn compute(&self, arg: &I) /* thrown(java.lang.IllegalStateException | java.lang.InterruptedException | java.lang.RuntimeException) */ -> O {
 		while true {
 			/* final */ let future: Future<O> = self.cache.computeIfAbsent(arg, self.mapping_function);
 			let r0 = 'try0: {
@@ -54,7 +54,7 @@ impl<I, O> Memoizer {
 		}
 	}
 
-	fn launder_exception(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.lang.Throwable | java.lang.IllegalStateException) */ -> /* Java */ java::lang::RuntimeException /**/ {
+	fn launder_exception(&self, throwable: &/* Java */ java::lang::Throwable /**/) /* thrown(java.lang.IllegalStateException | java.lang.Throwable) */ -> /* Java */ java::lang::RuntimeException /**/ {
 		return Err(IllegalStateException::new("Unchecked exception", &ExceptionUtils::throw_unchecked(throwable)?));
 	}
 }

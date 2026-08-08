@@ -45,7 +45,7 @@ impl ReferenceTypeImpl {
 		return self.typeDeclaration.as_type_parameter()?;
 	}
 
-	pub fn is_assignable_by(&self, other: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.UnsupportedOperationException | java.lang.IllegalStateException) */ -> bool {
+	pub fn is_assignable_by(&self, other: &com::github::javaparser::resolution::types::resolved_type::ResolvedType) /* thrown(java.lang.IllegalStateException | java.lang.UnsupportedOperationException) */ -> bool {
 		if other instanceof NullType {
 			return !self.is_primitive();
 		}
