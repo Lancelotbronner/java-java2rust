@@ -1,7 +1,6 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.body.Parameter;
-import java2rust.JavaTranspiler;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -34,6 +33,11 @@ public class RustParams {
 		for (RustParam param : this.params)
 			params.add(param.toString());
 		return params.toString();
+	}
+
+	public boolean isMut() {
+		if (self == null) return false;
+		return self.isMut();
 	}
 
 	public void mutateSelf() {

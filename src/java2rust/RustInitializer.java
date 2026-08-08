@@ -1,17 +1,12 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.type.ReferenceType;
-import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import java2rust.JavaTranspiler;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class RustInitializer implements IRustFunction {
 	public final InitializerDeclaration java;

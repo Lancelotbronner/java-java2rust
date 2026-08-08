@@ -3,7 +3,7 @@ package cli;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import java2rust.JavaTranspiler;
-import java2rust.rust.RustJar;
+import java2rust.RustJar;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;

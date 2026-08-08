@@ -1,30 +1,29 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
-import java2rust.JavaTranspiler;
+import com.github.javaparser.resolution.declarations.ResolvedRecordDeclaration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class RustClass extends RustItem {
-	public final ResolvedClassDeclaration decl;
+public class RustRecord extends RustItem {
+	public final ResolvedRecordDeclaration decl;
 	public final List<RustField> fields = new ArrayList<>();
 	public final RustImpls impls;
 	public final RustTyParams typarams = new RustTyParams();
 
-	RustClass(
+	RustRecord(
 		String name,
 		RustPackage module,
-		ResolvedClassDeclaration decl,
+		ResolvedRecordDeclaration decl,
 		RustVisibility visibility
 	) {
 		super(name, module, visibility);
 		this.decl = decl;
-		impls = new RustImpls(this, typarams);
+		this.impls = new RustImpls(this, typarams);
 	}
 
 	@Override
@@ -55,32 +54,35 @@ public class RustClass extends RustItem {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+
+		sb.append("#[derive(Debug, Hash, Eq, PartialEq)]\n");
 		sb.append(visibility);
 		sb.append("struct ");
 		sb.append(name);
 		sb.append(typarams);
 
-		if (fields.isEmpty())
+		if (fields.isEmpty()) {
 			sb.append(';');
-		else {
-			sb.append(" {\n");
-			for (RustField field : fields) {
-				sb.append('\t');
-				sb.append(field);
-				sb.append(",\n");
-			}
-			sb.append('}');
+			return sb.toString();
 		}
+
+		sb.append(" {\n");
+		for (RustField field : fields) {
+			sb.append('\t');
+			sb.append(field);
+			sb.append(",\n");
+		}
+		sb.append('}');
 
 		StringJoiner impl = new StringJoiner(
 			"\n\n",
 			"\n\nimpl%s %s {\n".formatted(typarams, name),
-			"\n}");
+			"}");
 		impl.setEmptyValue("");
 		for (RustStatic field : statics)
 			impl.add("\t" + field.toString().replace("\n", "\n\t"));
 		for (IRustFunction method : methods)
-			impl.add("\t" + method.toString().replace("\n", "\n\t"));
+			impl.add(method.toString());
 		sb.append(impl);
 
 		if (!impls.isEmpty()) {
@@ -91,3 +93,4 @@ public class RustClass extends RustItem {
 		return sb.toString();
 	}
 }
+

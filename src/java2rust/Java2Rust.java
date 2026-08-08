@@ -2,8 +2,6 @@ package java2rust;
 
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
-import java2rust.rust.RustJar;
-import java2rust.rust.RustUnit;
 import org.apache.commons.lang3.ArrayUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

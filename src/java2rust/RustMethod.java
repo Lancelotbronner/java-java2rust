@@ -1,11 +1,9 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import java2rust.Java2Rust;
-import java2rust.JavaTranspiler;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +40,8 @@ public class RustMethod implements IRustFunction {
 		// Assign all thrown errors
 		for (IRustFunction callee : calls.callees)
 			thrown.addAll(callee.thrown());
+		for (ReferenceType ty : java.getThrownExceptions())
+			thrown.add(ty.resolve());
 		// Method analysis
 		String successType = transpiler.describe(java.getType());
 		returnType = java.getType().isVoidType() ? " " : " -> %s ".formatted(successType);
@@ -49,8 +49,6 @@ public class RustMethod implements IRustFunction {
 			body = transpiler.describe(java.getBody().orElse(null), this);
 		else
 			body = ";";
-		for (ReferenceType ty : java.getThrownExceptions())
-			thrown.add(ty.resolve());
 		if (!thrown.isEmpty()) {
 			String errorType = thrown
 				.stream()

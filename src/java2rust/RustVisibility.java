@@ -1,4 +1,4 @@
-package java2rust.rust;
+package java2rust;
 
 import org.jspecify.annotations.NonNull;
 

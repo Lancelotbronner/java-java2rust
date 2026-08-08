@@ -15,7 +15,6 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.utils.SourceZip;
-import java2rust.rust.*;
 import javaparser.SourceZipTypeSolver;
 import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.NonNull;

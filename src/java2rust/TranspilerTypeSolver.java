@@ -6,8 +6,6 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.resolution.TypeSolver;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.model.SymbolReference;
-import java2rust.rust.RustJar;
-import java2rust.rust.RustUnit;
 
 import java.util.HashMap;
 

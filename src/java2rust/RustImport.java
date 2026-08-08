@@ -1,14 +1,6 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.expr.Name;
-import java2rust.JavaTranspiler;
-import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public final class RustImport {
 	public final ImportDeclaration java;

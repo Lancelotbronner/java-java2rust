@@ -1,12 +1,10 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedInterfaceDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedRecordDeclaration;
-import java2rust.Java2Rust;
-import java2rust.JavaTranspiler;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

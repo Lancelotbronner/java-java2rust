@@ -1,10 +1,9 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.quality.NotNull;
 import com.github.javaparser.resolution.declarations.ResolvedClassDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedRecordDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import java2rust.JavaTranspiler;
 
 import java.util.ArrayList;
 import java.util.List;

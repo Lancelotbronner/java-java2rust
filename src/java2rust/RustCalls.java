@@ -1,11 +1,7 @@
-package java2rust.rust;
+package java2rust;
 
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
-import com.github.javaparser.utils.Pair;
-import java2rust.JavaTranspiler;
 
 import java.util.HashSet;
 import java.util.Objects;

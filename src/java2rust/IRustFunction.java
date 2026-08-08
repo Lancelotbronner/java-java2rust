@@ -1,7 +1,6 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.resolution.types.ResolvedType;
-import java2rust.JavaTranspiler;
 
 import java.util.Set;
 

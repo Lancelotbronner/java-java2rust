@@ -1,9 +1,8 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParametrizable;
 import com.github.javaparser.utils.Pair;
-import java2rust.JavaTranspiler;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,7 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.type.Type;
-import java2rust.Java2Rust;
-import java2rust.JavaTranspiler;
 import org.jspecify.annotations.Nullable;
 
 public class RustField {

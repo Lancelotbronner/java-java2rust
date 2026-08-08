@@ -1,12 +1,10 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import java2rust.DeclVisitor;
-import java2rust.JavaTranspiler;
 
 import java.io.IOException;
 import java.nio.file.Path;

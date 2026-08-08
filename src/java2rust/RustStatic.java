@@ -1,9 +1,8 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
-import java2rust.JavaTranspiler;
 
 public class RustStatic {
 	public final RustItem parent;

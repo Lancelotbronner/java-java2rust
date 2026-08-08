@@ -1,8 +1,6 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.ast.body.Parameter;
-import java2rust.Java2Rust;
-import java2rust.JavaTranspiler;
 
 public class RustParam {
 	public final Parameter java;

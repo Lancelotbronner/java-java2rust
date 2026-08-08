@@ -1,13 +1,10 @@
-package java2rust.rust;
+package java2rust;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.utils.SourceZip;
-import java2rust.Java2Rust;
-import java2rust.JavaTranspiler;
 import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
