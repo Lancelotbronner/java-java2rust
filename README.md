@@ -22,6 +22,15 @@ The forked code serves only as a reminder for features to implement, it isn't ca
   - *currently no distinction between `>>` and `>>>`*
 - Support for specifying maven dependencies in order to improve analysis
 
+## Progress
+
+You can see the current state of things in the `generated` folder which is the transpiled project itself.
+I generate it with the following command:
+
+```sh
+java2rust generated --sources . --maven com.github.javaparser:javaparser-core:3.28.0 --maven org.apache.commons:commons-lang3:3.20.0
+```
+
 ## Roadmap
 
 - Assign `RustPackage` to their `RustJar`, allowing imports to track the crate
