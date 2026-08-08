@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="java2rust (self)" type="Application" factoryName="Application">
+    <option name="UNNAMED_CLASS_CONFIGURATION" value="true" />
+    <option name="MAIN_CLASS_NAME" value="cli.Main" />
+    <module name="java2rust" />
+    <option name="PROGRAM_PARAMETERS" value="generated --sources . --maven com.github.javaparser:javaparser-core:3.28.0 --maven org.apache.commons:commons-lang3:3.20.0" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
