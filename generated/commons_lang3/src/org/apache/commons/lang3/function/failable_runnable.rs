@@ -1,0 +1,1 @@
+pub trait FailableRunnable<E: /* Java */ java::lang::Throwable /**/>;

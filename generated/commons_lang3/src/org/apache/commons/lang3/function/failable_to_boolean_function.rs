@@ -1,0 +1,1 @@
+pub trait FailableToBooleanFunction<T, E: /* Java */ java::lang::Throwable /**/>;

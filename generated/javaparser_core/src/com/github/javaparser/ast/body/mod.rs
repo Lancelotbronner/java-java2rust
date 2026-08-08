@@ -1,0 +1,17 @@
+pub mod annotation_declaration;
+pub mod annotation_member_declaration;
+pub mod body_declaration;
+pub mod callable_declaration;
+pub mod class_or_interface_declaration;
+pub mod compact_constructor_declaration;
+pub mod constructor_declaration;
+pub mod enum_constant_declaration;
+pub mod enum_declaration;
+pub mod field_declaration;
+pub mod initializer_declaration;
+pub mod method_declaration;
+pub mod parameter;
+pub mod receiver_parameter;
+pub mod record_declaration;
+pub mod type_declaration;
+pub mod variable_declarator;

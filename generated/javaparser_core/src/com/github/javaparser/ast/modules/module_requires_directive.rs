@@ -1,0 +1,198 @@
+use crate::com::github::javaparser::ast::Modifier::Keyword::STATIC;
+use crate::com::github::javaparser::ast::Modifier::Keyword::TRANSITIVE;
+use crate::com::github::javaparser::utils::Utils::assertNotNull;
+use crate::com::github::javaparser::TokenRange;
+use crate::com::github::javaparser::ast;
+use crate::com::github::javaparser::ast::expr::Name;
+use crate::com::github::javaparser::ast::nodeTypes::NodeWithName;
+use crate::com::github::javaparser::ast::nodeTypes::modifiers::NodeWithStaticModifier;
+use crate::com::github::javaparser::ast::observer::ObservableProperty;
+use crate::com::github::javaparser::ast::visitor::CloneVisitor;
+use crate::com::github::javaparser::ast::visitor::GenericVisitor;
+use crate::com::github::javaparser::ast::visitor::VoidVisitor;
+use crate::com::github::javaparser::metamodel::JavaParserMetaModel;
+use crate::com::github::javaparser::metamodel::ModuleRequiresDirectiveMetaModel;
+use java::util::Optional;
+use java::util::function::Consumer;
+
+pub struct ModuleRequiresDirective {
+	modifiers: com::github::javaparser::ast::node_list::NodeList,
+	name: com::github::javaparser::ast::expr::name::Name,
+}
+
+impl ModuleRequiresDirective {
+	pub fn new() -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		this(null, NodeList<>::new(), Name::new());
+	}
+
+	pub fn new(modifiers: &com::github::javaparser::ast::node_list::NodeList, name: &com::github::javaparser::ast::expr::name::Name) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		this(null, modifiers, name);
+	}
+
+	pub fn new(token_range: &com::github::javaparser::token_range::TokenRange, modifiers: &com::github::javaparser::ast::node_list::NodeList, name: &com::github::javaparser::ast::expr::name::Name) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		super(token_range);
+		self.set_modifiers(modifiers);
+		self.set_name(name);
+		self.custom_initialization();
+	}
+
+	pub fn accept<R, A>(&self, v: &com::github::javaparser::ast::visitor::generic_visitor::GenericVisitor, arg: &A) -> R {
+		return v.visit(self, arg);
+	}
+
+	pub fn accept<A>(&self, v: &com::github::javaparser::ast::visitor::void_visitor::VoidVisitor, arg: &A) {
+		v.visit(self, arg);
+	}
+
+	pub fn get_modifiers(&self) -> com::github::javaparser::ast::node_list::NodeList {
+		return self.modifiers;
+	}
+
+	pub fn set_modifiers(&mut self, modifiers: &com::github::javaparser::ast::node_list::NodeList) /* thrown(java.lang.AssertionError) */ -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		com::github::javaparser::utils::utils::Utils::assert_not_null(modifiers)?;
+		if modifiers == self.modifiers {
+			return self;
+		}
+		self.notify_property_change(ObservableProperty::MODIFIERS, self.modifiers, modifiers);
+		if self.modifiers != null {
+			self.modifiers.set_parent_node(null);
+		}
+	
+		self.modifiers = modifiers;
+		self.set_as_parent_node_of(modifiers);
+		return self;
+	}
+
+	pub fn get_name(&self) -> com::github::javaparser::ast::expr::name::Name {
+		return self.name;
+	}
+
+	pub fn set_name(&mut self, name: &com::github::javaparser::ast::expr::name::Name) /* thrown(java.lang.AssertionError) */ -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		com::github::javaparser::utils::utils::Utils::assert_not_null(name)?;
+		if name == self.name {
+			return self;
+		}
+		self.notify_property_change(ObservableProperty::NAME, self.name, name);
+		if self.name != null {
+			self.name.set_parent_node(null);
+		}
+	
+		self.name = name;
+		self.set_as_parent_node_of(name);
+		return self;
+	}
+
+	pub fn is_static(&self) -> bool {
+		return self.has_modifier(STATIC);
+	}
+
+	pub fn is_transitive(&self) -> bool {
+		return self.has_modifier(TRANSITIVE);
+	}
+
+	pub fn set_transitive(&self, set: bool) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		return self.set_modifier(TRANSITIVE, set);
+	}
+
+	pub fn remove(&self, node: &com::github::javaparser::ast::node::Node) -> bool {
+		if node == null {
+			return false;
+		}
+		 {
+			let i: i32 = 0;
+			while i < self.modifiers.size() {
+				{
+					if self.modifiers.get(i) == node {
+						self.modifiers.remove(i);
+						return true;
+					}
+				}
+				i += 1;
+			 }
+		 }
+	
+		return super.remove(node);
+	}
+
+	pub fn clone(&self) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		return self.accept(CloneVisitor::new(), null) as ModuleRequiresDirective;
+	}
+
+	pub fn replace(&self, node: &com::github::javaparser::ast::node::Node, replacement_node: &com::github::javaparser::ast::node::Node) /* thrown(java.lang.AssertionError | java.lang.IllegalArgumentException) */ -> bool {
+		if node == null {
+			return false;
+		}
+		 {
+			let i: i32 = 0;
+			while i < self.modifiers.size() {
+				{
+					if self.modifiers.get(i) == node {
+						self.modifiers.set(i, replacement_node as Modifier)?;
+						return true;
+					}
+				}
+				i += 1;
+			 }
+		 }
+	
+		if node == self.name {
+			self.set_name(replacement_node as Name)?;
+			return true;
+		}
+		return super.replace(node, replacement_node);
+	}
+
+	pub fn is_module_requires_stmt(&self) -> bool {
+		return true;
+	}
+
+	pub fn as_module_requires_stmt(&self) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		return self;
+	}
+
+	pub fn if_module_requires_stmt(&self, action: &/* Java */ java::util::function::Consumer /**/) {
+		action.accept(self);
+	}
+
+	pub fn to_module_requires_stmt(&self) -> /* Java */ java::util::Optional /**/ {
+		return Optional::of(self);
+	}
+
+	pub fn is_module_requires_directive(&self) -> bool {
+		return true;
+	}
+
+	pub fn as_module_requires_directive(&self) -> com::github::javaparser::ast::modules::module_requires_directive::ModuleRequiresDirective {
+		return self;
+	}
+
+	pub fn to_module_requires_directive(&self) -> /* Java */ java::util::Optional /**/ {
+		return Optional::of(self);
+	}
+
+	pub fn if_module_requires_directive(&self, action: &/* Java */ java::util::function::Consumer /**/) {
+		action.accept(self);
+	}
+
+	pub fn get_meta_model(&self) -> com::github::javaparser::metamodel::module_requires_directive_meta_model::ModuleRequiresDirectiveMetaModel {
+		return JavaParserMetaModel::moduleRequiresDirectiveMetaModel;
+	}
+}
+
+impl com::github::javaparser::ast::node_types::modifiers::node_with_static_modifier::NodeWithStaticModifier for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::node_types::node_with_modifiers::NodeWithModifiers for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::node_types::node_with_name::NodeWithName for ModuleRequiresDirective {}
+
+impl /* Java */ java::lang::Cloneable /**/ for ModuleRequiresDirective {}
+
+impl com::github::javaparser::has_parent_node::HasParentNode for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::observer::observable::Observable for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::visitor::visitable::Visitable for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::node_types::node_with_range::NodeWithRange for ModuleRequiresDirective {}
+
+impl com::github::javaparser::ast::node_types::node_with_token_range::NodeWithTokenRange for ModuleRequiresDirective {}

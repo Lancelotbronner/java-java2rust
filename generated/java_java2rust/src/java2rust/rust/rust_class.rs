@@ -1,0 +1,80 @@
+use javaparser_core::com::github::javaparser::ast::expr::Expression;
+use javaparser_core::com::github::javaparser::ast::type::Type;
+use javaparser_core::com::github::javaparser::resolution::declarations::ResolvedClassDeclaration;
+use crate::java2rust::JavaTranspiler;
+use commons_lang3::org::jspecify::annotations::Nullable;
+use java::util::ArrayList;
+use java::util::List;
+use java::util::StringJoiner;
+
+pub struct RustClass {
+	decl: com::github::javaparser::resolution::declarations::resolved_class_declaration::ResolvedClassDeclaration,
+	fields: /* Java */ java::util::List /**/ = ArrayList<>::new(),
+	impls: java2rust::rust::rust_impls::RustImpls,
+	typarams: java2rust::rust::rust_ty_params::RustTyParams = RustTyParams::new(),
+}
+
+impl RustClass {
+	fn new(name: &/* Java */ java::lang::String /**/, module: &java2rust::rust::rust_package::RustPackage, decl: &com::github::javaparser::resolution::declarations::resolved_class_declaration::ResolvedClassDeclaration, visibility: &/* Java */ java2rust::rust::RustVisibility /**/) -> java2rust::rust::rust_class::RustClass {
+		super(name, module, visibility);
+		self.decl = decl;
+		self.impls = RustImpls::new(self, self.typarams);
+	}
+
+	pub fn analyze(&self, transpiler: &java2rust::java_transpiler::JavaTranspiler) {
+		super.analyze(transpiler);
+		for field in self.fields {
+			field.analyze(transpiler, self);
+		}
+		self.typarams.analyze(self.decl, transpiler);
+		self.impls.analyze(self.decl, transpiler);
+	}
+
+	pub fn id(&self) -> /* Java */ java::lang::String /**/ {
+		return self.decl.get_id();
+	}
+
+	pub fn path(&self) -> /* Java */ java::lang::String /**/ {
+		return "%s::%s".formatted(.path, );
+	}
+
+	pub fn field(&self, name: &/* Java */ java::lang::String /**/, type: &com::github::javaparser::ast::type::type::Type, initializer: &com::github::javaparser::ast::expr::expression::Expression) -> java2rust::rust::rust_field::RustField {
+		let field: RustField = RustField::new(name, type, initializer);
+		self.fields.add(field);
+		return field;
+	}
+
+	pub fn to_string(&self) -> /* Java */ java::lang::String /**/ {
+		let sb: StringBuilder = StringBuilder::new();
+		sb.append();
+		sb.append("struct ");
+		sb.append();
+		sb.append(self.typarams);
+		if self.fields.isEmpty() {
+			sb.append(';');
+		}
+		else {
+			sb.append(" {\n");
+			for field in self.fields {
+				sb.append('\t');
+				sb.append(field);
+				sb.append(",\n");
+			}
+			sb.append('}');
+		}
+		let impl: StringJoiner = StringJoiner::new("\n\n", &"\n\nimpl%s %s {\n".formatted(self.typarams, ), "\n}");
+		impl.setEmptyValue("");
+		for field in  {
+			impl.add("\t" + field.to_string().replace("\n", "\n\t"));
+		}
+		for method in  {
+			impl.add("\t" + method.toString().replace("\n", "\n\t"));
+		}
+		sb.append(impl);
+		if !self.impls.is_empty() {
+			sb.append("\n\n");
+			sb.append(self.impls);
+		}
+		return sb.toString();
+	}
+}

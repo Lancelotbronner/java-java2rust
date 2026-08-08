@@ -1,0 +1,1 @@
+pub struct Java12PostProcessor;

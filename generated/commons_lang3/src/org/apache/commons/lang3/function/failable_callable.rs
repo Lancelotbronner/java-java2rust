@@ -1,0 +1,1 @@
+pub trait FailableCallable<R, E: /* Java */ java::lang::Throwable /**/>;

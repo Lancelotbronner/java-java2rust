@@ -1,0 +1,16 @@
+use crate::com::github::javaparser::ast::Generated;
+use crate::com::github::javaparser::ast::body::AnnotationMemberDeclaration;
+use java::util::Optional;
+
+pub struct AnnotationMemberDeclarationMetaModel {
+	default_value_property_meta_model: com::github::javaparser::metamodel::property_meta_model::PropertyMetaModel,
+	modifiers_property_meta_model: com::github::javaparser::metamodel::property_meta_model::PropertyMetaModel,
+	name_property_meta_model: com::github::javaparser::metamodel::property_meta_model::PropertyMetaModel,
+	type_property_meta_model: com::github::javaparser::metamodel::property_meta_model::PropertyMetaModel,
+}
+
+impl AnnotationMemberDeclarationMetaModel {
+	fn new(super_base_node_meta_model: &/* Java */ java::util::Optional /**/) -> com::github::javaparser::metamodel::annotation_member_declaration_meta_model::AnnotationMemberDeclarationMetaModel {
+		super(super_base_node_meta_model, AnnotationMemberDeclaration.class, "AnnotationMemberDeclaration", "com.github.javaparser.ast.body", false, false);
+	}
+}
