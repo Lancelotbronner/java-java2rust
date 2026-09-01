@@ -33,9 +33,12 @@ java2rust generated --sources . --maven com.github.javaparser:javaparser-core:3.
 
 ## Roadmap
 
+- More tests for what is supposed to work right now, ensure they all pass
 - Assign `RustPackage` to their `RustJar`, allowing imports to track the crate
 - Generate a `Cargo.toml` workspace containing all generated crates
 - Ensure all printed types use the full path
+- Generate a `stderr.log` alongside the generated files for any occuring errors
+- Generate a `rustc.log` which documents the build errors
 
 ## Usage
 

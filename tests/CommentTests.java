@@ -1,9 +1,4 @@
-package test;
-
-import java2rust.Java2Rust;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommentTests {
 	@Test
@@ -72,12 +67,12 @@ public class CommentTests {
 					}
 				}
 				""", """
-                pub struct C {}
-                
-                impl C {
-                    fn glfw_error_capture(&self) {
-                    }
-                }
-                """);
+				pub struct C {}
+				
+				impl C {
+				    fn glfw_error_capture(&self) {
+				    }
+				}
+				""");
 	}
 }

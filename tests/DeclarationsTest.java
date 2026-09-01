@@ -1,11 +1,5 @@
-package test;
-
-import java2rust.Java2Rust;
 import org.junit.jupiter.api.Test;
 
-/**
- * Created by aschoerk on 15.05.16.
- */
 public class DeclarationsTest {
 	@Test
 	public void canConvertFieldDeclaration() {
